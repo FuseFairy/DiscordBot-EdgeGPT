@@ -13,8 +13,6 @@ chatbot = Chatbot("./cookies.json")
 
 logger = log.setup_logger(__name__)
 
-isPrivate = False
-
 sem = asyncio.Semaphore(1)
 
 async def send_message(message, user_message):

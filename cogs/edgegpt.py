@@ -19,7 +19,15 @@ async def send_message(message, user_message):
     async with sem:
         try:
             ask = f"> **{user_message}** - <@{str(message.user.id)}> \n\n"
-            response = f"{ask}{(await chatbot.ask(user_message))['item']['messages'][1]['adaptiveCards'][0]['body'][0]['text']}"
+            temp = await chatbot.ask(user_message)
+            text = temp["item"]["messages"][1]["text"]
+            i = 1
+            all_url = ""
+            for url in temp['item']['messages'][1]['sourceAttributions']:
+                text = str(text).replace(f"[^{i}^]", "")
+                all_url += f"{url['providerDisplayName']}\n-> [{url['seeMoreUrl']}]\n\n"
+                i+=1
+            response = f"{ask}```{all_url}```\n{text}"
             while len(response) > 2000:
                 temp = response[:2000]
                 response = response[2000:]
@@ -30,7 +38,7 @@ async def send_message(message, user_message):
             logger.exception(f"Error while sending message: {e}")
 
 class edgegpt(Cog_Extension):
-    @bot.tree.command(name = "bing", description = "Have a chat with EdgeGPT")
+    @bot.tree.command(name = "bing", description = "Have a chat with Bing")
     async def bing(self, interaction: discord.Interaction, *, message: str):
         if interaction.user == bot.user:
             return

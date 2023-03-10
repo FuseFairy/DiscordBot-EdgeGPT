@@ -2,7 +2,7 @@
 > ### Using Bing on discord bot, your Microsoft account needs to be able to access Bing first.
 
 ## Features
-* chat: `/chat [message]`
+* chat: `/bing [message]`
 
   ![edgegpt](https://i.imgur.com/DGJ7SiP.png)
 

@@ -4,8 +4,7 @@
 ## Features
 * chat: `/chat [message]`
 
-  ![edgegpt1](https://i.imgur.com/SLv6dpp.png)
-  ![edgegpt2](https://i.imgur.com/cnJmY79.png)
+  ![edgegpt](https://i.imgur.com/DGJ7SiP.png)
 
 * reset: `/reset`
 

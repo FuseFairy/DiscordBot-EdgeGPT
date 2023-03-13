@@ -20,14 +20,22 @@ async def send_message(message, user_message):
         try:
             ask = f"> **{user_message}** - <@{str(message.user.id)}> \n\n"
             temp = await chatbot.ask(user_message)
-            text = temp["item"]["messages"][1]["text"]
-            i = 1
-            all_url = ""
-            for url in temp['item']['messages'][1]['sourceAttributions']:
-                text = str(text).replace(f"[^{i}^]", "")
-                all_url += f"{url['providerDisplayName']}\n-> [{url['seeMoreUrl']}]\n\n"
-                i+=1
-            response = f"{ask}```{all_url}```\n{text}"
+            try:
+                text = temp["item"]["messages"][1]["text"]
+            except:
+                text = temp['item']['messages'][1]['adaptiveCards'][0]['body'][0]['text']
+            # maybe no url
+            if len(temp['item']['messages'][1]['sourceAttributions']) != 0:
+                i = 1
+                all_url = ""
+                for url in temp['item']['messages'][1]['sourceAttributions']:
+                    text = str(text).replace(f"[^{i}^]", "")
+                    all_url += f"{url['providerDisplayName']}\n-> [{url['seeMoreUrl']}]\n\n"
+                    i+=1
+                response = f"{ask}```{all_url}```\n{text}"
+            else:
+                response = f"{ask}{text}"
+            # discord characters limit 
             while len(response) > 2000:
                 temp = response[:2000]
                 response = response[2000:]
@@ -55,7 +63,7 @@ class edgegpt(Cog_Extension):
         open('discord_bot.log', 'w').close()
         await interaction.response.defer(ephemeral=False)
         await chatbot.reset()
-        await interaction.followup.send("> **Info: I have forgotten everything.**")
+        await interaction.followup.send("> **Info: Reset finish.**")
         logger.warning("\x1b[31mBing has been successfully reset\x1b[0m")
 
 async def setup(bot):

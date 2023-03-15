@@ -69,8 +69,8 @@ class edgegpt(Cog_Extension):
         await asyncio.gather(task)
 
     # reset Bing conversation history
-    @bot.tree.command(name="reset_bing", description="Complete reset Bing conversation history")
-    async def resetbing(self, interaction: discord.Interaction):
+    @bot.tree.command(name="reset", description="Complete reset Bing conversation history")
+    async def reset(self, interaction: discord.Interaction):
         open('discord_bot.log', 'w').close()
         await interaction.response.defer(ephemeral=False)
         await chatbot.reset()

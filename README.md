@@ -1,8 +1,9 @@
 # DiscordBot-EdgeGPT
 > ### Using Bing on discord bot, your Microsoft account needs to be able to access Bing first.
 ---
-> | 2023/3/15 update: support GPT-4 |
-> |---|
+> #### 2023/3/16 update: now can switch conversation style
+> #### 2023/3/15 update: support GPT-4
+
 
 ## Features
 * chat: `/bing [message]`

@@ -10,7 +10,7 @@
 
   ![edgegpt](https://i.imgur.com/DGJ7SiP.png)
  
- * conversation style: `/style_creative`、 `/style_balanced`、`/style_precise`
+ * conversation style (default balanced): `/style_creative`、 `/style_balanced`、`/style_precise`
 
 * reset: `/reset`
 

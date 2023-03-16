@@ -5,4 +5,4 @@ PyYAML==6.0
 tls-client==0.1.8
 websockets==10.4
 typing==3.7.4.3
-EdgeGPT==0.0.56.2
+EdgeGPT==0.0.58.1

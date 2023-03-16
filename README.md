@@ -24,7 +24,7 @@ $ pip install -r requirements.txt
 ```
 
 ## Usage
-1. Rename the file `.env.dev` to `.env`, then open it and edit it.
+1. Rename the file`.env.dev`to`.env`, then open it and edit it.
    ```
    DISCORD_BOT_TOKEN=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
    ```

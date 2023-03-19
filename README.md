@@ -8,7 +8,7 @@
 ## Features
 * chat: `/bing [message]`
 
-   | USE_SUGGEST_RESPONSES: True  (can change in file config.yml) |
+   | USE_SUGGEST_RESPONSES: True  (can change in file ```config.yml```) |
    |---|
   ![edgegpt](https://i.imgur.com/5y00Z2g.png)
 

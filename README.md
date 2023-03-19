@@ -2,13 +2,19 @@
 > ### Using Bing on discord bot, your Microsoft account needs to be able to access Bing first.
 > 
 ## Update
-> ### 2023/3/16 : now can switch conversation style
-> ### 2023/3/15 : support GPT-4
+> ### 2023/3/19 : add a new feature with a suggestion reply button.
+> ### 2023/3/16 : now can switch conversation style.
 
 ## Features
 * chat: `/bing [message]`
 
+   | USE_SUGGEST_RESPONSES: False (can change in file ```config.yml```) |
+   |---|
   ![edgegpt](https://i.imgur.com/DGJ7SiP.png)
+  
+   | USE_SUGGEST_RESPONSES: True  (can change in file config.yml) |
+   |---|
+  ![edgegpt](https://i.imgur.com/ZXGXiDd.png)
  
  * conversation style (default balanced): `/style_creative`、 `/style_balanced`、`/style_precise`
 

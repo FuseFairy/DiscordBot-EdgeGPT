@@ -42,8 +42,11 @@ async def send_message(chatbot: Chatbot, message: discord.Interaction, user_mess
             else:
                 temp = await chatbot.ask(prompt=user_message, conversation_style=ConversationStyle.balanced)
             # add all suggest in list
-            for suggest in temp["item"]["messages"][1]["suggestedResponses"]:
-                suggest_responses.append(suggest["text"])
+            try:
+                for suggest in temp["item"]["messages"][1]["suggestedResponses"]:
+                    suggest_responses.append(suggest["text"])
+            except Exception as e:
+                pass
             try:
                 text = temp["item"]["messages"][1]["text"]
             except:
@@ -64,7 +67,7 @@ async def send_message(chatbot: Chatbot, message: discord.Interaction, user_mess
                 temp = response[:2000]
                 response = response[2000:]
                 await message.followup.send(temp)
-            if config["USE_SUGGEST_RESPONSES"]:
+            if config["USE_SUGGEST_RESPONSES"] and len(suggest_responses) != 0:
                 await message.followup.send(response, view=MyView(chatbot, conversation_style))
             else:
                 await message.followup.send(response)

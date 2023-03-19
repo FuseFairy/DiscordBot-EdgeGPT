@@ -14,7 +14,7 @@
   
    | USE_SUGGEST_RESPONSES: True  (can change in file config.yml) |
    |---|
-  ![edgegpt](https://i.imgur.com/ZXGXiDd.png)
+  ![edgegpt](https://i.imgur.com/5y00Z2g.png)
  
  * conversation style (default balanced): `/style_creative`、 `/style_balanced`、`/style_precise`
 

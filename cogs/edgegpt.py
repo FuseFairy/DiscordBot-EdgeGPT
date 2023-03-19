@@ -12,7 +12,6 @@ load_dotenv()
 bot = commands.Bot(command_prefix='!', intents = discord.Intents.all())
 chatbot = Chatbot("./cookies.json")
 logger = log.setup_logger(__name__)
-sem = asyncio.Semaphore(1)
 conversation_style = "balanced" # default conversation style
 
 # switch conversation style
@@ -25,7 +24,6 @@ class edgegpt(Cog_Extension):
     async def bing(self, interaction: discord.Interaction, *, message: str):
         if interaction.user == bot.user:
             return
-        await interaction.response.defer(ephemeral=False, thinking=True)
         username = str(interaction.user)
         usermessage = message
         channel = str(interaction.channel)

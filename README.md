@@ -2,7 +2,7 @@
 > ### Using Bing on discord bot, your Microsoft account needs to be able to access Bing first.
 > 
 ## Update
-> ### 2023/3/19 : add a new feature with a suggestion reply button.
+> ### 2023/3/19 : make reply messages with suggestion reply buttons.
 > ### 2023/3/16 : now can switch conversation style.
 
 ## Features

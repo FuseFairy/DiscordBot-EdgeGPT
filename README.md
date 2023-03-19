@@ -8,13 +8,13 @@
 ## Features
 * chat: `/bing [message]`
 
-   | USE_SUGGEST_RESPONSES: False (can change in file ```config.yml```) |
-   |---|
-  ![edgegpt](https://i.imgur.com/DGJ7SiP.png)
-  
    | USE_SUGGEST_RESPONSES: True  (can change in file config.yml) |
    |---|
   ![edgegpt](https://i.imgur.com/5y00Z2g.png)
+
+   | USE_SUGGEST_RESPONSES: False (can change in file ```config.yml```) |
+   |---|
+  ![edgegpt](https://i.imgur.com/DGJ7SiP.png)
  
  * conversation style (default balanced): `/style_creative`、 `/style_balanced`、`/style_precise`
 
@@ -47,3 +47,4 @@ $ pip install -r requirements.txt
 
 ## Credits
 * EdgeGPT - [https://github.com/acheong08/EdgeGPT](https://github.com/acheong08/EdgeGPT)
+* other - [https://github.com/Zero6992/chatGPT-discord-bot](https://github.com/Zero6992/chatGPT-discord-bot)

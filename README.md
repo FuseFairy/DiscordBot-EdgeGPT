@@ -6,7 +6,7 @@
 > ### 2023/3/19 : make reply messages with suggestion reply buttons.
 > ### 2023/3/16 : now can switch conversation style.
 
-## Features
+## Features (slash command)
 * chat: `/bing [message]`
 
    | USE_SUGGEST_RESPONSES: True  (can change in file ```config.yml```) |

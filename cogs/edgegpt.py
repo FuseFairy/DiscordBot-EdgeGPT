@@ -22,6 +22,7 @@ async def switch_style(style: str):
 class edgegpt(Cog_Extension):
     @bot.tree.command(name = "bing", description = "Have a chat with Bing")
     async def bing(self, interaction: discord.Interaction, *, message: str):
+        await interaction.response.defer(ephemeral=False, thinking=True)
         if interaction.user == bot.user:
             return
         username = str(interaction.user)

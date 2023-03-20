@@ -15,10 +15,17 @@ sem = asyncio.Semaphore(1)
 # to add suggest responses
 class MyView(discord.ui.View):
     def __init__(self, chatbot: Chatbot, conversation_style:str):
-        super().__init__()
+        super().__init__(timeout=120)
         for label in suggest_responses:
             button = discord.ui.Button(label=label)
-            async def callback(interaction: discord.Interaction, button=button):
+            # button event
+            async def callback(interaction: discord.Interaction):
+                await interaction.response.defer(ephemeral=False, thinking=True)
+                # when click the button, all buttons will disable.
+                for child in self.children:
+                    child.disabled = True
+                await interaction.followup.edit_message(message_id=interaction.message.id, view=self)
+                
                 username = str(interaction.user)
                 usermessage = button.label
                 channel = str(interaction.channel)
@@ -27,35 +34,28 @@ class MyView(discord.ui.View):
                 await asyncio.gather(task)
             self.add_item(button)
             self.children[-1].callback = callback
-
+    
 async def send_message(chatbot: Chatbot, message: discord.Interaction, user_message: str, conversation_style: str):
-    await message.response.defer(ephemeral=False, thinking=True)
     async with sem:
         global suggest_responses
         suggest_responses = []
         try:
-            ask = f"> **{user_message}** - <@{str(message.user.id)}> \n\n"
+            ask = f"> **{user_message}** - <@{str(message.user.id)}> (***style: {conversation_style}***)\n\n"
             if conversation_style == "creative":
-                temp = await chatbot.ask(prompt=user_message, conversation_style=ConversationStyle.creative)
+                reply = await chatbot.ask(prompt=user_message, conversation_style=ConversationStyle.creative)
             elif conversation_style == "precise":
-                temp = await chatbot.ask(prompt=user_message, conversation_style=ConversationStyle.precise)
+                reply = await chatbot.ask(prompt=user_message, conversation_style=ConversationStyle.precise)
             else:
-                temp = await chatbot.ask(prompt=user_message, conversation_style=ConversationStyle.balanced)
-            # add all suggest in list
+                reply = await chatbot.ask(prompt=user_message, conversation_style=ConversationStyle.balanced)
             try:
-                for suggest in temp["item"]["messages"][1]["suggestedResponses"]:
-                    suggest_responses.append(suggest["text"])
-            except Exception as e:
-                pass
-            try:
-                text = temp["item"]["messages"][1]["text"]
+                text = reply["item"]["messages"][1]["text"]
             except:
-                text = temp["item"]["messages"][1]["adaptiveCards"][0]["body"][0]["text"]
+                text = reply["item"]["messages"][1]["adaptiveCards"][0]["body"][0]["text"]
             # maybe no url
-            if len(temp['item']['messages'][1]['sourceAttributions']) != 0:
+            if len(reply['item']['messages'][1]['sourceAttributions']) != 0:
                 i = 1
                 all_url = ""
-                for url in temp['item']['messages'][1]['sourceAttributions']:
+                for url in reply['item']['messages'][1]['sourceAttributions']:
                     text = str(text).replace(f"[^{i}^]", "")
                     all_url += f"{url['providerDisplayName']}\n-> [{url['seeMoreUrl']}]\n\n"
                     i+=1
@@ -67,10 +67,21 @@ async def send_message(chatbot: Chatbot, message: discord.Interaction, user_mess
                 temp = response[:2000]
                 response = response[2000:]
                 await message.followup.send(temp)
-            if config["USE_SUGGEST_RESPONSES"] and len(suggest_responses) != 0:
-                await message.followup.send(response, view=MyView(chatbot, conversation_style))
+            if config["USE_SUGGEST_RESPONSES"]:
+                try:
+                    # add all suggest in list
+                    for suggest in reply["item"]["messages"][1]["suggestedResponses"]:
+                        suggest_responses.append(suggest["text"])
+                    await message.followup.send(response, view=MyView(chatbot, conversation_style))
+                except:
+                    await message.followup.send(response)
+                    
             else:
                 await message.followup.send(response)
         except Exception as e:
-            await message.followup.send("> **Error: Something went wrong, please try again later!**")
-            logger.exception(f"Error while sending message: {e}")
+            if reply["item"]["result"]["value"] == "Throttled":
+                await message.followup.send("> **Error: We're sorry, but you've reached the maximum number of messages you can send to Bing in a 24-hour period. Check back later!**")
+                logger.exception(f"Error while sending message: {reply['item']['result']['error']}")
+            else:
+                await message.followup.send("> **Error: Something went wrong, please try again later or reset Bing!**")
+                logger.exception(f"Error while sending message: {e}")

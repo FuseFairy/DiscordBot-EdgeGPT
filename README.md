@@ -2,6 +2,7 @@
 > ### Using Bing on discord bot, your Microsoft account needs to be able to access Bing first.
 > 
 ## Update
+> ### 2023/3/20 : make buttons disable after a click.
 > ### 2023/3/19 : make reply messages with suggestion reply buttons.
 > ### 2023/3/16 : now can switch conversation style.
 
@@ -10,11 +11,11 @@
 
    | USE_SUGGEST_RESPONSES: True  (can change in file ```config.yml```) |
    |---|
-  ![edgegpt](https://i.imgur.com/5y00Z2g.png)
+  ![edgegpt](https://i.imgur.com/pz0XLzC.png)
 
    | USE_SUGGEST_RESPONSES: False (can change in file ```config.yml```) |
    |---|
-  ![edgegpt](https://i.imgur.com/DGJ7SiP.png)
+  ![edgegpt](https://i.imgur.com/0sMP56J.png)
  
  * conversation style (default balanced): `/style_creative`、 `/style_balanced`、`/style_precise`
 

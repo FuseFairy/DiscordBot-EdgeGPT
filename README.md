@@ -7,7 +7,7 @@
 > ### 2023/3/16 : now can switch conversation style.
 
 ## Features (slash command)
-* chat: `/bing [message]`
+* bing: `/bing [message]`
 
    | USE_SUGGEST_RESPONSES: True  (can change in file ```config.yml```) |
    |---|

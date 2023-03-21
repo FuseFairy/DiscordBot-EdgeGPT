@@ -75,7 +75,6 @@ async def send_message(chatbot: Chatbot, message: discord.Interaction, user_mess
                     await message.followup.send(response, view=MyView(chatbot, conversation_style))
                 except:
                     await message.followup.send(response)
-                    
             else:
                 await message.followup.send(response)
         except Exception as e:

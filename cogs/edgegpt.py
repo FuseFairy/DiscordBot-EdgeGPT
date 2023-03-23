@@ -5,9 +5,6 @@ from discord.ext import commands
 from core.classes import Cog_Extension
 from src import log
 from src.response import send_message
-from dotenv import load_dotenv
-
-load_dotenv()
 
 bot = commands.Bot(command_prefix='!', intents = discord.Intents.all())
 chatbot = Chatbot("./cookies.json")

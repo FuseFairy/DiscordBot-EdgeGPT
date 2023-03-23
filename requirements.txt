@@ -1,5 +1,5 @@
-discord.py==2.1.0
+discord.py==2.2.2
 python-dotenv==0.20.0
 interaction==1.3
 PyYAML==6.0
-EdgeGPT==0.0.60
+EdgeGPT==0.1.3

@@ -3,10 +3,7 @@ import asyncio
 from discord.ext import commands
 from EdgeGPT import Chatbot, ConversationStyle
 from src import log
-from dotenv import load_dotenv
 from config.load_config import config
-
-load_dotenv()
 
 bot = commands.Bot(command_prefix='!', intents = discord.Intents.all())
 logger = log.setup_logger(__name__)
@@ -15,7 +12,7 @@ sem = asyncio.Semaphore(1)
 # to add suggest responses
 class MyView(discord.ui.View):
     def __init__(self, chatbot: Chatbot, conversation_style:str):
-        super().__init__(timeout=120)
+        super().__init__()
         for label in suggest_responses:
             button = discord.ui.Button(label=label)
             # button event
@@ -25,20 +22,18 @@ class MyView(discord.ui.View):
                 for child in self.children:
                     child.disabled = True
                 await interaction.followup.edit_message(message_id=interaction.message.id, view=self)
-                
                 username = str(interaction.user)
                 usermessage = button.label
                 channel = str(interaction.channel)
                 logger.info(f"\x1b[31m{username}\x1b[0m : '{usermessage}' ({channel}) [Style: {conversation_style}] [button]")
                 task = asyncio.create_task(send_message(chatbot, interaction, usermessage, conversation_style))
                 await asyncio.gather(task)
+                self.stop()
             self.add_item(button)
             self.children[-1].callback = callback
     
 async def send_message(chatbot: Chatbot, message: discord.Interaction, user_message: str, conversation_style: str):
     async with sem:
-        global suggest_responses
-        suggest_responses = []
         try:
             ask = f"> **{user_message}** - <@{str(message.user.id)}> (***style: {conversation_style}***)\n\n"
             if conversation_style == "creative":
@@ -68,6 +63,8 @@ async def send_message(chatbot: Chatbot, message: discord.Interaction, user_mess
                 response = response[2000:]
                 await message.followup.send(temp)
             if config["USE_SUGGEST_RESPONSES"]:
+                global suggest_responses
+                suggest_responses = []
                 try:
                     # add all suggest in list
                     for suggest in reply["item"]["messages"][1]["suggestedResponses"]:

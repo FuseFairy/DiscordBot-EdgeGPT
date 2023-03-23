@@ -3,7 +3,7 @@ import asyncio
 from discord.ext import commands
 from EdgeGPT import Chatbot, ConversationStyle
 from src import log
-from config.load_config import config
+from config import load_config 
 
 bot = commands.Bot(command_prefix='!', intents = discord.Intents.all())
 logger = log.setup_logger(__name__)
@@ -62,7 +62,7 @@ async def send_message(chatbot: Chatbot, message: discord.Interaction, user_mess
                 temp = response[:2000]
                 response = response[2000:]
                 await message.followup.send(temp)
-            if config["USE_SUGGEST_RESPONSES"]:
+            if load_config.config["USE_SUGGEST_RESPONSES"]:
                 global suggest_responses
                 suggest_responses = []
                 try:

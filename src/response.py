@@ -23,7 +23,7 @@ class MyView(discord.ui.View):
                 for child in self.children:
                     child.disabled = True
                 await interaction.followup.edit_message(message_id=interaction.message.id, view=self)
-
+                self.clear_items()
                 username = str(interaction.user)
                 usermessage = button.label
                 channel = str(interaction.channel)
@@ -40,17 +40,15 @@ async def send_message(chatbot: Chatbot, message: discord.Interaction, user_mess
     async with sem:
         try:
             ask = f"> **{user_message}** - <@{str(message.user.id)}> (***style: {conversation_style}***)\n\n"
-
+            # change conversation style
             if conversation_style == "creative":
                 reply = await chatbot.ask(prompt=user_message, conversation_style=ConversationStyle.creative)
             elif conversation_style == "precise":
                 reply = await chatbot.ask(prompt=user_message, conversation_style=ConversationStyle.precise)
             else:
                 reply = await chatbot.ask(prompt=user_message, conversation_style=ConversationStyle.balanced)
-            try:
-                text = reply["item"]["messages"][1]["text"]
-            except:
-                text = reply["item"]["messages"][1]["adaptiveCards"][0]["body"][0]["text"]
+            # get reply text
+            text = reply["item"]["messages"][1]["text"]
             # Get the URL, if available
             if len(reply['item']['messages'][1]['sourceAttributions']) != 0:
                 i = 1
@@ -67,25 +65,21 @@ async def send_message(chatbot: Chatbot, message: discord.Interaction, user_mess
                 temp = response[:2000]
                 response = response[2000:]
                 await message.followup.send(temp)
+            # add all suggest responses in list
             if load_config.config["USE_SUGGEST_RESPONSES"]:
                 global suggest_responses
                 suggest_responses = []
-                try:
-                    # add all suggest responses in list
-                    for suggest in reply["item"]["messages"][1]["suggestedResponses"]:
-                        suggest_responses.append(suggest["text"])
-                    await message.followup.send(response, view=MyView(chatbot, conversation_style))
-                except:
-                    await message.followup.send(response)
+                for suggest in reply["item"]["messages"][1]["suggestedResponses"]:
+                    suggest_responses.append(suggest["text"])
+                await message.followup.send(response, view=MyView(chatbot, conversation_style))
             else:
                 await message.followup.send(response)
-        except Exception as e:
-            if reply["item"]["throttling"]["maxNumUserMessagesInConversation"] == 15:
-                await message.followup.send("> **Oops, I think we've reached the end of this conversation. Please reset the bot, if you would!**")
-                logger.exception(f"Error while sending message: {reply['item']['result']['error']}")
-            elif reply["item"]["result"]["value"] == "Throttled":
-                await message.followup.send("> **Error: We're sorry, but you've reached the maximum number of messages you can send to Bing in a 24-hour period. Check back later!**")
-                logger.exception(f"Error while sending message: {reply['item']['result']['error']}")
-            else:
-                await message.followup.send("> **Error: Something went wrong, please try again later or reset Bing!**")
-                logger.exception(f"Error while sending message: {e}")
+        except:
+            try:
+                if reply["item"]["throttling"]["numUserMessagesInConversation"] > 15:
+                    await message.followup.send("> **Oops, I think we've reached the end of this conversation. Please reset the bot, if you would!**")
+                    logger.exception(f"Error while sending message: The maximum number of conversations in a round has been reached")
+            except:    
+                if reply["item"]["result"]["value"] == "Throttled":
+                    await message.followup.send("> **Error: We're sorry, but you've reached the maximum number of messages you can send to Bing in a 24-hour period. Check back later!**")
+                    logger.exception("Error while sending message: The daily conversation limit has been reached")

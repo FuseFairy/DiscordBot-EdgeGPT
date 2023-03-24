@@ -3,7 +3,8 @@ import asyncio
 from discord.ext import commands
 from EdgeGPT import Chatbot, ConversationStyle
 from src import log
-from config import load_config 
+from config import load_config
+from functools import partial
 
 bot = commands.Bot(command_prefix='!', intents = discord.Intents.all())
 logger = log.setup_logger(__name__)
@@ -12,30 +13,34 @@ sem = asyncio.Semaphore(1)
 # to add suggest responses
 class MyView(discord.ui.View):
     def __init__(self, chatbot: Chatbot, conversation_style:str):
-        super().__init__()
+        super().__init__(timeout=120)
         for label in suggest_responses:
             button = discord.ui.Button(label=label)
             # button event
-            async def callback(interaction: discord.Interaction):
+            async def callback(interaction: discord.Interaction, button: discord.ui.Button):
                 await interaction.response.defer(ephemeral=False, thinking=True)
                 # when click the button, all buttons will disable.
                 for child in self.children:
                     child.disabled = True
                 await interaction.followup.edit_message(message_id=interaction.message.id, view=self)
+
                 username = str(interaction.user)
                 usermessage = button.label
                 channel = str(interaction.channel)
                 logger.info(f"\x1b[31m{username}\x1b[0m : '{usermessage}' ({channel}) [Style: {conversation_style}] [button]")
                 task = asyncio.create_task(send_message(chatbot, interaction, usermessage, conversation_style))
                 await asyncio.gather(task)
-                self.stop()
+        # add buttons to MyView()
+        for label in suggest_responses:
+            button = discord.ui.Button(label=label)
             self.add_item(button)
-            self.children[-1].callback = callback
+            self.children[-1].callback = partial(callback, button=button)
     
 async def send_message(chatbot: Chatbot, message: discord.Interaction, user_message: str, conversation_style: str):
     async with sem:
         try:
             ask = f"> **{user_message}** - <@{str(message.user.id)}> (***style: {conversation_style}***)\n\n"
+
             if conversation_style == "creative":
                 reply = await chatbot.ask(prompt=user_message, conversation_style=ConversationStyle.creative)
             elif conversation_style == "precise":
@@ -46,7 +51,7 @@ async def send_message(chatbot: Chatbot, message: discord.Interaction, user_mess
                 text = reply["item"]["messages"][1]["text"]
             except:
                 text = reply["item"]["messages"][1]["adaptiveCards"][0]["body"][0]["text"]
-            # maybe no url
+            # Get the URL, if available
             if len(reply['item']['messages'][1]['sourceAttributions']) != 0:
                 i = 1
                 all_url = ""
@@ -57,7 +62,7 @@ async def send_message(chatbot: Chatbot, message: discord.Interaction, user_mess
                 response = f"{ask}```{all_url}```\n{text}"
             else:
                 response = f"{ask}{text}"
-            # discord characters limit 
+            # discord limit about 2000 characters for a message
             while len(response) > 2000:
                 temp = response[:2000]
                 response = response[2000:]
@@ -66,7 +71,7 @@ async def send_message(chatbot: Chatbot, message: discord.Interaction, user_mess
                 global suggest_responses
                 suggest_responses = []
                 try:
-                    # add all suggest in list
+                    # add all suggest responses in list
                     for suggest in reply["item"]["messages"][1]["suggestedResponses"]:
                         suggest_responses.append(suggest["text"])
                     await message.followup.send(response, view=MyView(chatbot, conversation_style))
@@ -75,7 +80,10 @@ async def send_message(chatbot: Chatbot, message: discord.Interaction, user_mess
             else:
                 await message.followup.send(response)
         except Exception as e:
-            if reply["item"]["result"]["value"] == "Throttled":
+            if reply["item"]["throttling"]["maxNumUserMessagesInConversation"] == 15:
+                await message.followup.send("> **Oops, I think we've reached the end of this conversation. Please reset the bot, if you would!**")
+                logger.exception(f"Error while sending message: {reply['item']['result']['error']}")
+            elif reply["item"]["result"]["value"] == "Throttled":
                 await message.followup.send("> **Error: We're sorry, but you've reached the maximum number of messages you can send to Bing in a 24-hour period. Check back later!**")
                 logger.exception(f"Error while sending message: {reply['item']['result']['error']}")
             else:

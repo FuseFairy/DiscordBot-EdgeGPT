@@ -56,7 +56,7 @@ async def send_message(chatbot: Chatbot, message: discord.Interaction, user_mess
                     source_links.append(f"[{url['providerDisplayName']}]({url['seeMoreUrl']})")
             if source_links:
                 source_links_str = "\n\n".join(source_links)
-                response = f"{ask}```\n{source_links_str}\n```{text}"
+                response = f"{ask}\n{source_links_str}\n{text}"
             else:
                 response = f"{ask}{text}"
             # discord limit about 2000 characters for a message

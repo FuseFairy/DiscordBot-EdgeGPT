@@ -1,4 +1,4 @@
 discord.py==2.2.2
 python-dotenv==0.20.0
 PyYAML==6.0
-EdgeGPT==0.1.8
+EdgeGPT==0.1.10.1

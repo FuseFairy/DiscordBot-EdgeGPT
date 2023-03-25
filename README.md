@@ -11,11 +11,11 @@
 
    | USE_SUGGEST_RESPONSES: True  (can change in file ```config.yml```) |
    |---|
-  ![edgegpt](https://i.imgur.com/pz0XLzC.png)
+  ![edgegpt](https://i.imgur.com/1Alyma2.png)
 
    | USE_SUGGEST_RESPONSES: False (can change in file ```config.yml```) |
    |---|
-  ![edgegpt](https://i.imgur.com/0sMP56J.png)
+  ![edgegpt](https://i.imgur.com/y5fvVeq.png)
  
  * conversation style (default balanced): `/style_creative`、 `/style_balanced`、`/style_precise`
 

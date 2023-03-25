@@ -48,7 +48,7 @@ async def send_message(chatbot: Chatbot, message: discord.Interaction, user_mess
             else:
                 reply = await chatbot.ask(prompt=user_message, conversation_style=ConversationStyle.balanced)
             # get reply text
-            text = reply["item"]["messages"][1]["text"]
+            text = f"{reply['item']['messages'][1]['text']}"
             # Get the URL, if available
             embed = ''
             if len(reply['item']['messages'][1]['sourceAttributions']) != 0:
@@ -56,6 +56,7 @@ async def send_message(chatbot: Chatbot, message: discord.Interaction, user_mess
                 all_url = []
                 for url in reply['item']['messages'][1]['sourceAttributions']:
                     all_url.append(f"[{url['providerDisplayName']}]({url['seeMoreUrl']})")
+                    text = text.replace(f"[^{i}^]", "")
                     i += 1
                 link_text = "\n".join(all_url)
                 embed = discord.Embed(title="Source Links", description=link_text)
@@ -82,8 +83,8 @@ async def send_message(chatbot: Chatbot, message: discord.Interaction, user_mess
                     await message.followup.send(response)
         except:
             try:
-                if reply["item"]["throttling"]["numUserMessagesInConversation"] > 15:
-                    await message.followup.send("> **Oops, I think we've reached the end of this conversation. Please reset the bot, if you would!**")
+                if reply["item"]["throttling"]["numUserMessagesInConversation"] > reply["item"]["throttling"]["maxNumUserMessagesInConversation"]:
+                    await message.followup.send("> **Oops, I think we've reached the end of this conversation. Please reset the bot!**")
                     logger.exception(f"Error while sending message: The maximum number of conversations in a round has been reached")
             except:    
                 if reply["item"]["result"]["value"] == "Throttled":

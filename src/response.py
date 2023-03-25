@@ -50,7 +50,7 @@ async def send_message(chatbot: Chatbot, message: discord.Interaction, user_mess
             # get reply text
             text = reply["item"]["messages"][1]["text"]
             # Get the URL, if available
-            embed = ''
+            has_links = False
             if len(reply['item']['messages'][1]['sourceAttributions']) != 0:
                 i = 1
                 all_url = []
@@ -59,6 +59,7 @@ async def send_message(chatbot: Chatbot, message: discord.Interaction, user_mess
                     i += 1
                 link_text = "\n".join(all_url)
                 embed = discord.Embed(title="Source Links", description=link_text)
+                has_links = True
             response = f"{ask}{text}"
             # discord limit about 2000 characters for a message
             while len(response) > 2000:
@@ -71,12 +72,12 @@ async def send_message(chatbot: Chatbot, message: discord.Interaction, user_mess
                 suggest_responses = []
                 for suggest in reply["item"]["messages"][1]["suggestedResponses"]:
                     suggest_responses.append(suggest["text"])
-                if embed:
+                if has_links:
                     await message.followup.send(response, view=MyView(chatbot, conversation_style), embeds=[embed])
                 else:
                     await message.followup.send(response, view=MyView(chatbot, conversation_style))
             else:
-                if embed:
+                if has_links:
                     await message.followup.send(response, embeds=[embed])
                 else:
                     await message.followup.send(response)

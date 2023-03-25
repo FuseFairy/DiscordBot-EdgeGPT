@@ -53,11 +53,11 @@ async def send_message(chatbot: Chatbot, message: discord.Interaction, user_mess
             embed=''
             if len(reply['item']['messages'][1]['sourceAttributions']) != 0:
                 i = 1
-                all_links = []
-                for link in reply['item']['messages'][1]['sourceAttributions']:
-                    all_links.append(f"[{link['providerDisplayName']}]({link['seeMoreUrl']})")
+                all_url = []
+                for url in reply['item']['messages'][1]['sourceAttributions']:
+                    all_url.append(f"[{link['providerDisplayName']}]({link['seeMoreUrl']})")
                     i += 1
-                link_text = "\n".join(all_links)
+                link_text = "\n".join(all_url)
                 embed = discord.Embed(title="Source Links", description=link_text)
             response = f"{ask}{text}"
             # discord limit about 2000 characters for a message
@@ -88,4 +88,4 @@ async def send_message(chatbot: Chatbot, message: discord.Interaction, user_mess
             except:    
                 if reply["item"]["result"]["value"] == "Throttled":
                     await message.followup.send("> **Error: We're sorry, but you've reached the maximum number of messages you can send to Bing in a 24-hour period. Check back later!**")
-                    logger.exception("Error while sending message: The daily conversation limit has been reached") 
+                    logger.exception("Error while sending message: The daily conversation limit has been reached")

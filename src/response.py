@@ -56,6 +56,7 @@ async def send_message(chatbot: Chatbot, message: discord.Interaction, user_mess
                 for link in reply['item']['messages'][1]['sourceAttributions']:
                     all_links.append(f"[{link['providerDisplayName']}]({link['seeMoreUrl']})")
                     i += 1
+            if all_links:
                 link_text = "\n".join(all_links)
                 response = f"{ask}\n{text}"
                 embed = discord.Embed(title="Source Links", description=link_text)

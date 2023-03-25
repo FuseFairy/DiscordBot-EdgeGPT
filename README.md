@@ -25,9 +25,9 @@
 
 ## Install
 ```
-$ git clone https://github.com/FuseFairy/DiscordBot-EdgeGPT.git
-$ cd DiscordBot-EdgeGPT
-$ pip install -r requirements.txt
+git clone https://github.com/FuseFairy/DiscordBot-EdgeGPT.git
+cd DiscordBot-EdgeGPT
+pip install -r requirements.txt
 ```
 
 ## Usage

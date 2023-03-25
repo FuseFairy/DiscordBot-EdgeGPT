@@ -35,7 +35,7 @@ class MyView(discord.ui.View):
             button = discord.ui.Button(label=label)
             self.add_item(button)
             self.children[-1].callback = partial(callback, button=button)
-    
+
 async def send_message(chatbot: Chatbot, message: discord.Interaction, user_message: str, conversation_style: str):
     async with sem:
         try:
@@ -50,14 +50,13 @@ async def send_message(chatbot: Chatbot, message: discord.Interaction, user_mess
             # get reply text
             text = reply["item"]["messages"][1]["text"]
             # Get the URL, if available
+            source_links = []
             if len(reply['item']['messages'][1]['sourceAttributions']) != 0:
-                i = 1
-                all_url = ""
                 for url in reply['item']['messages'][1]['sourceAttributions']:
-                    text = str(text).replace(f"[^{i}^]", "")
-                    all_url += f"{url['providerDisplayName']}\n-> [{url['seeMoreUrl']}]\n\n"
-                    i+=1
-                response = f"{ask}```{all_url}```\n{text}"
+                    source_links.append(f"[{url['providerDisplayName']}]({url['seeMoreUrl']})")
+            if source_links:
+                source_links_str = "\n\n".join(source_links)
+                response = f"{ask}```\n{source_links_str}\n```{text}"
             else:
                 response = f"{ask}{text}"
             # discord limit about 2000 characters for a message
@@ -71,7 +70,10 @@ async def send_message(chatbot: Chatbot, message: discord.Interaction, user_mess
                 suggest_responses = []
                 for suggest in reply["item"]["messages"][1]["suggestedResponses"]:
                     suggest_responses.append(suggest["text"])
-                await message.followup.send(response, view=MyView(chatbot, conversation_style))
+                embed = discord.Embed(description=response, color=0x00ff00)
+                for label in suggest_responses:
+                    embed.add_field(name=label, value=" ", inline=False)
+                await message.followup.send(embed=embed, view=MyView(chatbot, conversation_style))
             else:
                 await message.followup.send(response)
         except:
@@ -82,4 +84,4 @@ async def send_message(chatbot: Chatbot, message: discord.Interaction, user_mess
             except:    
                 if reply["item"]["result"]["value"] == "Throttled":
                     await message.followup.send("> **Error: We're sorry, but you've reached the maximum number of messages you can send to Bing in a 24-hour period. Check back later!**")
-                    logger.exception("Error while sending message: The daily conversation limit has been reached")
+                    logger.exception("Error while sending message: The daily conversation limit has been reached") 

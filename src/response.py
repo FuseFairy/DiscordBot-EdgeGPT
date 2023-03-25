@@ -50,19 +50,16 @@ async def send_message(chatbot: Chatbot, message: discord.Interaction, user_mess
             # get reply text
             text = reply["item"]["messages"][1]["text"]
             # Get the URL, if available
+            embed=''
             if len(reply['item']['messages'][1]['sourceAttributions']) != 0:
                 i = 1
                 all_links = []
                 for link in reply['item']['messages'][1]['sourceAttributions']:
                     all_links.append(f"[{link['providerDisplayName']}]({link['seeMoreUrl']})")
                     i += 1
-            if all_links:
                 link_text = "\n".join(all_links)
-                response = f"{ask}\n{text}"
                 embed = discord.Embed(title="Source Links", description=link_text)
-                await message.followup.send(response, embeds=[embed])
-            else:
-                response = f"{ask}{text}"
+            response = f"{ask}{text}"
             # discord limit about 2000 characters for a message
             while len(response) > 2000:
                 temp = response[:2000]
@@ -74,9 +71,9 @@ async def send_message(chatbot: Chatbot, message: discord.Interaction, user_mess
                 suggest_responses = []
                 for suggest in reply["item"]["messages"][1]["suggestedResponses"]:
                     suggest_responses.append(suggest["text"])
-                await message.followup.send(response, view=MyView(chatbot, conversation_style))
+                await message.followup.send(response, view=MyView(chatbot, conversation_style), embeds=[embed])
             else:
-                await message.followup.send(response)
+                await message.followup.send(response, embeds=[embed])
         except:
             try:
                 if reply["item"]["throttling"]["numUserMessagesInConversation"] > 15:

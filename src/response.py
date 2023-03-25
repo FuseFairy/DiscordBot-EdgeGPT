@@ -50,7 +50,7 @@ async def send_message(chatbot: Chatbot, message: discord.Interaction, user_mess
             # get reply text
             text = reply["item"]["messages"][1]["text"]
             # Get the URL, if available
-            embed=''
+            embed=discord.Embed(title="No sources!")
             if len(reply['item']['messages'][1]['sourceAttributions']) != 0:
                 i = 1
                 all_links = []

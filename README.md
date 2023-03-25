@@ -49,3 +49,11 @@ $ pip install -r requirements.txt
 ## Credits
 * EdgeGPT - [https://github.com/acheong08/EdgeGPT](https://github.com/acheong08/EdgeGPT)
 * other - [https://github.com/Zero6992/chatGPT-discord-bot](https://github.com/Zero6992/chatGPT-discord-bot)
+
+## Contributors
+
+This project exists thanks to all the people who contribute.
+
+ <a href="https://github.com/FuseFairy/DiscordBot-EdgeGPT/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=FuseFairy/DiscordBot-EdgeGPT" />
+ </a>

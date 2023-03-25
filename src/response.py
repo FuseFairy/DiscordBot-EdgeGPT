@@ -50,13 +50,16 @@ async def send_message(chatbot: Chatbot, message: discord.Interaction, user_mess
             # get reply text
             text = reply["item"]["messages"][1]["text"]
             # Get the URL, if available
-            source_links = []
             if len(reply['item']['messages'][1]['sourceAttributions']) != 0:
-                for url in reply['item']['messages'][1]['sourceAttributions']:
-                    source_links.append(f"[{url['providerDisplayName']}]({url['seeMoreUrl']})")
-            if source_links:
-                source_links_str = "\n\n".join(source_links)
-                response = f"{ask}\n{source_links_str}\n{text}"
+                i = 1
+                all_links = []
+                for link in reply['item']['messages'][1]['sourceAttributions']:
+                    all_links.append(f"[{link['providerDisplayName']}]({link['seeMoreUrl']})")
+                    i += 1
+                link_text = "\n".join(all_links)
+                response = f"{ask}\n{text}"
+                embed = discord.Embed(title="Source Links", description=link_text)
+                await message.followup.send(response, embeds=[embed])
             else:
                 response = f"{ask}{text}"
             # discord limit about 2000 characters for a message
@@ -70,10 +73,7 @@ async def send_message(chatbot: Chatbot, message: discord.Interaction, user_mess
                 suggest_responses = []
                 for suggest in reply["item"]["messages"][1]["suggestedResponses"]:
                     suggest_responses.append(suggest["text"])
-                embed = discord.Embed(description=response, color=0x00ff00)
-                for label in suggest_responses:
-                    embed.add_field(name=label, value=" ", inline=False)
-                await message.followup.send(embed=embed, view=MyView(chatbot, conversation_style))
+                await message.followup.send(response, view=MyView(chatbot, conversation_style))
             else:
                 await message.followup.send(response)
         except:

@@ -50,7 +50,7 @@ async def send_message(chatbot: Chatbot, message: discord.Interaction, user_mess
             # get reply text
             text = reply["item"]["messages"][1]["text"]
             # Get the URL, if available
-            embed=discord.Embed(title="No sources!")
+            embed=''
             if len(reply['item']['messages'][1]['sourceAttributions']) != 0:
                 i = 1
                 all_links = []
@@ -71,9 +71,15 @@ async def send_message(chatbot: Chatbot, message: discord.Interaction, user_mess
                 suggest_responses = []
                 for suggest in reply["item"]["messages"][1]["suggestedResponses"]:
                     suggest_responses.append(suggest["text"])
-                await message.followup.send(response, view=MyView(chatbot, conversation_style), embeds=[embed])
+                if embed:
+                    await message.followup.send(response, view=MyView(chatbot, conversation_style), embeds=[embed])
+                else:
+                    await message.followup.send(response, view=MyView(chatbot, conversation_style))
             else:
-                await message.followup.send(response, embeds=[embed])
+                if embed:
+                    await message.followup.send(response, embeds=[embed])
+                else:
+                    await message.followup.send(response)
         except:
             try:
                 if reply["item"]["throttling"]["numUserMessagesInConversation"] > 15:

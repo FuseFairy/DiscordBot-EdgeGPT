@@ -8,12 +8,14 @@ from functools import partial
 
 bot = commands.Bot(command_prefix='!', intents = discord.Intents.all())
 logger = log.setup_logger(__name__)
+USE_SUGGEST_RESPONSES = load_config.config["USE_SUGGEST_RESPONSES"]
 sem = asyncio.Semaphore(1)
 
 # to add suggest responses
 class MyView(discord.ui.View):
-    def __init__(self, chatbot: Chatbot, conversation_style:str):
+    def __init__(self, chatbot: Chatbot, conversation_style:str, suggest_responses:list):
         super().__init__(timeout=120)
+        # add buttons
         for label in suggest_responses:
             button = discord.ui.Button(label=label)
             # button event
@@ -30,9 +32,6 @@ class MyView(discord.ui.View):
                 logger.info(f"\x1b[31m{username}\x1b[0m : '{usermessage}' ({channel}) [Style: {conversation_style}] [button]")
                 task = asyncio.create_task(send_message(chatbot, interaction, usermessage, conversation_style))
                 await asyncio.gather(task)
-        # add buttons to MyView()
-        for label in suggest_responses:
-            button = discord.ui.Button(label=label)
             self.add_item(button)
             self.children[-1].callback = partial(callback, button=button)
 
@@ -67,15 +66,14 @@ async def send_message(chatbot: Chatbot, message: discord.Interaction, user_mess
                 response = response[2000:]
                 await message.followup.send(temp)
             # add all suggest responses in list
-            if load_config.config["USE_SUGGEST_RESPONSES"]:
-                global suggest_responses
+            if USE_SUGGEST_RESPONSES:
                 suggest_responses = []
                 for suggest in reply["item"]["messages"][1]["suggestedResponses"]:
                     suggest_responses.append(suggest["text"])
                 if embed:
-                    await message.followup.send(response, view=MyView(chatbot, conversation_style), embeds=[embed])
+                    await message.followup.send(response, view=MyView(chatbot, conversation_style,  suggest_responses), embeds=[embed])
                 else:
-                    await message.followup.send(response, view=MyView(chatbot, conversation_style))
+                    await message.followup.send(response, view=MyView(chatbot, conversation_style, suggest_responses))
             else:
                 if embed:
                     await message.followup.send(response, embeds=[embed])

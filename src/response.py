@@ -6,7 +6,6 @@ from src import log
 from config import load_config
 from functools import partial
 
-bot = commands.Bot(command_prefix='!', intents = discord.Intents.all())
 logger = log.setup_logger(__name__)
 USE_SUGGEST_RESPONSES = load_config.config["USE_SUGGEST_RESPONSES"]
 sem = asyncio.Semaphore(1)
@@ -79,12 +78,13 @@ async def send_message(chatbot: Chatbot, message: discord.Interaction, user_mess
                     await message.followup.send(response, embeds=[embed])
                 else:
                     await message.followup.send(response)
-        except:
-            try:
-                if reply["item"]["throttling"]["numUserMessagesInConversation"] > reply["item"]["throttling"]["maxNumUserMessagesInConversation"]:
+        except Exception as e:
+                if reply["item"]["throttling"]["numUserMessagesInConversation"] and reply["item"]["throttling"]["numUserMessagesInConversation"] > reply["item"]["throttling"]["maxNumUserMessagesInConversation"]:
                     await message.followup.send("> **Oops, I think we've reached the end of this conversation. Please reset the bot!**")
                     logger.exception(f"Error while sending message: The maximum number of conversations in a round has been reached")
-            except:    
-                if reply["item"]["result"]["value"] == "Throttled":
+                elif reply["item"]["result"]["value"] and reply["item"]["result"]["value"] == "Throttled":
                     await message.followup.send("> **Error: We're sorry, but you've reached the maximum number of messages you can send to Bing in a 24-hour period. Check back later!**")
                     logger.exception("Error while sending message: The daily conversation limit has been reached")
+                else:
+                    await message.followup.send("> **Please try again later or reset bot**")
+                    logger.exception(f"Error while sending message: {e}")

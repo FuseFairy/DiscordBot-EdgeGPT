@@ -49,7 +49,7 @@ async def send_message(chatbot: Chatbot, message: discord.Interaction, user_mess
             # get reply text
             text = f"{reply['item']['messages'][1]['text']}"
             superscript_map = {'0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴', '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹'}
-            text = re.sub(r'\[\^(\d+)\^\]', lambda match: superscript_map.get(match.group(1), match.group(0)), text)
+            text = re.sub(r'\[\^(\d+)\^\]', lambda match: ''.join(superscript_map.get(digit, digit) for digit in match.group(1)), text)
             # Get the URL, if available
             embed = ''
             if len(reply['item']['messages'][1]['sourceAttributions']) != 0:

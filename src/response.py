@@ -12,7 +12,7 @@ sem = asyncio.Semaphore(1)
 
 # to add suggest responses
 class MyView(discord.ui.View):
-    def __init__(self, chatbot: Chatbot, conversation_style:str, suggest_responses:list, interaction: discord.Interaction):
+    def __init__(self, chatbot: Chatbot, conversation_style:str, suggest_responses:list):
         super().__init__(timeout=120)
         # add buttons
         for label in suggest_responses:

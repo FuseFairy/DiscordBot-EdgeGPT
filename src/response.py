@@ -36,6 +36,7 @@ class MyView(discord.ui.View):
 
 async def send_message(chatbot: Chatbot, message: discord.Interaction, user_message: str, conversation_style: str):
     async with sem:
+        import re
         try:
             ask = f"> **{user_message}** - <@{str(message.user.id)}> (***style: {conversation_style}***)\n\n"
             # change conversation style
@@ -47,17 +48,16 @@ async def send_message(chatbot: Chatbot, message: discord.Interaction, user_mess
                 reply = await chatbot.ask(prompt=user_message, conversation_style=ConversationStyle.balanced)
             # get reply text
             text = f"{reply['item']['messages'][1]['text']}"
+            superscript_map = {'0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴', '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹'}
+            text = re.sub(r'\[\^(\d+)\^\]', lambda match: superscript_map.get(match.group(1), match.group(0)), text)
             # Get the URL, if available
             embed = ''
             if len(reply['item']['messages'][1]['sourceAttributions']) != 0:
-                i = 1
                 all_url = []
-                for url in reply['item']['messages'][1]['sourceAttributions']:
-                    all_url.append(f"[{url['providerDisplayName']}]({url['seeMoreUrl']})")
-                    text = text.replace(f"[^{i}^]", "")
-                    i += 1
+                for i, url in enumerate(reply['item']['messages'][1]['sourceAttributions'], start=1):
+                    all_url.append(f"{i}: [{url['providerDisplayName']}]({url['seeMoreUrl']})")
                 link_text = "\n".join(all_url)
-                embed = discord.Embed(title="Source Links", description=link_text)
+                embed = discord.Embed(description=link_text)
             response = f"{ask}{text}"
             # discord limit about 2000 characters for a message
             while len(response) > 2000:

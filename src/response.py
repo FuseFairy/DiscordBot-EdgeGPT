@@ -12,7 +12,7 @@ sem = asyncio.Semaphore(1)
 
 # to add suggest responses
 class MyView(discord.ui.View):
-    def __init__(self, chatbot: Chatbot, conversation_style:str, suggest_responses:list):
+    def __init__(self, chatbot: Chatbot, conversation_style:str, suggest_responses:list, interaction: discord.Interaction):
         super().__init__(timeout=120)
         # add buttons
         for label in suggest_responses:
@@ -37,25 +37,30 @@ class MyView(discord.ui.View):
 async def send_message(chatbot: Chatbot, message: discord.Interaction, user_message: str, conversation_style: str):
     async with sem:
         import re
+        superscript_map = {'0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴', '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹'}
+        reply = ''
+        text = ''
+        embed = ''
+        all_url = []
         try:
             ask = f"> **{user_message}** - <@{str(message.user.id)}> (***style: {conversation_style}***)\n\n"
             # change conversation style
             if conversation_style == "creative":
-                reply = await chatbot.ask(prompt=user_message, conversation_style=ConversationStyle.creative)
+                reply = await chatbot.ask(prompt=user_message, conversation_style=ConversationStyle.creative, wss_link="wss://sydney.bing.com/sydney/ChatHub")
             elif conversation_style == "precise":
-                reply = await chatbot.ask(prompt=user_message, conversation_style=ConversationStyle.precise)
+                reply = await chatbot.ask(prompt=user_message, conversation_style=ConversationStyle.precise, wss_link="wss://sydney.bing.com/sydney/ChatHub")
             else:
-                reply = await chatbot.ask(prompt=user_message, conversation_style=ConversationStyle.balanced)
+                reply = await chatbot.ask(prompt=user_message, conversation_style=ConversationStyle.balanced, wss_link="wss://sydney.bing.com/sydney/ChatHub")
             # get reply text
             text = f"{reply['item']['messages'][1]['text']}"
-            superscript_map = {'0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴', '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹'}
             text = re.sub(r'\[\^(\d+)\^\]', lambda match: ''.join(superscript_map.get(digit, digit) for digit in match.group(1)), text)
             # Get the URL, if available
-            embed = ''
             if len(reply['item']['messages'][1]['sourceAttributions']) != 0:
-                all_url = []
                 for i, url in enumerate(reply['item']['messages'][1]['sourceAttributions'], start=1):
-                    all_url.append(f"{i}: [{url['providerDisplayName']}]({url['seeMoreUrl']})")
+                    if len(url['providerDisplayName']) == 0:
+                        all_url.append(f"{i}. [{url['seeMoreUrl']}]({url['seeMoreUrl']})")
+                    else:
+                        all_url.append(f"{i}. [{url['providerDisplayName']}]({url['seeMoreUrl']})")
                 link_text = "\n".join(all_url)
                 embed = discord.Embed(description=link_text)
             response = f"{ask}{text}"
@@ -79,6 +84,7 @@ async def send_message(chatbot: Chatbot, message: discord.Interaction, user_mess
                 else:
                     await message.followup.send(response)
         except Exception as e:
+                print(reply)
                 if reply["item"]["throttling"]["numUserMessagesInConversation"] and reply["item"]["throttling"]["numUserMessagesInConversation"] > reply["item"]["throttling"]["maxNumUserMessagesInConversation"]:
                     await message.followup.send("> **Oops, I think we've reached the end of this conversation. Please reset the bot!**")
                     logger.exception(f"Error while sending message: The maximum number of conversations in a round has been reached")

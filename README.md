@@ -11,17 +11,17 @@
 
    | USE_SUGGEST_RESPONSES: True  (can change in file ```config.yml```) |
    |---|
-  ![edgegpt](https://i.imgur.com/1Alyma2.png)
+  ![edgegpt](https://i.imgur.com/cLPL156.png)
 
    | USE_SUGGEST_RESPONSES: False (can change in file ```config.yml```) |
    |---|
-  ![edgegpt](https://i.imgur.com/y5fvVeq.png)
+  ![edgegpt](https://i.imgur.com/yK3P9Kt.png)
  
  * conversation style (default balanced): `/style_creative`、 `/style_balanced`、`/style_precise`
 
 * reset: `/reset`
 
-  ![reset](https://i.imgur.com/Csst7Y3.png)
+  ![reset](https://i.imgur.com/AG5qQ1F.png)
 
 ## Install
 ```

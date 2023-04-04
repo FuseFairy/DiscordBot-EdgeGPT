@@ -16,8 +16,12 @@
    | USE_SUGGEST_RESPONSES: False (can change in file ```config.yml```) |
    |---|
   ![edgegpt](https://i.imgur.com/yK3P9Kt.png)
+  
+* bing image creator: `/create_image [prompt]`
+  
+  ![bingimage.png](https://i.postimg.cc/3JFr67pD/bingimage.png)
  
- * conversation style (default balanced): `/style_creative`、 `/style_balanced`、`/style_precise`
+* conversation style (default balanced): `/style_creative`、 `/style_balanced`、`/style_precise`
 
 * reset: `/reset`
 
@@ -48,6 +52,7 @@ pip install -r requirements.txt
 
 ## Credits
 * EdgeGPT - [https://github.com/acheong08/EdgeGPT](https://github.com/acheong08/EdgeGPT)
+* BingImageCreator - [https://github.com/acheong08/BingImageCreator](https://github.com/acheong08/BingImageCreator)
 * other - [https://github.com/Zero6992/chatGPT-discord-bot](https://github.com/Zero6992/chatGPT-discord-bot)
 
 ## Contributors

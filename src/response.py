@@ -1,6 +1,5 @@
 import discord
 import asyncio
-from discord.ext import commands
 from EdgeGPT import Chatbot, ConversationStyle
 from src import log
 from config import load_config

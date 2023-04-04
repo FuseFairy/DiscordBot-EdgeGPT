@@ -2,9 +2,9 @@
 > ### Using Bing on discord bot, your Microsoft account needs to be able to access Bing first.
 > 
 ## Update
+> ### 2023/4/5 : Now can generate images by Bing Image Creator.
 > ### 2023/3/20 : make buttons disable after a click.
 > ### 2023/3/19 : make reply messages with suggestion reply buttons.
-> ### 2023/3/16 : now can switch conversation style.
 
 ## Features (slash command)
 * bing: `/bing [message]`

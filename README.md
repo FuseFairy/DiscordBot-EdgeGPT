@@ -6,7 +6,13 @@
 > ### 2023/3/20 : make buttons disable after a click.
 > ### 2023/3/19 : make reply messages with suggestion reply buttons.
 
+<details>
+   <summary>
+   
 ## Features (slash command)
+
+   </summary>
+
 * bing: `/bing [message]`
 
    | USE_SUGGEST_RESPONSES: True  (can change in file ```config.yml```) |
@@ -26,6 +32,7 @@
 * reset: `/reset`
 
   ![reset](https://i.imgur.com/AG5qQ1F.png)
+</details>
 
 ## Install
 ```

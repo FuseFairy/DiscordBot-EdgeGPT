@@ -19,7 +19,7 @@
   
 * bing image creator: `/create_image [prompt]`
   
-  ![bingimage.png](https://i.postimg.cc/3JFr67pD/bingimage.png)
+  ![bingimage.png](https://i.ibb.co/3RfN8rS/bingimage.png)
  
 * conversation style (default balanced): `/style_creative`、 `/style_balanced`、`/style_precise`
 

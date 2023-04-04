@@ -1,4 +1,5 @@
 discord.py==2.2.2
 python-dotenv==0.20.0
 PyYAML==6.0
-EdgeGPT==0.1.13.1
+EdgeGPT==0.1.22
+BingImageCreator==0.1.0

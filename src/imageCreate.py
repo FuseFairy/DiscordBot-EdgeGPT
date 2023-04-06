@@ -2,7 +2,6 @@ import discord
 import json
 import os
 import asyncio
-import aiohttp
 from BingImageCreator import ImageGenAsync
 from src import log
 
@@ -28,15 +27,8 @@ async def create_image(interaction: discord.Interaction, prompt: str):
             # Delete image from file
             [os.remove(f"./images/{image}") for image in os.listdir("./images")]
             prompts = f"> **{prompt}** - <@{str(interaction.user.id)}> (***BingImageCreator***)\n\n"
-            # Fetches image links
-            image_link = await image_generator.get_images(prompt)
-            # Download imageawait asyncio.sleep(10)
-            async with aiohttp.ClientSession() as session:
-                for i, link in enumerate(image_link):
-                    async with session.get(link) as response:
-                        content = await response.read()
-                        with open(os.path.join("./images", f"{i}.jpeg"), "wb") as f:
-                            f.write(content)
+            # Fetches image links and download images
+            await image_generator.save_images(await image_generator.get_images(prompt), "./images")
             # Add image to list
             [files.append(discord.File(f"./images/{image}")) for image in os.listdir("./images")]
             await interaction.followup.send(prompts, files=files)

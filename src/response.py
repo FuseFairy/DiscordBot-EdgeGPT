@@ -85,11 +85,11 @@ async def send_message(chatbot: Chatbot, message: discord.Interaction, user_mess
         except Exception as e:
                 print(reply)
                 if reply["item"]["throttling"]["numUserMessagesInConversation"] and reply["item"]["throttling"]["numUserMessagesInConversation"] > reply["item"]["throttling"]["maxNumUserMessagesInConversation"]:
-                    await message.followup.send("> **Oops, I think we've reached the end of this conversation. Please reset the bot!**")
+                    await message.followup.send("> **Oops, I think we've reached the end of this conversation. Please reset the bot!**", ephemeral=True)
                     logger.exception(f"Error while sending message: The maximum number of conversations in a round has been reached")
                 elif reply["item"]["result"]["value"] and reply["item"]["result"]["value"] == "Throttled":
-                    await message.followup.send("> **Error: We're sorry, but you've reached the maximum number of messages you can send to Bing in a 24-hour period. Check back later!**")
+                    await message.followup.send("> **Error: We're sorry, but you've reached the maximum number of messages you can send to Bing in a 24-hour period. Check back later!**", ephemeral=True)
                     logger.exception("Error while sending message: The daily conversation limit has been reached")
                 else:
-                    await message.followup.send("> **Please try again later or reset bot**")
+                    await message.followup.send("> **Please try again later or reset bot**", ephemeral=True)
                     logger.exception(f"Error while sending message: {e}")

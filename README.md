@@ -27,7 +27,9 @@
   
   ![bingimage.png](https://i.ibb.co/0rxNbnk/2023-04-07-191036.png)
  
-* conversation style (default balanced): `/style_creative`、 `/style_balanced`、`/style_precise`
+* conversation style (default balanced): `/switch_style`
+  
+  ![style.png](https://i.ibb.co/54KMWKH/2023-04-07-200312.png)
 
 * reset: `/reset`
 

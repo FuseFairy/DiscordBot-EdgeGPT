@@ -2,6 +2,7 @@ import discord
 import asyncio
 from EdgeGPT import Chatbot
 from discord.ext import commands
+from discord import app_commands
 from core.classes import Cog_Extension
 from src import log
 from src.response import send_message
@@ -11,12 +12,8 @@ chatbot = Chatbot("./cookies.json")
 logger = log.setup_logger(__name__)
 conversation_style = "balanced" # default conversation style
 
-# switch conversation style
-async def switch_style(style: str):
-    global conversation_style
-    conversation_style = style
-
 class edgegpt(Cog_Extension):
+    # chat with Bing
     @bot.tree.command(name = "bing", description = "Have a chat with Bing")
     async def bing(self, interaction: discord.Interaction, *, message: str):
         await interaction.response.defer(ephemeral=False, thinking=True)
@@ -38,29 +35,15 @@ class edgegpt(Cog_Extension):
         await interaction.followup.send("> **Info: Reset finish.**")
         logger.warning("\x1b[31mBing has been successfully reset\x1b[0m")
 
-    # switch conversation style to creative
-    @bot.tree.command(name="style_creative", description="Switch conversation style to creative")
-    async def switch_style_creative(self, interaction: discord.Interaction):
-        await interaction.response.defer(ephemeral=False)
-        await switch_style("creative")
-        await interaction.followup.send("> **Info: successfull switch conversation style to creative.**")
-        logger.warning("\x1b[31mConversation style has been successfully switch to creative\x1b[0m")
-
     # switch conversation style to balanced
-    @bot.tree.command(name="style_balanced", description="Switch conversation style to balanced")
-    async def switch_style_balanced(self, interaction: discord.Interaction):
+    @bot.tree.command(name="switch_style", description="Switch conversation style")
+    @app_commands.choices(style=[app_commands.Choice(name="Creative", value="creative"), app_commands.Choice(name="Balanced", value="balanced"), app_commands.Choice(name="Precise", value="precise")])
+    async def switch_style(self, interaction: discord.Interaction, style: app_commands.Choice[str]):
         await interaction.response.defer(ephemeral=False)
-        await switch_style("balanced")
-        await interaction.followup.send("> **Info: successfull switch conversation style to balanced.**")
-        logger.warning("\x1b[31mConversation style has been successfully switch to balanced\x1b[0m")
-
-    # switch conversation style to precise
-    @bot.tree.command(name="style_precise", description="Switch conversation style to precise")
-    async def switch_style_precise(self, interaction: discord.Interaction):
-        await interaction.response.defer(ephemeral=False)
-        await switch_style("precise")
-        await interaction.followup.send("> **Info: successfull switch conversation style to precise.**")
-        logger.warning("\x1b[31mConversation style has been successfully switch to precise\x1b[0m")
+        global conversation_style
+        conversation_style = style.value
+        await interaction.followup.send(f"> **Info: successfull switch conversation style to {conversation_style}.**")
+        logger.warning(f"\x1b[31mConversation style has been successfully switch to {conversation_style}\x1b[0m")
 
 async def setup(bot):
     await bot.add_cog(edgegpt(bot))

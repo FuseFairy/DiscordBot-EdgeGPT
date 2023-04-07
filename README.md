@@ -25,7 +25,7 @@
   
 * bing image creator: `/create_image [prompt]`
   
-  ![bingimage.png](https://i.ibb.co/3RfN8rS/bingimage.png)
+  ![bingimage.png](https://i.ibb.co/0rxNbnk/2023-04-07-191036.png)
  
 * conversation style (default balanced): `/style_creative`、 `/style_balanced`、`/style_precise`
 

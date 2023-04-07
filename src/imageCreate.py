@@ -35,10 +35,10 @@ async def create_image(interaction: discord.Interaction, prompt: str):
             [files.append(discord.File(f"./images/{image}")) for image in os.listdir("./images")]
             await interaction.followup.send(prompts, files=files, wait=True)
         except asyncio.TimeoutError:
-            await interaction.followup.send("> **Error: Request timed out.**", ephemeral=True)
+            await interaction.followup.send("> **Error: Request timed out.**")
             logger.exception("Error while create image: Request timed out.")
         except Exception as e:
-            await interaction.followup.send(f"> **Error: {e}**", ephemeral=True)
+            await interaction.followup.send(f"> **Error: {e}**")
             logger.exception(f"Error while create image: {e}")
         finally:
             # Wait for 15 seconds before processing the next request

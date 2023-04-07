@@ -35,7 +35,7 @@ class edgegpt(Cog_Extension):
         await interaction.followup.send("> **Info: Reset finish.**")
         logger.warning("\x1b[31mBing has been successfully reset\x1b[0m")
 
-    # switch conversation style to balanced
+    # switch conversation style
     @bot.tree.command(name="switch_style", description="Switch conversation style")
     @app_commands.choices(style=[app_commands.Choice(name="Creative", value="creative"), app_commands.Choice(name="Balanced", value="balanced"), app_commands.Choice(name="Precise", value="precise")])
     async def switch_style(self, interaction: discord.Interaction, style: app_commands.Choice[str]):

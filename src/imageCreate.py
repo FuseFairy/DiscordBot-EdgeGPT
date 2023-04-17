@@ -1,7 +1,7 @@
 import discord
 import json
 import asyncio
-from BingImageCreator import ImageGenAsync
+from ImageGen import ImageGenAsync
 from src import log
 
 with open("./cookies.json", encoding="utf-8") as file:

@@ -61,13 +61,6 @@ async def unload(ctx, extension):
     await bot.unload_extension(f'cogs.{extension}')
     await ctx.send(f'Un-Loaded {extension} done.')
 
-# Reload command
-@commands.is_owner()
-@bot.command()
-async def reload(ctx, extension):
-    await bot.reload_extension(f'cogs.{extension}')
-    await ctx.send(f'Re-Loaded {extension} done.')
-
 # Empty discord_bot.log file
 @commands.is_owner()
 @bot.command()

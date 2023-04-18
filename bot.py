@@ -87,7 +87,7 @@ async def getLog(ctx):
     except:
         await ctx.send("Send failed!")
 
-# Upload new Bing cookies than restart the bot
+# Upload new Bing cookies and restart the bot
 @commands.is_owner()
 @bot.command()
 async def upload(ctx):

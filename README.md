@@ -2,17 +2,18 @@
 > ### Using Bing on discord bot, your Microsoft account needs to be able to access Bing first.
 > 
 ## Update
+> ### 2023/4/19 : When old Cookies expire, the bot can set new Cookies directly by prefix command.
 > ### 2023/4/5 : Now can generate images by Bing Image Creator.
-> ### 2023/3/20 : make buttons disable after a click.
-> ### 2023/3/19 : make reply messages with suggestion reply buttons.
+   
+## Features
 
 <details>
    <summary>
    
-## Features (slash command)
+   ### Slash command
 
    </summary>
-
+   
 * bing: `/bing [message]`
 
    | USE_SUGGEST_RESPONSES: True  (can change in file ```config.yml```) |
@@ -36,10 +37,27 @@
   ![reset](https://i.imgur.com/AG5qQ1F.png)
 </details>
 
+<details>
+   <summary>
+   
+   ### Prefix command (available only to bot owner)
+
+   </summary>
+   
+ * `!unload [file_name_in_cogs_folder]`: Disable command from the specified file.
+ * `!load [file_name_in_cogs_folder]`: Enable the command from the specified file.
+ 
+   ![load & unload](https://i.imgur.com/Wnf9nll.png)
+  
+ * `!clean`: Empty discord_bot.log file.
+ * `!getLog`: Get discord_bot.log file. Real-time tracking of the bot's operating status.
+ * `!upload [.txt_file]`: Because Bing Cookies will expire, so this command can set new Cookies directly and restart bot. You just need to copy bing cookies and past,                           the Cookies will auto convert to .txt file.
+ 
+   ![upload](https://i.imgur.com/UN1Ac7N.png)
+</details>
+
 ## Install
 ```
-git clone https://github.com/FuseFairy/DiscordBot-EdgeGPT.git
-cd DiscordBot-EdgeGPT
 pip install -r requirements.txt
 ```
 

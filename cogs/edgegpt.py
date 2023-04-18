@@ -13,7 +13,7 @@ logger = log.setup_logger(__name__)
 conversation_style = "balanced" # default conversation style
 
 class edgegpt(Cog_Extension):
-    # chat with Bing
+    # Chat with Bing
     @bot.tree.command(name = "bing", description = "Have a chat with Bing")
     async def bing(self, interaction: discord.Interaction, *, message: str):
         await interaction.response.defer(ephemeral=False, thinking=True)
@@ -26,16 +26,15 @@ class edgegpt(Cog_Extension):
         task = asyncio.create_task(send_message(chatbot, interaction, usermessage, conversation_style))
         await asyncio.gather(task)
 
-    # reset Bing conversation history
+    # Reset Bing conversation history
     @bot.tree.command(name="reset", description="Complete reset Bing conversation history")
     async def reset(self, interaction: discord.Interaction):
-        open('discord_bot.log', 'w').close()
         await interaction.response.defer(ephemeral=False)
         await chatbot.reset()
         await interaction.followup.send("> **Info: Reset finish.**")
         logger.warning("\x1b[31mBing has been successfully reset\x1b[0m")
 
-    # switch conversation style
+    # Switch conversation style
     @bot.tree.command(name="switch_style", description="Switch conversation style")
     @app_commands.choices(style=[app_commands.Choice(name="Creative", value="creative"), app_commands.Choice(name="Balanced", value="balanced"), app_commands.Choice(name="Precise", value="precise")])
     async def switch_style(self, interaction: discord.Interaction, style: app_commands.Choice[str]):

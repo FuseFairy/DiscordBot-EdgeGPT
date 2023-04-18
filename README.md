@@ -51,6 +51,9 @@
   
  * `!clean`: Empty discord_bot.log file.
  * `!getLog`: Get discord_bot.log file. Real-time tracking of the bot's operating status.
+   
+   ![getLog](https://i.imgur.com/LHX4yWV.png)
+ 
  * `!upload [.txt_file]`: Because Bing Cookies will expire, so this command can set new Cookies directly and restart bot. You just need to copy bing cookies and past,                           the Cookies will auto convert to .txt file.
  
    ![upload](https://i.imgur.com/UN1Ac7N.png)

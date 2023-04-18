@@ -95,8 +95,8 @@ async def upload(ctx):
                 await ctx.send(f'Upload new cookies successfully!')
                 logger.warning("\x1b[31mCookies has been setup successfully\x1b[0m")
                 os.system("python bot.py")
-                else:
-                    await ctx.send("Didn't get any txt file.")
+             else:
+                await ctx.send("Didn't get any txt file.")
     else:
         await ctx.send("Didn't get any file.")
 

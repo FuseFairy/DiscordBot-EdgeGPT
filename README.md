@@ -47,7 +47,7 @@
  * `!unload [file_name_in_cogs_folder]`: Disable command from the specified file.
  * `!load [file_name_in_cogs_folder]`: Enable the command from the specified file.
  
-   ![load & unload](https://i.imgur.com/Wnf9nll.png)
+   ![load & unload](https://i.imgur.com/spsyAEG.png)
   
  * `!clean`: Empty discord_bot.log file.
  * `!getLog`: Get discord_bot.log file. Real-time tracking of the bot's operating status.

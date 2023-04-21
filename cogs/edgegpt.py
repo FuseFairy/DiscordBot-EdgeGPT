@@ -8,7 +8,7 @@ from src import log
 from src.response import send_message
 
 bot = commands.Bot(command_prefix='!', intents = discord.Intents.all())
-chatbot = Chatbot(cookiePath="./cookies.json")
+chatbot = Chatbot(cookie_path="./cookies.json")
 logger = log.setup_logger(__name__)
 conversation_style = "balanced" # default conversation style
 

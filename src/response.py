@@ -23,7 +23,6 @@ class MyView(discord.ui.View):
                 for child in self.children:
                     child.disabled = True
                 await interaction.followup.edit_message(message_id=interaction.message.id, view=self)
-                self.clear_items()
                 username = str(interaction.user)
                 usermessage = button.label
                 channel = str(interaction.channel)
@@ -32,6 +31,7 @@ class MyView(discord.ui.View):
                 await asyncio.gather(task)
             self.add_item(button)
             self.children[-1].callback = partial(callback, button=button)
+
 
 async def send_message(chatbot: Chatbot, message: discord.Interaction, user_message: str, conversation_style: str):
     async with sem:
@@ -42,7 +42,6 @@ async def send_message(chatbot: Chatbot, message: discord.Interaction, user_mess
         embed = ''
         all_url = []
         try:
-            ask = f"> **{user_message}** - <@{str(message.user.id)}> (***style: {conversation_style}***)\n\n"
             # change conversation style
             if conversation_style == "creative":
                 reply = await chatbot.ask(prompt=user_message, conversation_style=ConversationStyle.creative, wss_link="wss://sydney.bing.com/sydney/ChatHub")
@@ -62,6 +61,9 @@ async def send_message(chatbot: Chatbot, message: discord.Interaction, user_mess
                         all_url.append(f"{i}. [{url['providerDisplayName']}]({url['seeMoreUrl']})")
                 link_text = "\n".join(all_url)
                 embed = discord.Embed(description=link_text)
+            # Set the final message
+            user_message = user_message.replace("\n", "")
+            ask = f"> **{user_message}** - <@{str(message.user.id)}> (***style: {conversation_style}***)\n\n"
             response = f"{ask}{text}"
             # discord limit about 2000 characters for a message
             while len(response) > 2000:
@@ -74,7 +76,7 @@ async def send_message(chatbot: Chatbot, message: discord.Interaction, user_mess
                 for suggest in reply["item"]["messages"][1]["suggestedResponses"]:
                     suggest_responses.append(suggest["text"])
                 if embed:
-                    await message.followup.send(response, view=MyView(chatbot, conversation_style,  suggest_responses), embeds=[embed])
+                    await message.followup.send(response, view=MyView(chatbot, conversation_style, suggest_responses), embeds=[embed])
                 else:
                     await message.followup.send(response, view=MyView(chatbot, conversation_style, suggest_responses))
             else:

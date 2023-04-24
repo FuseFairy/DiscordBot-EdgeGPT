@@ -2,12 +2,10 @@ name: "Deploy docker image to Github Container Registry"
 
 on:
   push:
-    tags:
-      - 'v*'
-  pull_request:
     branches:
       - main
-
+    tags:
+      - 'v*'
 
 jobs:
   deploy:

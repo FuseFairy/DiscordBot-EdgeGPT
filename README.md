@@ -2,6 +2,7 @@
 > ### Using Bing on discord bot, your Microsoft account needs to be able to access Bing first.
 > 
 ## Update
+> ### 2023/4/24 : Now can generate images by Creative style.
 > ### 2023/4/19 : When old Cookies expire, the bot can set new Cookies directly by prefix command.
 > ### 2023/4/5 : Now can generate images by Bing Image Creator.
    
@@ -23,6 +24,10 @@
    | USE_SUGGEST_RESPONSES: False (can change in file ```config.yml```) |
    |---|
   ![edgegpt](https://i.imgur.com/yK3P9Kt.png)
+  
+  | conversation style: Creative |
+   |---|
+  ![creative_style](https://i.imgur.com/IIzRsqj.png)
   
 * bing image creator: `/create_image [prompt]`
   

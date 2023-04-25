@@ -2,9 +2,9 @@
 > ### Using Bing on discord bot, your Microsoft account needs to be able to access Bing first.
 > 
 ## Update
+> ### 2023/4/26 : Create a separate chat for each user.
 > ### 2023/4/24 : Now can generate images by Creative style.
 > ### 2023/4/19 : When old Cookies expire, the bot can set new Cookies directly by prefix command.
-> ### 2023/4/5 : Now can generate images by Bing Image Creator.
    
 ## Features
 

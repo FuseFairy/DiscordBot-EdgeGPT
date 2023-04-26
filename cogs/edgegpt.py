@@ -1,12 +1,10 @@
 import discord
 from EdgeGPT import Chatbot
-from discord.ext import commands
 from discord import app_commands
 from core.classes import Cog_Extension
 from src import log
 from src.response import send_message, get_func_status, set_func_status
 
-bot = commands.Bot(command_prefix='!', intents=discord.Intents.all())
 logger = log.setup_logger(__name__)
 
 users_chatbot = {}
@@ -21,11 +19,11 @@ class UserChatbot:
         await send_message(self.chatbot, interaction, message, conversation_style)
 
     async def reset(self):
-        self.chatbot.reset()
+        await self.chatbot.reset()
 
 class EdgeGPT(Cog_Extension):
     # Chat with Bing
-    @bot.tree.command(name="bing", description="Have a chat with Bing")
+    @app_commands.command(name="bing", description="Have a chat with Bing")
     async def bing(self, interaction: discord.Interaction, *, message: str):
         try:
             using = await get_func_status(interaction.user.id)
@@ -51,7 +49,7 @@ class EdgeGPT(Cog_Extension):
             await interaction.followup.send("Please wait for your last conversation to finish.")
 
     # Reset Bing conversation history
-    @bot.tree.command(name="reset", description="Complete reset Bing conversation history")
+    @app_commands.command(name="reset", description="Complete reset Bing conversation history")
     async def reset(self, interaction: discord.Interaction):
         await interaction.response.defer(ephemeral=True, thinking=True)
         try:
@@ -63,7 +61,7 @@ class EdgeGPT(Cog_Extension):
             logger.exception("Bing reset failed.")
 
     # Switch conversation style
-    @bot.tree.command(name="switch_style", description="Switch conversation style")
+    @app_commands.command(name="switch_style", description="Switch conversation style")
     @app_commands.choices(style=[app_commands.Choice(name="Creative", value="creative"), app_commands.Choice(name="Balanced", value="balanced"), app_commands.Choice(name="Precise", value="precise")])
     async def switch_style(self, interaction: discord.Interaction, style: app_commands.Choice[str]):
         await interaction.response.defer(ephemeral=True, thinking=True)

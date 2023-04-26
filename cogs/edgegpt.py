@@ -8,13 +8,13 @@ from src.response import send_message, get_func_status, set_func_status
 
 bot = commands.Bot(command_prefix='!', intents=discord.Intents.all())
 logger = log.setup_logger(__name__)
+
 users_chatbot = {}
 user_conversation_style = {}
 
 class UserChatbot:
     def __init__(self, cookie_path, user_id):
         self.chatbot = Chatbot(cookie_path=cookie_path)
-        user_conversation_style[user_id] = "balanced"
         self.user_id = user_id
 
     async def send_message(self, interaction, message, conversation_style):
@@ -41,6 +41,8 @@ class EdgeGPT(Cog_Extension):
             if user_id not in users_chatbot:
                 # create a new chatbot instance for this user
                 users_chatbot[user_id] = UserChatbot(cookie_path="./cookies.json", user_id=interaction.user.id)
+            if user_id not in user_conversation_style:
+                user_conversation_style[user_id] = "balanced"
             conversation_style = user_conversation_style[interaction.user.id]
             logger.info(f"\x1b[31m{username}\x1b[0m : '{usermessage}' ({channel}) [Style: {conversation_style}]")
             await users_chatbot[user_id].send_message(interaction, usermessage, conversation_style)

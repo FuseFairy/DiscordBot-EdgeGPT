@@ -14,6 +14,10 @@ bot = commands.Bot(command_prefix='!', intents = discord.Intents.all())
 # init loggger
 logger = src.log.setup_logger(__name__)
 
+def restart_bot():
+    # Replace current process with new instance of bot.py
+    os.execl(sys.executable, sys.executable, "bot.py")
+
 def check_verion() -> None:
     # Read the requirements.txt file and add each line to a list
     with open('requirements.txt') as f:
@@ -52,21 +56,21 @@ async def on_ready():
 @bot.command()
 async def load(ctx, extension):
     await bot.load_extension(f'cogs.{extension}')
-    await ctx.send(f'Loaded {extension} done.')
+    await ctx.author.send(f'> **Loaded {extension} done.**')
 
 # Unload command
 @commands.is_owner()
 @bot.command()
 async def unload(ctx, extension):
     await bot.unload_extension(f'cogs.{extension}')
-    await ctx.send(f'Un-Loaded {extension} done.')
+    await ctx.author.send(f'> **Un-Loaded {extension} done.**')
 
 # Empty discord_bot.log file
 @commands.is_owner()
 @bot.command()
 async def clean(ctx):
     open('discord_bot.log', 'w').close()
-    await ctx.send(f'Successfully emptied the file!')
+    await ctx.author.send(f'> **Successfully emptied the file!**')
 
 # Get discord_bot.log file
 @commands.is_owner()
@@ -76,9 +80,9 @@ async def getLog(ctx):
         with open('discord_bot.log', 'rb') as f:
             file = discord.File(f)
         await ctx.author.send(file=file)
-        await ctx.send("Send successfully!")
+        await ctx.author.send("> **Send successfully!**")
     except:
-        await ctx.send("Send failed!")
+        await ctx.author.send("> **Send failed!**")
 
 # Upload new Bing cookies and restart the bot
 @commands.is_owner()
@@ -92,13 +96,13 @@ async def upload(ctx):
                     json.dump(json.loads(content), f, indent = 2)
                 if not isinstance(ctx.channel, discord.abc.PrivateChannel):
                     await ctx.message.delete()
-                await ctx.send(f'Upload new cookies successfully!')
+                await ctx.author.send(f'> **Upload new cookies successfully!**')
                 logger.warning("\x1b[31mCookies has been setup successfully\x1b[0m")
-                os.system("python bot.py")
+                restart_bot()
             else:
-                await ctx.send("Didn't get any txt file.")
+                await ctx.author.send("> **Didn't get any txt file.**")
     else:
-        await ctx.send("Didn't get any file.")
+        await ctx.author.send("> **Didn't get any file.**")
 
 if __name__ == '__main__':
     check_verion()

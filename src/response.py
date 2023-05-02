@@ -18,7 +18,7 @@ class MyView(discord.ui.View):
         for label in suggest_responses:
             button = discord.ui.Button(label=label)
             # Button event
-            async def callback(interaction: discord.Interaction, button_author: int):
+            async def callback(interaction: discord.Interaction, button_author: int, button: discord.ui.Button):
                 if interaction.user.id != button_author:
                     await interaction.response.defer(ephemeral=True, thinking=True)
                     await interaction.followup.send("You don't have permission to press this button.")
@@ -37,7 +37,7 @@ class MyView(discord.ui.View):
                     await interaction.response.defer(ephemeral=True, thinking=True)
                     await interaction.followup.send("Please wait for your last conversation to finish.")
             self.add_item(button)
-            self.children[-1].callback = partial(callback, button_author=self.button_author)
+            self.children[-1].callback = partial(callback, button_author=self.button_author, button=button)
 
 async def get_func_status(user_id):
     return using_func[user_id]

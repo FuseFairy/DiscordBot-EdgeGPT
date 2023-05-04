@@ -61,6 +61,7 @@ async def send_message(chatbot: Chatbot, interaction: discord.Interaction, user_
                 reply = await chatbot.ask(prompt=user_message, conversation_style=ConversationStyle.precise, wss_link="wss://sydney.bing.com/sydney/ChatHub")
             else:
                 reply = await chatbot.ask(prompt=user_message, conversation_style=ConversationStyle.balanced, wss_link="wss://sydney.bing.com/sydney/ChatHub")
+            print(reply)
             # Get reply text
             try:
                 text = f"{reply['item']['messages'][4]['text']}"
@@ -69,12 +70,13 @@ async def send_message(chatbot: Chatbot, interaction: discord.Interaction, user_
             text = re.sub(r'\[\^(\d+)\^\]', lambda match: ''.join(superscript_map.get(digit, digit) for digit in match.group(1)), text)
             # Get the URL, if available
             try:
-                for search_results in reply["item"]["messages"][2]["groundingInfo"]:
-                    for url in reply["item"]["messages"][2]["groundingInfo"][search_results]:
-                        if url['title'] != None:
-                            all_url.append(f"{url['index']}. [{url['title']}]({url['url']})")
+                if len(reply['item']['messages'][1]['sourceAttributions']) != 0:
+                    for i, url in enumerate(reply['item']['messages'][1]['sourceAttributions'], start=1):
+                        if len(url['providerDisplayName']) == 0:
+                            all_url.append(f"{i}. [{url['seeMoreUrl']}]({url['seeMoreUrl']})")
                         else:
-                            all_url.append(f"{url['index']}. [{url['url']}]({url['url']})")
+                            all_url.append(f"{i}. [{url['providerDisplayName']}]({url['seeMoreUrl']})")
+                    print(all_url)
                 link_text = "\n".join(all_url)
                 link_embed = discord.Embed(description=link_text)
             except:
@@ -90,8 +92,10 @@ async def send_message(chatbot: Chatbot, interaction: discord.Interaction, user_
                 await interaction.followup.send(temp)
             # Get the image, if available
             try:
-                all_image = re.findall("https?://[\w\./]+", str(reply["item"]["messages"][1]["adaptiveCards"][0]["body"][0]["text"]))
-                [images_embed.append(discord.Embed(url="https://www.bing.com/").set_image(url=image_link)) for image_link in all_image]
+                if reply["item"]["messages"][2]["contentType"] == "IMAGE":
+                    all_image = re.findall("https?://[\w\./]+", str(reply["item"]["messages"][1]["adaptiveCards"][0]["body"][0]["text"]))
+                    print(all_image)
+                    [images_embed.append(discord.Embed(url="https://www.bing.com/").set_image(url=image_link)) for image_link in all_image]
             except:
                 pass
             # Add all suggest responses in list

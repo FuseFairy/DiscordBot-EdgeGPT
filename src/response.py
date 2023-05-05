@@ -61,7 +61,6 @@ async def send_message(chatbot: Chatbot, interaction: discord.Interaction, user_
                 reply = await chatbot.ask(prompt=user_message, conversation_style=ConversationStyle.precise, wss_link="wss://sydney.bing.com/sydney/ChatHub")
             else:
                 reply = await chatbot.ask(prompt=user_message, conversation_style=ConversationStyle.balanced, wss_link="wss://sydney.bing.com/sydney/ChatHub")
-            print(reply)
             # Get reply text
             try:
                 text = f"{reply['item']['messages'][4]['text']}"

@@ -5,13 +5,13 @@ from src import log
 from config import load_config
 from functools import partial
 
-logger = log.setup_logger(__name__)
 USE_SUGGEST_RESPONSES = load_config.config["USE_SUGGEST_RESPONSES"]
+logger = log.setup_logger(__name__)
 using_func = {}
 
 # To add suggest responses
 class MyView(discord.ui.View):
-    def __init__(self,interaction: discord.Interaction, chatbot: Chatbot, conversation_style:str, suggest_responses:list):
+    def __init__(self, interaction: discord.Interaction, chatbot: Chatbot, conversation_style:str, suggest_responses:list):
         super().__init__(timeout=120)
         self.button_author =interaction.user.id
         # Add buttons
@@ -72,10 +72,9 @@ async def send_message(chatbot: Chatbot, interaction: discord.Interaction, user_
                 if len(reply['item']['messages'][1]['sourceAttributions']) != 0:
                     for i, url in enumerate(reply['item']['messages'][1]['sourceAttributions'], start=1):
                         if len(url['providerDisplayName']) == 0:
-                            all_url.append(f"{i}. [{url['seeMoreUrl']}]({url['seeMoreUrl']})")
+                            all_url.append(f"{i}. {url['seeMoreUrl']}")
                         else:
                             all_url.append(f"{i}. [{url['providerDisplayName']}]({url['seeMoreUrl']})")
-                    print(all_url)
                 link_text = "\n".join(all_url)
                 link_embed = discord.Embed(description=link_text)
             except:
@@ -93,7 +92,6 @@ async def send_message(chatbot: Chatbot, interaction: discord.Interaction, user_
             try:
                 if reply["item"]["messages"][2]["contentType"] == "IMAGE":
                     all_image = re.findall("https?://[\w\./]+", str(reply["item"]["messages"][1]["adaptiveCards"][0]["body"][0]["text"]))
-                    print(all_image)
                     [images_embed.append(discord.Embed(url="https://www.bing.com/").set_image(url=image_link)) for image_link in all_image]
             except:
                 pass

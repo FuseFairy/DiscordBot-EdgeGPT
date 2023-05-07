@@ -5,13 +5,13 @@ from src import log
 from config import load_config
 from functools import partial
 
-logger = log.setup_logger(__name__)
 USE_SUGGEST_RESPONSES = load_config.config["USE_SUGGEST_RESPONSES"]
+logger = log.setup_logger(__name__)
 using_func = {}
 
 # To add suggest responses
 class MyView(discord.ui.View):
-    def __init__(self,interaction: discord.Interaction, chatbot: Chatbot, conversation_style:str, suggest_responses:list):
+    def __init__(self, interaction: discord.Interaction, chatbot: Chatbot, conversation_style:str, suggest_responses:list):
         super().__init__(timeout=120)
         self.button_author =interaction.user.id
         # Add buttons
@@ -60,7 +60,7 @@ async def send_message(chatbot: Chatbot, interaction: discord.Interaction, user_
             elif conversation_style == "precise":
                 reply = await chatbot.ask(prompt=user_message, conversation_style=ConversationStyle.precise, wss_link="wss://sydney.bing.com/sydney/ChatHub")
             else:
-                reply = await chatbot.ask(prompt=user_message, conversation_style=ConversationStyle.balanced, wss_link="wss://sydney.bing.com/sydney/ChatHub")
+                reply = await chatbot.ask(prompt=user_message, conversation_style=ConversationStyle.balanced, wss_link="wss://sydney.bing.com/sydney/ChatHub")         
             # Get reply text
             try:
                 text = f"{reply['item']['messages'][4]['text']}"
@@ -72,10 +72,9 @@ async def send_message(chatbot: Chatbot, interaction: discord.Interaction, user_
                 if len(reply['item']['messages'][1]['sourceAttributions']) != 0:
                     for i, url in enumerate(reply['item']['messages'][1]['sourceAttributions'], start=1):
                         if len(url['providerDisplayName']) == 0:
-                            all_url.append(f"{i}. [{url['seeMoreUrl']}]({url['seeMoreUrl']})")
+                            all_url.append(f"{i}. {url['seeMoreUrl']}")
                         else:
                             all_url.append(f"{i}. [{url['providerDisplayName']}]({url['seeMoreUrl']})")
-                    print(all_url)
                 link_text = "\n".join(all_url)
                 link_embed = discord.Embed(description=link_text)
             except:
@@ -93,7 +92,6 @@ async def send_message(chatbot: Chatbot, interaction: discord.Interaction, user_
             try:
                 if reply["item"]["messages"][2]["contentType"] == "IMAGE":
                     all_image = re.findall("https?://[\w\./]+", str(reply["item"]["messages"][1]["adaptiveCards"][0]["body"][0]["text"]))
-                    print(all_image)
                     [images_embed.append(discord.Embed(url="https://www.bing.com/").set_image(url=image_link)) for image_link in all_image]
             except:
                 pass
@@ -101,12 +99,12 @@ async def send_message(chatbot: Chatbot, interaction: discord.Interaction, user_
             if USE_SUGGEST_RESPONSES:
                 suggest_responses = []
                 try:
-                    for suggest in reply["item"]["messages"]:
-                        try:
-                            for suggest_message in suggest["suggestedResponses"]:
-                                suggest_responses.append(suggest_message["text"])
-                        except:
-                            pass
+                    for suggest_message in reply["item"]["messages"][1]["suggestedResponses"]:
+                        if len(suggest_message["text"]) > 80:
+                            suggest = f"{str(suggest_message['text'])[:77]}..."
+                        else:
+                            suggest = suggest_message["text"]
+                        suggest_responses.append(suggest)
                 except:
                     pass
                 if images_embed:
@@ -123,12 +121,7 @@ async def send_message(chatbot: Chatbot, interaction: discord.Interaction, user_
                 else:
                     await interaction.followup.send(response, wait=True)
         except Exception as e:
-                try:
-                    if reply["item"]["throttling"]["numUserMessagesInConversation"] and reply["item"]["throttling"]["numUserMessagesInConversation"] > reply["item"]["throttling"]["maxNumUserMessagesInConversation"]:
-                        await interaction.followup.send("> **Oops, I think we've reached the end of this conversation. Please reset the bot!**")
-                        logger.exception(f"Error while sending message: The maximum number of conversations in a round has been reached")
-                except:
-                    await interaction.followup.send("> **Error: Please try again later or reset bot**")
-                    logger.exception(f"Error while sending message: {e}")
+                await interaction.followup.send(f">>> **Error: {e}**")
+                logger.exception(f"Error while sending message: {e}")
         finally:
             using_func[interaction.user.id] = False

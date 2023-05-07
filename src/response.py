@@ -60,7 +60,7 @@ async def send_message(chatbot: Chatbot, interaction: discord.Interaction, user_
             elif conversation_style == "precise":
                 reply = await chatbot.ask(prompt=user_message, conversation_style=ConversationStyle.precise, wss_link="wss://sydney.bing.com/sydney/ChatHub")
             else:
-                reply = await chatbot.ask(prompt=user_message, conversation_style=ConversationStyle.balanced, wss_link="wss://sydney.bing.com/sydney/ChatHub")
+                reply = await chatbot.ask(prompt=user_message, conversation_style=ConversationStyle.balanced, wss_link="wss://sydney.bing.com/sydney/ChatHub")         
             # Get reply text
             try:
                 text = f"{reply['item']['messages'][4]['text']}"
@@ -99,12 +99,12 @@ async def send_message(chatbot: Chatbot, interaction: discord.Interaction, user_
             if USE_SUGGEST_RESPONSES:
                 suggest_responses = []
                 try:
-                    for suggest in reply["item"]["messages"]:
-                        try:
-                            for suggest_message in suggest["suggestedResponses"]:
-                                suggest_responses.append(suggest_message["text"])
-                        except:
-                            pass
+                    for suggest_message in reply["item"]["messages"][1]["suggestedResponses"]:
+                        if len(suggest_message["text"]) > 80:
+                            suggest = f"{str(suggest_message['text'])[:77]}..."
+                        else:
+                            suggest = suggest_message["text"]
+                        suggest_responses.append(suggest)
                 except:
                     pass
                 if images_embed:
@@ -121,12 +121,7 @@ async def send_message(chatbot: Chatbot, interaction: discord.Interaction, user_
                 else:
                     await interaction.followup.send(response, wait=True)
         except Exception as e:
-                try:
-                    if reply["item"]["throttling"]["numUserMessagesInConversation"] and reply["item"]["throttling"]["numUserMessagesInConversation"] > reply["item"]["throttling"]["maxNumUserMessagesInConversation"]:
-                        await interaction.followup.send("> **Oops, I think we've reached the end of this conversation. Please reset the bot!**")
-                        logger.exception(f"Error while sending message: The maximum number of conversations in a round has been reached")
-                except:
-                    await interaction.followup.send("> **Error: Please try again later or reset bot**")
-                    logger.exception(f"Error while sending message: {e}")
+                await interaction.followup.send(f">>> **Error: {e}**")
+                logger.exception(f"Error while sending message: {e}")
         finally:
             using_func[interaction.user.id] = False

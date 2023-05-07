@@ -218,7 +218,7 @@ class Event(Cog_Extension):
                 await asyncio.gather(task)
             else:
                 await message.channel.send(view=DropdownView())
-        else:
+        elif MENTION_CHANNEL_ID is not None:
             await message.channel.send(f"> **Can only be mentioned at <#{self.bot.get_channel(MENTION_CHANNEL_ID).id}>**")
 
 async def setup(bot):

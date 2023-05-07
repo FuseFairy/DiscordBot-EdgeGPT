@@ -6,7 +6,7 @@
 > ### 2023/5/4: Can't get image by create conversation style
 
 ## Update
-> ### 2023/5/7: Server owner can setup channel for replyall messsages.
+> ### 2023/5/7: Mention bot for replyall messsages.
 > ### 2023/4/26 : Create a separate chat for each user.
 > ### 2023/4/24 : Now can generate images by Creative style.
    

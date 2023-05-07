@@ -1,5 +1,5 @@
 # DiscordBot-EdgeGPT
-> ### Using Bing on discord bot, your Microsoft account needs to be able to access Bing first.
+> ## Using Microsoft's Bing Chat AI and Bing Image Creator on discord bot.
 
 > **Warning**
 > ### 2023/5/7: Can get image by create conversation style, but sometime will fail.

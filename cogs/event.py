@@ -154,16 +154,15 @@ async def send_message(chatbot: Chatbot, message, user_message: str):
                     [images_embed.append(discord.Embed(url="https://www.bing.com/").set_image(url=image_link)) for image_link in all_image]
             except:
                 pass
-            # Add all suggest responses in list
             if USE_SUGGEST_RESPONSES:
                 suggest_responses = []
                 try:
-                    for suggest in reply["item"]["messages"]:
-                        try:
-                            for suggest_message in suggest["suggestedResponses"]:
-                                suggest_responses.append(suggest_message["text"])
-                        except:
-                            pass
+                    for suggest_message in reply["item"]["messages"][1]["suggestedResponses"]:
+                        if len(suggest_message["text"]) > 80:
+                            suggest = f"{str(suggest_message['text'])[:77]}..."
+                        else:
+                            suggest = suggest_message["text"]
+                        suggest_responses.append(suggest)
                 except:
                     pass
                 if images_embed:
@@ -198,19 +197,11 @@ async def send_message(chatbot: Chatbot, message, user_message: str):
                     else:
                         await message.channel.send(response)
         except Exception as e:
-                try:
-                    if reply["item"]["throttling"]["numUserMessagesInConversation"] and reply["item"]["throttling"]["numUserMessagesInConversation"] > reply["item"]["throttling"]["maxNumUserMessagesInConversation"]:
-                        if isinstance(message, discord.interactions.Interaction):
-                            await message.followup.send("> **Oops, I think we've reached the end of this conversation. Please reset the bot!**")
-                        else:
-                            await message.channel.send("> **Oops, I think we've reached the end of this conversation. Please reset the bot!**")
-                        logger.exception(f"Error while sending message: The maximum number of conversations in a round has been reached")
-                except:
-                    if isinstance(message, discord.interactions.Interaction):
-                        await message.followup.send("> **Error: Please try again later or reset bot**")
-                    else:
-                        await message.channel.send("> **Error: Please try again later or reset bot**")
-                    logger.exception(f"Error while sending message: {e}")
+            if isinstance(message, discord.interactions.Interaction):
+                await message.followup.send(f">>> **Error: {e}**")
+            else:
+                await message.channel.send(f">>> **Error: {e}**")
+            logger.exception(f"Error while sending message: {e}")
 
 class Event(Cog_Extension):
     @commands.Cog.listener()

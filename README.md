@@ -2,12 +2,13 @@
 > ### Using Bing on discord bot, your Microsoft account needs to be able to access Bing first.
 
 > **Warning**
+> ### 2023/5/7: Can get image by create conversation style, but sometime will fail.
 > ### 2023/5/4: Can't get image by create conversation style
 
 ## Update
+> ### 2023/5/7: Server owner can setup channel for replyall messsages.
 > ### 2023/4/26 : Create a separate chat for each user.
 > ### 2023/4/24 : Now can generate images by Creative style.
-> ### 2023/4/19 : When old Cookies expire, the bot can set new Cookies directly by prefix command.
    
 ## Features
 
@@ -17,6 +18,8 @@
    ### Slash command
 
    </summary>
+   
+> ### will create a separate chat for each user.
    
 * bing: `/bing [message]`
 
@@ -48,9 +51,35 @@
 <details>
    <summary>
    
+   ### Mention bot
+
+   </summary>
+
+> ### same function as the slash command, but this will reply all user messages.
+
+* If only the bot is mentioned, you will get a drop-down list of settings.
+
+  ![dropdown1](https://i.imgur.com/XDcnTuC.png)
+  ![dropdown2](https://i.imgur.com/azHIUqv.png)
+
+* Same as use `/bing`,
+
+  ![mention1](https://i.imgur.com/aC5ZM9y.png)
+  
+  after switching styles to creative, you can also generate images!
+  
+  ![mention2](https://i.imgur.com/3w0vYKt.png)
+
+</details>
+
+<details>
+   <summary>
+   
    ### Prefix command (available only to bot owner)
 
    </summary>
+ 
+ > ### bot owner setting.
    
  * `!unload [file_name_in_cogs_folder]`: Disable command from the specified file.
  * `!load [file_name_in_cogs_folder]`: Enable the command from the specified file.
@@ -73,9 +102,10 @@ pip install -r requirements.txt
 ```
 
 ## Usage
-1. Rename the file`.env.dev`to`.env`, then open it and edit it.
+1. Rename the file`.env.dev`to`.env`, then open it and edit it. If you don't want a limit channel to mention a bot, you don't need to set up a   MENTION_CHANNEL_ID, just leave it blank.
    ```
    DISCORD_BOT_TOKEN=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+   MENTION_CHANNEL_ID=123456789
    ```
    
 2. Get Bing authentication.

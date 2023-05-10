@@ -1,10 +1,6 @@
 # DiscordBot-EdgeGPT
 > ## Using Microsoft's Bing Chat AI and Bing Image Creator on discord bot.
 
-> **Warning**
-> ### 2023/5/7: Can get image by create conversation style, but sometime will fail.
-> ### 2023/5/4: Can't get image by create conversation style
-
 ## Update
 > ### 2023/5/7: Mention bot for replyall messsages.
 > ### 2023/4/26 : Create a separate chat for each user.

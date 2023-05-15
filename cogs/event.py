@@ -208,18 +208,19 @@ class Event(Cog_Extension):
     async def on_message(self, message: discord.Message):
         if message.author == self.bot.user:
             return
-        if self.bot.user in message.mentions and (not MENTION_CHANNEL_ID or message.channel.id == MENTION_CHANNEL_ID):
-            content = re.sub(r'<@.*?>', '', message.content).strip()
-            if len(content) > 0:
-                username = str(message.author)
-                channel = str(message.channel)
-                logger.info(f"\x1b[31m{username}\x1b[0m : '{content}' ({channel}) [Style: {conversation_style}]")
-                task = asyncio.create_task(send_message(chatbot, message, content))
-                await asyncio.gather(task)
-            else:
-                await message.channel.send(view=DropdownView())
-        elif MENTION_CHANNEL_ID is not None:
-            await message.channel.send(f"> **Can only be mentioned at <#{self.bot.get_channel(MENTION_CHANNEL_ID).id}>**")
+        if self.bot.user in message.mentions:
+            if not MENTION_CHANNEL_ID or message.channel.id == MENTION_CHANNEL_ID:
+                content = re.sub(r'<@.*?>', '', message.content).strip()
+                if len(content) > 0:
+                    username = str(message.author)
+                    channel = str(message.channel)
+                    logger.info(f"\x1b[31m{username}\x1b[0m : '{content}' ({channel}) [Style: {conversation_style}]")
+                    task = asyncio.create_task(send_message(chatbot, message, content))
+                    await asyncio.gather(task)
+                else:
+                    await message.channel.send(view=DropdownView())
+            elif MENTION_CHANNEL_ID is not None:
+                await message.channel.send(f"> **Can only be mentioned at <#{self.bot.get_channel(MENTION_CHANNEL_ID).id}>**")
 
 async def setup(bot):
     await bot.add_cog(Event(bot))

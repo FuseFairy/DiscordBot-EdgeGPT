@@ -2,7 +2,7 @@
 > ## Using Microsoft's Bing Chat AI and Bing Image Creator on discord bot.
 
 ## Update
-> ### 2023/5/7: Mention bot for replyall messsages.
+> ### 2023/5/7 : Mention bot for replyall messsages.
 > ### 2023/4/26 : Create a separate chat for each user.
 > ### 2023/4/24 : Now can generate images by Creative style.
    

@@ -5,6 +5,7 @@ import sys
 import pkg_resources
 import json
 from discord.ext import commands
+from cogs.event import set_chatbot
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -13,10 +14,6 @@ bot = commands.Bot(command_prefix='!', intents = discord.Intents.all())
 
 # init loggger
 logger = src.log.setup_logger(__name__)
-
-def restart_bot():
-    # Replace current process with new instance of bot.py
-    os.execl(sys.executable, sys.executable, "bot.py")
 
 def check_verion() -> None:
     # Read the requirements.txt file and add each line to a list
@@ -88,21 +85,26 @@ async def getLog(ctx):
 @commands.is_owner()
 @bot.command()
 async def upload(ctx):
-    if ctx.message.attachments:
-        for attachment in ctx.message.attachments:
-            if str(attachment)[-4:] == ".txt":
-                content = await attachment.read()
-                with open("cookies.json", "w", encoding = "utf-8") as f:
-                    json.dump(json.loads(content), f, indent = 2)
-                if not isinstance(ctx.channel, discord.abc.PrivateChannel):
-                    await ctx.message.delete()
-                await ctx.author.send(f'> **Upload new cookies successfully!**')
-                logger.warning("\x1b[31mCookies has been setup successfully\x1b[0m")
-                restart_bot()
-            else:
-                await ctx.author.send("> **Didn't get any txt file.**")
-    else:
-        await ctx.author.send("> **Didn't get any file.**")
+    try:
+        if ctx.message.attachments:
+            for attachment in ctx.message.attachments:
+                if str(attachment)[-4:] == ".txt":
+                    content = await attachment.read()
+                    print(json.loads(content))
+                    with open("cookies.json", "w", encoding = "utf-8") as f:
+                        json.dump(json.loads(content), f, indent = 2)
+                    if not isinstance(ctx.channel, discord.abc.PrivateChannel):
+                        await ctx.message.delete()
+                    await set_chatbot(json.loads(content))
+                    await ctx.author.send(f'> **Upload new cookies successfully!**')
+                    logger.warning("\x1b[31mCookies has been setup successfully\x1b[0m")
+                else:
+                    await ctx.author.send("> **Didn't get any txt file.**")
+        else:
+            await ctx.author.send("> **Didn't get any file.**")
+    except Exception as e:
+        await ctx.author.send(f">>> **Error: {e}**")
+        logger.exception(f"Error while upload cookies: {e}")
 
 if __name__ == '__main__':
     check_verion()

@@ -91,7 +91,7 @@
    
    ![getLog](https://i.imgur.com/LHX4yWV.png)
  
- * `!upload [.txt_file]`: Because Bing Cookies will expire, so this command can set new Cookies directly and restart bot. You just need to copy bing cookies and past,                           the Cookies will auto convert to .txt file.
+ * `!upload [.txt_file]`: Because Bing Cookies will expire, so this command can set new Cookies directly. You just need to copy bing cookies and past,                           the Cookies will auto convert to .txt file.
  
    ![upload](https://i.imgur.com/UN1Ac7N.png)
 </details>

@@ -1,6 +1,7 @@
 import discord
 import re
 import os
+import json
 import asyncio
 from EdgeGPT import Chatbot, ConversationStyle
 from config import load_config
@@ -18,9 +19,12 @@ try:
 except:
     MENTION_CHANNEL_ID = None
 logger = log.setup_logger(__name__)
-chatbot = Chatbot(cookie_path="./cookies.json")
 sem = asyncio.Semaphore(1)
 conversation_style = "balanced"
+
+with open("./cookies.json", encoding="utf-8") as file:
+    cookies = json.load(file)
+chatbot = Chatbot(cookies=cookies)
 
 # To add suggest responses
 class MyView(discord.ui.View):
@@ -93,6 +97,9 @@ class DropdownView(discord.ui.View):
 async def set_conversation_style(style: str):
     global conversation_style
     conversation_style = style
+async def set_chatbot(cookies):
+    global chatbot
+    chatbot = Chatbot(cookies=cookies)
 
 async def send_message(chatbot: Chatbot, message, user_message: str):
     async with sem:

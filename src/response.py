@@ -46,7 +46,6 @@ async def set_using_send(user_id, status: bool):
 
 async def send_message(chatbot: Chatbot, interaction: discord.Interaction, user_message: str, conversation_style: str):
     using_func[interaction.user.id] = True
-    superscript_map = {'0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴', '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹'}
     reply = ''
     text = ''
     link_embed = ''
@@ -65,7 +64,7 @@ async def send_message(chatbot: Chatbot, interaction: discord.Interaction, user_
             text = f"{reply['item']['messages'][4]['text']}"
         except:
             text = f"{reply['item']['messages'][1]['text']}"
-        text = re.sub(r'\[\^(\d+)\^\]', lambda match: ''.join(superscript_map.get(digit, digit) for digit in match.group(1)), text)
+        text = re.sub(r'\[\^(\d+)\^\]', lambda match: '', text)
         # Get the URL, if available
         try:
             if len(reply['item']['messages'][1]['sourceAttributions']) != 0:

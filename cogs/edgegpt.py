@@ -87,7 +87,7 @@ class EdgeGPT(Cog_Extension):
                     if cookie.get("name") == "_U":
                         auth_cookie = cookie.get("value")
                         break
-                users_image_generator[interaction.user.id] = ImageGenAsync(auth_cookie, True)
+                users_image_generator[interaction.user.id] = ImageGenAsync(auth_cookie, quiet=True)
                 users_chatbot[interaction.user.id] = UserChatbot(cookies=content)
                 user_conversation_style[interaction.user.id] = "balanced" 
                 await interaction.followup.send("> **Upload successful!**")
@@ -95,11 +95,14 @@ class EdgeGPT(Cog_Extension):
             except:
                 await interaction.followup.send("> **Please upload your cookies.**")
         else:
-            del users_chatbot[interaction.user.id]
-            del users_image_generator[interaction.user.id]
-            del user_conversation_style[interaction.user.id]
-            await interaction.followup.send("> **Delete finish.**")
-            logger.warning(f"\x1b[31m{interaction.user} delete cookies\x1b[0m")
+            try:
+                del users_chatbot[interaction.user.id]
+                del users_image_generator[interaction.user.id]
+                del user_conversation_style[interaction.user.id]
+                await interaction.followup.send("> **Delete finish.**")
+                logger.warning(f"\x1b[31m{interaction.user} delete cookies\x1b[0m")
+            except:
+                await interaction.followup.send("> **You haven't set up Bing cookies.**")
 
     # Create images
     @app_commands.command(name = "create_image", description = "generate image by bing image creator")

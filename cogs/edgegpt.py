@@ -44,7 +44,7 @@ class EdgeGPT(Cog_Extension):
             user_id = interaction.user.id
             if user_id not in users_chatbot:
                 await interaction.response.defer(ephemeral=True, thinking=True)
-                await interaction.followup.send("> **Please use */bing_cookies* command to set your bing cookies first**")
+                await interaction.followup.send("> **Please use */bing_cookies* command to set your Bing Cookies first.**")
             else:
                 await interaction.response.defer(ephemeral=False, thinking=True)
                 conversation_style = user_conversation_style[user_id]
@@ -54,8 +54,8 @@ class EdgeGPT(Cog_Extension):
             await interaction.response.defer(ephemeral=True, thinking=True)
             await interaction.followup.send("> **Please wait for your last conversation to finish.**")
 
-    # Reset Bing conversation history
-    @app_commands.command(name="reset", description="Complete reset Bing conversation history")
+    # Reset Bing conversation
+    @app_commands.command(name="reset", description="Reset Bing conversation")
     async def reset(self, interaction: discord.Interaction):
         await interaction.response.defer(ephemeral=True, thinking=True)
         try:
@@ -63,7 +63,7 @@ class EdgeGPT(Cog_Extension):
             await interaction.followup.send("> **Info: Reset finish.**")
             logger.warning("\x1b[31mBing has been successfully reset\x1b[0m")
         except:
-            await interaction.followup.send(f"> **Info: You don't have any conversation yet.**")
+            await interaction.followup.send(f"> **Please use /bing_cookies command to set your Bing Cookies first.**")
             logger.exception("Bing reset failed.")
 
     # Switch conversation style
@@ -71,12 +71,15 @@ class EdgeGPT(Cog_Extension):
     @app_commands.choices(style=[app_commands.Choice(name="Creative", value="creative"), app_commands.Choice(name="Balanced", value="balanced"), app_commands.Choice(name="Precise", value="precise")])
     async def switch_style(self, interaction: discord.Interaction, style: app_commands.Choice[str]):
         await interaction.response.defer(ephemeral=True, thinking=True)
-        user_conversation_style[interaction.user.id] = style.value
-        await interaction.followup.send(f"> **Info: successfull switch conversation style to {style.value}.**")
-        logger.warning(f"\x1b[31mConversation style has been successfully switch to {style.value}\x1b[0m")
+        if interaction.user.id not in users_chatbot:
+            await interaction.followup.send("> **Please use /bing_cookies command to set your Bing Cookies first.**")
+        else:
+            user_conversation_style[interaction.user.id] = style.value
+            await interaction.followup.send(f"> **Info: successfull switch conversation style to {style.value}.**")
+            logger.warning(f"\x1b[31mConversation style has been successfully switch to {style.value}\x1b[0m")
     
-    # Set and delete bing cookies
-    @app_commands.command(name="bing_cookies", description="Set or delete bing cookies")
+    # Set and delete Bing Cookies
+    @app_commands.command(name="bing_cookies", description="Set or delete Bing Cookies")
     @app_commands.choices(choice=[app_commands.Choice(name="set", value="set"), app_commands.Choice(name="delete", value="delete")])
     async def cookies_setting(self, interaction: discord.Interaction, choice: app_commands.Choice[str], cookies_file: Optional[discord.Attachment]=None):
         await interaction.response.defer(ephemeral=True, thinking=True)
@@ -91,25 +94,25 @@ class EdgeGPT(Cog_Extension):
                 users_chatbot[interaction.user.id] = UserChatbot(cookies=content)
                 user_conversation_style[interaction.user.id] = "balanced" 
                 await interaction.followup.send("> **Upload successful!**")
-                logger.warning(f"\x1b[31m{interaction.user} set bing cookies successful\x1b[0m")
+                logger.warning(f"\x1b[31m{interaction.user} set Bing Cookies successful\x1b[0m")
             except:
-                await interaction.followup.send("> **Please upload your cookies.**")
+                await interaction.followup.send("> **Please upload your Bing Cookies.**")
         else:
             try:
                 del users_chatbot[interaction.user.id]
                 del users_image_generator[interaction.user.id]
                 del user_conversation_style[interaction.user.id]
                 await interaction.followup.send("> **Delete finish.**")
-                logger.warning(f"\x1b[31m{interaction.user} delete cookies\x1b[0m")
+                logger.warning(f"\x1b[31m{interaction.user} delete Cookies\x1b[0m")
             except:
-                await interaction.followup.send("> **You haven't set up Bing cookies.**")
+                await interaction.followup.send("> **You don't have any Bing Cookies.**")
 
     # Create images
-    @app_commands.command(name = "create_image", description = "generate image by bing image creator")
+    @app_commands.command(name="create_image", description="generate image by Bing image creator")
     async def create_image(self, interaction: discord.Interaction, *, prompt: str):
-        if interaction.user.id not in users_image_generator:
+        if interaction.user.id not in users_chatbot:
             await interaction.response.defer(ephemeral=True, thinking=True)
-            await interaction.followup.send("> **Please use */bing_cookies* command to set your bing cookies first.**")
+            await interaction.followup.send("> **Please use */bing_cookies* command to set your Bing Cookies first.**")
         else:
             try:
                 using = await get_using_create(interaction.user.id)

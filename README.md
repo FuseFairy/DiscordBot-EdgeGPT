@@ -2,9 +2,9 @@
 > ## Using Microsoft's Bing Chat AI and Bing Image Creator on discord bot.
 
 ## Update
+> ## 2023/6/1 : Users not need to set cookies also can use slash command.
 > ### 2023/5/21 : Anyone who wants to use slash command should set their cookies first.
 > ### 2023/5/7 : Mention bot for replyall messsages.
-> ### 2023/4/26 : Create a separate chat for each user.
    
 ## Features
 
@@ -15,9 +15,9 @@
 
    </summary>
    
-> ### will create a separate chat for each user, should set cookies first.
+> ### will create a separate chat for each user.
    
-* cookies setting: `/bing_cookies [choice]`
+* cookies setting(use personal Bing Cookies): `/bing_cookies [choice]`
   ![setting](https://i.imgur.com/qLmFr52.png) 
   
    

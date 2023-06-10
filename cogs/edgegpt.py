@@ -1,8 +1,8 @@
 import discord
 import json
 from typing import Optional
-from ImageGen import ImageGenAsync
-from EdgeGPT import Chatbot
+from EdgeGPT.ImageGen import ImageGenAsync
+from EdgeGPT.EdgeGPT import Chatbot
 from discord import app_commands
 from core.classes import Cog_Extension
 from src import log

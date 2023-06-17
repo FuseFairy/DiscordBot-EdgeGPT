@@ -1,6 +1,6 @@
 import discord
 import re
-from EdgeGPT import Chatbot, ConversationStyle
+from EdgeGPT.EdgeGPT import Chatbot, ConversationStyle
 from src import log
 from config import load_config
 from functools import partial
@@ -54,21 +54,20 @@ async def send_message(chatbot: Chatbot, interaction: discord.Interaction, user_
     try:
         # Change conversation style
         if conversation_style == "creative":
-            reply = await chatbot.ask(prompt=user_message, conversation_style=ConversationStyle.creative)
+            reply = await chatbot.ask(prompt=user_message, conversation_style=ConversationStyle.creative, simplify_response=True)
         elif conversation_style == "precise":
-            reply = await chatbot.ask(prompt=user_message, conversation_style=ConversationStyle.precise)
+            reply = await chatbot.ask(prompt=user_message, conversation_style=ConversationStyle.precise, simplify_response=True)
         else:
-            reply = await chatbot.ask(prompt=user_message, conversation_style=ConversationStyle.balanced)         
+            reply = await chatbot.ask(prompt=user_message, conversation_style=ConversationStyle.balanced, simplify_response=True)
+   
         # Get reply text
-        try:
-            text = f"{reply['item']['messages'][4]['text']}"
-        except:
-            text = f"{reply['item']['messages'][1]['text']}"
+        text = f"{reply['text']}"
         text = re.sub(r'\[\^(\d+)\^\]', lambda match: '', text)
+        
         # Get the URL, if available
         try:
-            if len(reply['item']['messages'][1]['sourceAttributions']) != 0:
-                for i, url in enumerate(reply['item']['messages'][1]['sourceAttributions'], start=1):
+            if len(reply['sources']) != 0:
+                for i, url in enumerate(reply['sources'], start=1):
                     if len(url['providerDisplayName']) == 0:
                         all_url.append(f"{i}. {url['seeMoreUrl']}")
                     else:
@@ -77,15 +76,18 @@ async def send_message(chatbot: Chatbot, interaction: discord.Interaction, user_
             link_embed = discord.Embed(description=link_text)
         except:
             pass
+        
         # Set the final message
         user_message = user_message.replace("\n", "")
         ask = f"> **{user_message}** - <@{str(interaction.user.id)}> (***style: {conversation_style}***)\n\n"
         response = f"{ask}{text}"
+        
         # Discord limit about 2000 characters for a message
         while len(response) > 2000:
             temp = response[:2000]
             response = response[2000:]
             await interaction.followup.send(temp)
+
         # Get the image, if available
         try:
             if reply["item"]["messages"][2]["contentType"] == "IMAGE":
@@ -95,16 +97,8 @@ async def send_message(chatbot: Chatbot, interaction: discord.Interaction, user_
             pass
         # Add all suggest responses in list
         if USE_SUGGEST_RESPONSES:
-            suggest_responses = []
-            try:
-                for suggest_message in reply["item"]["messages"][1]["suggestedResponses"]:
-                    if len(suggest_message["text"]) > 80:
-                        suggest = f"{str(suggest_message['text'])[:77]}..."
-                    else:
-                        suggest = suggest_message["text"]
-                    suggest_responses.append(suggest)
-            except:
-                pass
+            suggest_responses = reply["suggestions"]
+
             if images_embed:
                 await interaction.followup.send(response, view=MyView(interaction, chatbot, conversation_style, suggest_responses), embeds=images_embed, wait=True)                
             elif link_embed:

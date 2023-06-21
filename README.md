@@ -2,7 +2,7 @@
 > ## Using Microsoft's Bing Chat AI and Bing Image Creator on discord bot.
 
 ## Update
-> ### 2023/6/21: fix Redirect failed when use Creative style to create images.
+> ### 2023/6/21: fix Redirect failed when using Creative style to create images.
 > ### 2023/6/1 : Users not need to set cookies also can use slash command.
 > ### 2023/5/21 : Anyone who wants to use slash command should set their cookies first.
    

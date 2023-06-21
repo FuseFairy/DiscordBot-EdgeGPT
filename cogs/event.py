@@ -152,16 +152,17 @@ async def send_message(chatbot: Chatbot, message, user_message: str):
                     await message.followup.send(temp)
                 else: 
                     await message.channel.send(temp)
+
             # Get the image, if available
             try:
-                if reply["item"]["messages"][2]["contentType"] == "IMAGE":
-                    all_image = re.findall("https?://[\w\./]+", str(reply["item"]["messages"][1]["adaptiveCards"][0]["body"][0]["text"]))
+                if len(link_embed) == 0:
+                    all_image = re.findall("https?://[\w\./]+", str(reply["sources_text"]))
                     [images_embed.append(discord.Embed(url="https://www.bing.com/").set_image(url=image_link)) for image_link in all_image]
             except:
                 pass
+            
             if USE_SUGGEST_RESPONSES:
                 suggest_responses = reply["suggestions"]
-
                 if images_embed:
                     if isinstance(message, discord.interactions.Interaction):
                         await message.followup.send(response, view=MyView(chatbot, suggest_responses), embeds=images_embed, wait=True)                

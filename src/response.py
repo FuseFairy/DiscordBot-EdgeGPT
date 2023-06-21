@@ -59,7 +59,7 @@ async def send_message(chatbot: Chatbot, interaction: discord.Interaction, user_
             reply = await chatbot.ask(prompt=user_message, conversation_style=ConversationStyle.precise, simplify_response=True)
         else:
             reply = await chatbot.ask(prompt=user_message, conversation_style=ConversationStyle.balanced, simplify_response=True)
-   
+
         # Get reply text
         text = f"{reply['text']}"
         text = re.sub(r'\[\^(\d+)\^\]', lambda match: '', text)
@@ -90,15 +90,14 @@ async def send_message(chatbot: Chatbot, interaction: discord.Interaction, user_
 
         # Get the image, if available
         try:
-            if reply["item"]["messages"][2]["contentType"] == "IMAGE":
-                all_image = re.findall("https?://[\w\./]+", str(reply["item"]["messages"][1]["adaptiveCards"][0]["body"][0]["text"]))
+            if len(link_embed) == 0:
+                all_image = re.findall("https?://[\w\./]+", str(reply["sources_text"]))
                 [images_embed.append(discord.Embed(url="https://www.bing.com/").set_image(url=image_link)) for image_link in all_image]
         except:
             pass
         # Add all suggest responses in list
         if USE_SUGGEST_RESPONSES:
             suggest_responses = reply["suggestions"]
-
             if images_embed:
                 await interaction.followup.send(response, view=MyView(interaction, chatbot, conversation_style, suggest_responses), embeds=images_embed, wait=True)                
             elif link_embed:

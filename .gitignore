@@ -1,6 +1,5 @@
 __pycache__/
 .env
 discord_bot.log
-cookies.json
 test.py
 test2.py

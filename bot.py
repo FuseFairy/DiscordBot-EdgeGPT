@@ -5,8 +5,8 @@ import sys
 import pkg_resources
 import json
 from discord.ext import commands
-from cogs.event import set_chatbot
 from dotenv import load_dotenv
+from cogs.event import set_chatbot
 
 load_dotenv()
 
@@ -15,22 +15,14 @@ bot = commands.Bot(command_prefix='!', intents = discord.Intents.all())
 # init loggger
 logger = src.log.setup_logger(__name__)
 
-def check_verion() -> None:
-    # Read the requirements.txt file and add each line to a list
-    with open('requirements.txt') as f:
-        required = f.read().splitlines()
+def check_version():
+    required = [line.strip() for line in open('requirements.txt')]
 
-    # For each library listed in requirements.txt, check if the corresponding version is installed
     for package in required:
-        # Use the pkg_resources library to get information about the installed version of the library
-        package_name, package_verion = package.split('==')
-        installed = pkg_resources.get_distribution(package_name)
-        # Extract the library name and version number
-        name, version = installed.project_name, installed.version
-        # Compare the version number to see if it matches the one in requirements.txt
+        package_name, package_version = package.split('==')
+        name, version = pkg_resources.get_distribution(package_name).project_name, pkg_resources.get_distribution(package_name).version
         if package != f'{name}=={version}':
-            logger.error(f'{name} version {version} is installed but does not match the requirements')
-            sys.exit()
+            raise ValueError(f'{name} version {version} is installed but does not match the requirements')
 
 @bot.event
 async def on_ready():
@@ -72,7 +64,7 @@ async def clean(ctx):
 # Get discord_bot.log file
 @commands.is_owner()
 @bot.command()
-async def getLog(ctx):
+async def getlog(ctx):
     try:
         with open('discord_bot.log', 'rb') as f:
             file = discord.File(f)
@@ -88,16 +80,15 @@ async def upload(ctx):
     try:
         if ctx.message.attachments:
             for attachment in ctx.message.attachments:
-                if str(attachment)[-4:] == ".txt":
+                if str(attachment).find("message.txt"):
                     content = await attachment.read()
-                    print(json.loads(content))
                     with open("cookies.json", "w", encoding = "utf-8") as f:
                         json.dump(json.loads(content), f, indent = 2)
                     if not isinstance(ctx.channel, discord.abc.PrivateChannel):
                         await ctx.message.delete()
                     await set_chatbot(json.loads(content))
                     await ctx.author.send(f'> **Upload new cookies successfully!**')
-                    logger.warning("\x1b[31mCookies has been setup successfully\x1b[0m")
+                    logger.info("\x1b[31mCookies has been setup successfully\x1b[0m")
                 else:
                     await ctx.author.send("> **Didn't get any txt file.**")
         else:
@@ -107,5 +98,5 @@ async def upload(ctx):
         logger.exception(f"Error while upload cookies: {e}")
 
 if __name__ == '__main__':
-    check_verion()
+    check_version()
     bot.run(os.getenv("DISCORD_BOT_TOKEN"))

@@ -2,6 +2,7 @@
 > ## Using Microsoft's Bing Chat AI and Bing Image Creator on discord bot.
 
 ## Update
+> ### 2023/11/13: Use another bing api instead.
 > ### 2023/6/21: fix Redirect failed when using Creative style to create images.
 > ### 2023/6/1 : Users not need to set cookies also can use slash command.
 > ### 2023/5/21 : Anyone who wants to use slash command should set their cookies first.
@@ -17,23 +18,13 @@
    
 > ### will create a separate chat for each user.
    
-* cookies setting(use personal Bing Cookies): `/bing_cookies [choice]`
+* cookies setting(use personal Bing Cookies): `/bing_setting [choice]`
   ![setting](https://i.imgur.com/qLmFr52.png) 
   
    
 * bing: `/bing [message]`
 
-   | USE_SUGGEST_RESPONSES: True  (can change in file ```config.yml```) |
-   |---|
   ![edgegpt](https://i.imgur.com/cLPL156.png)
-
-   | USE_SUGGEST_RESPONSES: False (can change in file ```config.yml```) |
-   |---|
-  ![edgegpt](https://i.imgur.com/yK3P9Kt.png)
-  
-  | conversation style: Creative |
-   |---|
-  ![creative_style](https://i.imgur.com/IIzRsqj.png)
   
 * bing image creator: `/create_image [prompt]`
   
@@ -119,14 +110,10 @@ pip install -r requirements.txt
    -> Recommended Free Servers: [fly.io](https://fly.io/)
 
 ## Credits
-* EdgeGPT - [https://github.com/acheong08/EdgeGPT](https://github.com/acheong08/EdgeGPT)
-* BingImageCreator - [https://github.com/acheong08/BingImageCreator](https://github.com/acheong08/BingImageCreator)
-* other - [https://github.com/Zero6992/chatGPT-discord-bot](https://github.com/Zero6992/chatGPT-discord-bot)
+* ReEdgeGPT - [https://github.com/Integration-Automation/ReEdgeGPT](https://github.com/Integration-Automation/ReEdgeGPT)
 
 ## Contributors
 
 This project exists thanks to all the people who contribute.
 
- <a href="https://github.com/FuseFairy/DiscordBot-EdgeGPT/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=FuseFairy/DiscordBot-EdgeGPT" />
- </a>
+[![](https://contrib.rocks/image?repo=FuseFairy/DiscordBot-EdgeGPT)](https://github.com/FuseFairy/DiscordBot-EdgeGPT/graphs/contributors)

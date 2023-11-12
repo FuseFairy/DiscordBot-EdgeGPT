@@ -33,12 +33,11 @@ async def on_ready():
         if Filename.endswith('.py'):
             await bot.load_extension(f'cogs.{Filename[:-3]}')
     logger.info(f'{bot.user} is now running!')
-    print("Bot is Up and Ready!")
     try:
         synced = await bot.tree.sync()
         print(f"Synced {len(synced)} commands")
     except Exception as e:
-        print(e)
+        logger.error(f"Error: {e}")
 
 # Load command
 @commands.is_owner()   

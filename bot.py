@@ -1,7 +1,6 @@
 import discord
 import os
 import src.log
-import sys
 import pkg_resources
 import json
 from discord.ext import commands

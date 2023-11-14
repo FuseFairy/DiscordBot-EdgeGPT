@@ -12,8 +12,9 @@ async def send_message(chatbot: Chatbot, interaction: discord.Interaction, user_
     text = ''
     link_embed = ''
     all_url = []
-
-    await interaction.response.defer(ephemeral=False, thinking=True)
+    
+    if not interaction.response.is_done():
+        await interaction.response.defer(ephemeral=False, thinking=True)
 
     try:
         # Change conversation style

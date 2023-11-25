@@ -2,8 +2,8 @@ import json
 import discord
 from asyncio import Semaphore
 from re_edge_gpt import Chatbot
-from src.response import send_message
-from src.image_create import create_image
+from src.bing_chat.response import send_message
+from src.image.image_create import create_image
 
 users_chatbot = {}
 
@@ -54,7 +54,7 @@ class UserChatbot():
 
     async def create_image(self, interaction: discord.Interaction, prompt: str):
         async with self.sem_create_image:
-            await create_image(interaction, prompt, self.auth_cookie)
+            await create_image(interaction, users_chatbot, prompt, self.auth_cookie)
     
     async def reset_conversation(self):
         await self.chatbot.reset()

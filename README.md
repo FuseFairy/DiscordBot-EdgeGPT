@@ -18,7 +18,7 @@
    
 > ### will create a separate chat for each user.
    
-* cookies setting(use personal Bing Cookies): `/bing_setting [choice]`
+* cookies setting(use personal Bing Cookies): `/bing setting [choice]`
   ![setting](https://i.imgur.com/qLmFr52.png) 
   
    
@@ -26,11 +26,11 @@
 
   ![edgegpt](https://i.imgur.com/cLPL156.png)
   
-* bing image creator: `/create_image [prompt]`
+* bing image creator: `/create image [prompt]`
   
-  ![bingimage.png](https://i.ibb.co/0rxNbnk/2023-04-07-191036.png)
+  ![bingimage.png](https://i.imgur.com/xxIAR09.png)
  
-* conversation style (default balanced): `/switch_style [style]`
+* conversation style (default balanced): `/switch style [style]`
   
   ![style.png](https://i.ibb.co/54KMWKH/2023-04-07-200312.png)
 

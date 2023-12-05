@@ -23,7 +23,7 @@ class EdgeGPT(Cog_Extension):
             Parameters
             -----------
             choice: Choice[str]
-                Remember to upload your bing cookies if you choose to set it.
+                Remember to upload your bing cookie if you want to use your own bing account when you choose to set it up.
         """
 
         await interaction.response.defer(ephemeral=True, thinking=True)

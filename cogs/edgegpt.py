@@ -29,15 +29,21 @@ class EdgeGPT(Cog_Extension):
         await interaction.response.defer(ephemeral=True, thinking=True)
         user_id = interaction.user.id
         if choice.value == "set":
-            if cookies_file is not None:
-                cookies = json.loads(await cookies_file.read())
-                await set_chatbot(user_id, cookies)
-                await interaction.followup.send("> **INFO: Chatbot set successful!**")
-                logger.info(f"{interaction.user} set Bing Chatbot successful")
-            else:
-                await set_chatbot(user_id)
-                await interaction.followup.send("> **INFO: Chatbot set successful! (using bot owner cookies)**")
-                logger.info(f"{interaction.user} set Bing chatbot successful. (using bot owner cookies)")
+            try:
+                if cookies_file is not None:
+                    if "json" in cookies_file.content_type:
+                        cookies = json.loads(await cookies_file.read())
+                        await set_chatbot(user_id, cookies)
+                        await interaction.followup.send("> **INFO: Chatbot set successful!**")
+                        logger.info(f"{interaction.user} set Bing Chatbot successful")
+                    else:
+                        await interaction.followup.send("> **ERROR: Support json format only.**")
+                else:
+                    await set_chatbot(user_id)
+                    await interaction.followup.send("> **INFO: Chatbot set successful! (using bot owner cookies)**")
+                    logger.info(f"{interaction.user} set Bing chatbot successful. (using bot owner cookies)")
+            except Exception as e:
+                await interaction.followup.send(f">>> **ERROR: {e}**")
         else:
             users_chatbot = get_users_chatbot()
             if user_id in users_chatbot:
@@ -49,18 +55,21 @@ class EdgeGPT(Cog_Extension):
 
     # Chat with Bing.
     @app_commands.command(name="bing", description="Have a chat with Bing")
-    async def bing(self, interaction: discord.Interaction, *, message: str):
+    async def bing(self, interaction: discord.Interaction, image: Optional[discord.Attachment]=None, *, message: str):
         users_chatbot = get_users_chatbot()
         username = interaction.user
         usermessage = message
         channel = interaction.channel
         user_id = interaction.user.id
         if user_id not in users_chatbot:
-            await interaction.response.defer(ephemeral=True, thinking=True)
-            await interaction.followup.send("> **ERROE: Please use  ` /chatbot setting`   to set yourself Bing chatbot first.**")
-        logger.info(f"{username}: {usermessage} ({channel}) [Style: {users_chatbot[user_id].get_conversation_style()}]")
-        await users_chatbot[user_id].send_message(interaction, usermessage)
-
+            await interaction.response.send_message("> **ERROE: Please use  `/chatbot setting`   to set yourself Bing chatbot first.**", ephemeral=True)
+        # Check if an attachment is provided
+        if image is  None or "image" in image.content_type:
+            logger.info(f"{username}: {usermessage} ({channel}) [Style: {users_chatbot[user_id].get_conversation_style()}]")
+            await users_chatbot[user_id].send_message(interaction, usermessage, image)
+        else:
+            await interaction.response.send_message("> **ERROE: This file format is not supported.**", ephemeral=True)
+        
     # Switch conversation style.
     @switch_group.command(name="style", description="Switch conversation style")
     @app_commands.choices(style=[app_commands.Choice(name="Creative", value="creative"), app_commands.Choice(name="Balanced", value="balanced"), app_commands.Choice(name="Precise", value="precise")])
@@ -96,6 +105,5 @@ class EdgeGPT(Cog_Extension):
         await users_chatbot[user_id].reset_conversation()
         await interaction.followup.send(f"> **Info: Reset finish.**")
         
-
 async def setup(bot):
     await bot.add_cog(EdgeGPT(bot))

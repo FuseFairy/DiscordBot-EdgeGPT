@@ -48,9 +48,9 @@ class UserChatbot():
     async def set_chatbot(self, cookies):
         self.chatbot = Chatbot(cookie=cookies)
 
-    async def send_message(self, interaction: discord.Interaction, message):
+    async def send_message(self, interaction: discord.Interaction, message: str, image: str=None):
         async with self.sem_send_message:
-            await send_message(self.chatbot, interaction, message, self.conversation_style, users_chatbot, self.user_id)
+            await send_message(self.chatbot, interaction, message, image, self.conversation_style, users_chatbot, self.user_id)
 
     async def create_image(self, interaction: discord.Interaction, prompt: str):
         async with self.sem_create_image:

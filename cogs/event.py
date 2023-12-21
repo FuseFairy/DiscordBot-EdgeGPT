@@ -134,8 +134,8 @@ async def send_message(interaction, user_message: str):
             
             # Get the URL, if available
             try:
-                if reply['sources_text']:
-                    urls = re.findall(r'\[(\d+)\. (.*?)\]\((https?://.*?)\)', reply["sources_text"])
+                if reply['sources_link']:
+                    urls = re.findall(r'\[(\d+)\. (.*?)\]\((https?://.*?)\)', reply["sources_link"])
                     for url in urls:
                         all_url.append(f"{url[0]}. [{url[1]}]({url[2]})")
                 link_text = "\n".join(all_url)

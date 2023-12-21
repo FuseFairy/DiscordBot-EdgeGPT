@@ -7,7 +7,7 @@ from src.bing_chat.button_view import ButtonView
 
 logger = log.setup_logger(__name__)
 
-async def send_message(chatbot: Chatbot, interaction: discord.Interaction, user_message: str, conversation_style_str: str, users_chatbot=None, user_id=None):
+async def send_message(chatbot: Chatbot, interaction: discord.Interaction, user_message: str, image: str, conversation_style_str: str, users_chatbot=None, user_id=None):
     reply = ''
     text = ''
     link_embed = ''
@@ -28,8 +28,10 @@ async def send_message(chatbot: Chatbot, interaction: discord.Interaction, user_
         reply = await chatbot.ask(
             prompt=user_message,
             conversation_style=conversation_style,
-            simplify_response=True
+            simplify_response=True,
+            attachment={"image_url":f"{image}"}
         )
+        print(reply)
 
         # Get reply text
         text = f"{reply['text']}"
@@ -37,8 +39,8 @@ async def send_message(chatbot: Chatbot, interaction: discord.Interaction, user_
         
         # Get the URL, if available
         try:
-            if reply['sources_text']:
-                urls = re.findall(r'\[(\d+)\. (.*?)\]\((https?://.*?)\)', reply["sources_text"])
+            if reply['sources_link']:
+                urls = re.findall(r'\[(\d+)\. (.*?)\]\((https?://.*?)\)', reply["sources_link"])
                 for url in urls:
                     all_url.append(f"{url[0]}. [{url[1]}]({url[2]})")
             link_text = "\n".join(all_url)
@@ -48,7 +50,7 @@ async def send_message(chatbot: Chatbot, interaction: discord.Interaction, user_
         
         # Set the final message
         user_message = user_message.replace("\n", "")
-        ask = f"> **{user_message}** - <@{str(interaction.user.id)}> (***style: {conversation_style_str}***)\n\n"
+        ask = f">>> **{user_message}** - <@{str(interaction.user.id)}> (***style: {conversation_style_str}***)\n\n"
         response = f"{ask}{text}"
         
         # Discord limit about 2000 characters for a message
@@ -57,12 +59,11 @@ async def send_message(chatbot: Chatbot, interaction: discord.Interaction, user_
             response = response[2000:]
             await interaction.followup.send(temp)
             
-        suggest_responses = reply["suggestions"]              
+        suggest_responses = reply["suggestions"]         
         if link_embed:
             await interaction.followup.send(response, view=ButtonView(interaction, conversation_style_str, suggest_responses, users_chatbot, user_id), embed=link_embed, wait=True)
         else:
             await interaction.followup.send(response, view=ButtonView(interaction, conversation_style_str, suggest_responses, users_chatbot, user_id), wait=True)
 
     except Exception as e:
-            await interaction.followup.send(f">>> **Error: {e}**")
-            logger.error(f"Error while sending message: {e}")
+            await interaction.followup.send(f">>> **ERROR: {e}**")

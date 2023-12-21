@@ -44,9 +44,6 @@ class UserChatbot():
     
     def get_conversation_style(self) -> str:
         return self.conversation_style
-    
-    async def set_chatbot(self, cookies):
-        self.chatbot = Chatbot(cookie=cookies)
 
     async def send_message(self, interaction: discord.Interaction, message: str, image: str=None):
         async with self.sem_send_message:

@@ -31,7 +31,6 @@ async def send_message(chatbot: Chatbot, interaction: discord.Interaction, user_
             simplify_response=True,
             attachment={"image_url":f"{image}"}
         )
-        print(reply)
 
         # Get reply text
         text = f"{reply['text']}"

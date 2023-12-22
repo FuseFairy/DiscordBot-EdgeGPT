@@ -63,6 +63,7 @@ class EdgeGPT(Cog_Extension):
         user_id = interaction.user.id
         if user_id not in users_chatbot:
             await interaction.response.send_message("> **ERROE: Please use  `/chatbot setting`   to set yourself Bing chatbot first.**", ephemeral=True)
+            return
         # Check if an attachment is provided
         if image is  None or "image" in image.content_type:
             logger.info(f"{username}: {usermessage} ({channel}) [Style: {users_chatbot[user_id].get_conversation_style()}]")
@@ -74,23 +75,22 @@ class EdgeGPT(Cog_Extension):
     @switch_group.command(name="style", description="Switch conversation style")
     @app_commands.choices(style=[app_commands.Choice(name="Creative", value="creative"), app_commands.Choice(name="Balanced", value="balanced"), app_commands.Choice(name="Precise", value="precise")])
     async def switch_style(self, interaction: discord.Interaction, style: app_commands.Choice[str]):
-        await interaction.response.defer(ephemeral=True, thinking=True)
         users_chatbot = get_users_chatbot()
         user_id = interaction.user.id
         if user_id not in users_chatbot:
-            await interaction.followup.send("> **ERROR: Please use  ` /chatbot setting`   to set yourself Bing chatbot first.**")
+            await interaction.response.send_message("> **ERROE: Please use  `/chatbot setting`   to set yourself Bing chatbot first.**", ephemeral=True)
+            return
         users_chatbot[user_id].set_conversation_style(style.value)
-        await interaction.followup.send(f"> **INFO: successfull switch conversation style to {style.value}.**")
+        await interaction.response.send_message(f"> **INFO: successfull switch conversation style to {style.value}.**", ephemeral=True)
         
     # Create images.
-    @create_group.command(name="image", description="Generate image by Bing image creator")
+    @create_group.command(name="image", description="Generate image by Bing Image Creator")
     async def create_image(self, interaction: discord.Interaction, *, prompt: str):
         users_chatbot = get_users_chatbot()
         user_id = interaction.user.id
         if user_id not in users_chatbot:
-            await interaction.response.defer(ephemeral=True, thinking=True)
-            await interaction.followup.send("> **ERROR: Please use  ` /chatbot setting`   to set yourself Bing chatbot first.**")
-        await interaction.response.defer(ephemeral=False, thinking=True)
+            await interaction.response.send_message("> **ERROE: Please use  `/chatbot setting`   to set yourself Bing chatbot first.**", ephemeral=True)
+            return
         await users_chatbot[user_id].create_image(interaction, prompt)
     
     # Reset conversation
@@ -98,12 +98,12 @@ class EdgeGPT(Cog_Extension):
     async def reset_conversation(self, interaction: discord.Interaction):
         users_chatbot = get_users_chatbot()
         user_id = interaction.user.id
-        if user_id not in users_chatbot:
-            await interaction.response.defer(ephemeral=True, thinking=True)
-            await interaction.followup.send("> **ERROR: Please use  ` /chatbot_setting`   to set yourself Bing chatbot first.**")
         await interaction.response.defer(ephemeral=True, thinking=True)
+        if user_id not in users_chatbot:
+            await interaction.followup.send("> **ERROE: Please use  `/chatbot setting`   to set yourself Bing chatbot first.**")
+            return
         await users_chatbot[user_id].reset_conversation()
-        await interaction.followup.send(f"> **Info: Reset finish.**")
+        await interaction.followup.send("> **Info: Reset finish.**")
         
 async def setup(bot):
     await bot.add_cog(EdgeGPT(bot))

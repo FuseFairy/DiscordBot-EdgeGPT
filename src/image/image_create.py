@@ -8,6 +8,9 @@ logger = log.setup_logger(__name__)
 
 async def create_image(interaction: discord.Interaction, users_chatbot: dict, prompt: str, auth_cookie: str):
     try:
+        if not interaction.response.is_done():
+            await interaction.response.defer(thinking=True)
+
         embeds = []
         user_id = interaction.user.id
         username = interaction.user
@@ -22,7 +25,7 @@ async def create_image(interaction: discord.Interaction, users_chatbot: dict, pr
         
         # Add embed to list of embeds
         [embeds.append(discord.Embed(url="https://www.bing.com/").set_image(url=image_link)) for image_link in images]
-        await interaction.followup.send(prompts, embeds=embeds, view=ButtonView(interaction, prompt, users_chatbot, user_id), wait=True)
+        await interaction.followup.send(prompts, embeds=embeds, view=ButtonView(interaction, prompt, users_chatbot, user_id))
     except asyncio.TimeoutError:
         await interaction.followup.send("> **Error: Request timed out.**")
         logger.error("Error while create image: Request timed out.")

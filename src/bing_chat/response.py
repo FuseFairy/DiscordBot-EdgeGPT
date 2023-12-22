@@ -14,7 +14,7 @@ async def send_message(chatbot: Chatbot, interaction: discord.Interaction, user_
     all_url = []
     
     if not interaction.response.is_done():
-        await interaction.response.defer(ephemeral=False, thinking=True)
+        await interaction.response.defer(thinking=True)
 
     try:
         # Change conversation style
@@ -37,19 +37,16 @@ async def send_message(chatbot: Chatbot, interaction: discord.Interaction, user_
         text = re.sub(r'\[\^(\d+)\^\]', lambda match: '', text)
         
         # Get the URL, if available
-        try:
-            if reply['sources_link']:
-                urls = re.findall(r'\[(\d+)\. (.*?)\]\((https?://.*?)\)', reply["sources_link"])
-                for url in urls:
-                    all_url.append(f"{url[0]}. [{url[1]}]({url[2]})")
+        urls = re.findall(r'\[(\d+)\. (.*?)\]\((https?://.*?)\)', reply["sources_link"])
+        if len(urls) > 0:
+            for url in urls:
+                all_url.append(f"{url[0]}. [{url[1]}]({url[2]})")
             link_text = "\n".join(all_url)
             link_embed = discord.Embed(description=link_text)
-        except:
-            pass
         
         # Set the final message
         user_message = user_message.replace("\n", "")
-        ask = f">>> **{user_message}** - <@{str(interaction.user.id)}> (***style: {conversation_style_str}***)\n\n"
+        ask = f"> **{user_message}** - <@{str(interaction.user.id)}> (***style: {conversation_style_str}***)\n\n"
         response = f"{ask}{text}"
         
         # Discord limit about 2000 characters for a message
@@ -60,9 +57,9 @@ async def send_message(chatbot: Chatbot, interaction: discord.Interaction, user_
             
         suggest_responses = reply["suggestions"]         
         if link_embed:
-            await interaction.followup.send(response, view=ButtonView(interaction, conversation_style_str, suggest_responses, users_chatbot, user_id), embed=link_embed, wait=True)
+            await interaction.followup.send(response, view=ButtonView(interaction, conversation_style_str, suggest_responses, users_chatbot, user_id), embed=link_embed)
         else:
-            await interaction.followup.send(response, view=ButtonView(interaction, conversation_style_str, suggest_responses, users_chatbot, user_id), wait=True)
+            await interaction.followup.send(response, view=ButtonView(interaction, conversation_style_str, suggest_responses, users_chatbot, user_id))
 
     except Exception as e:
-            await interaction.followup.send(f">>> **ERROR: {e}**")
+        await interaction.followup.send(f"> **ERROR: {e}**")

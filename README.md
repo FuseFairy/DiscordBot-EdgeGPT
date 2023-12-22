@@ -1,11 +1,13 @@
 # DiscordBot-EdgeGPT
 > ## Using Microsoft's Bing Chat AI and Bing Image Creator on discord bot.
+![demo](https://i.imgur.com/Kc1aP9M.gif)
 
 ## Update
-> ### 2023/11/13: Use another bing api instead.
-> ### 2023/6/21: fix Redirect failed when using Creative style to create images.
-> ### 2023/6/1 : Users not need to set cookies also can use slash command.
-> ### 2023/5/21 : Anyone who wants to use slash command should set their cookies first.
+> ### 2023/12/22：Support uploading image while chatting.
+> ### 2023/11/13：Use another bing api instead.
+> ### 2023/6/21：fix Redirect failed when using Creative style to create images.
+> ### 2023/6/1：Users not need to set cookies also can use slash command.
+> ### 2023/5/21：Anyone who wants to use slash command should set their cookies first.
    
 ## Features
 
@@ -18,11 +20,11 @@
    
 > ### will create a separate chat for each user.
    
-* cookies setting(use personal Bing Cookies): `/bing setting [choice]`
-  ![setting](https://i.imgur.com/qLmFr52.png) 
+* cookies setting(can use personal Bing Cookies): `/bing setting [choice]`
+  ![setting](https://i.imgur.com/GMLQpCF.png)
   
    
-* bing: `/bing [message]`
+* bing: `/bing [message] [image]`
 
   ![edgegpt](https://i.imgur.com/cLPL156.png)
   
@@ -32,11 +34,11 @@
  
 * conversation style (default balanced): `/switch style [style]`
   
-  ![style.png](https://i.ibb.co/54KMWKH/2023-04-07-200312.png)
+  ![style.png](https://i.imgur.com/bs4tmZr.png)
 
-* reset: `/reset`
+* reset conversation: `/reset conversation`
 
-  ![reset](https://i.imgur.com/AG5qQ1F.png)
+  ![reset](https://i.imgur.com/7CyEFao.png)
 </details>
 
 <details>
@@ -55,11 +57,7 @@
 
 * Same as use `/bing`,
 
-  ![mention1](https://i.imgur.com/aC5ZM9y.png)
-  
-  after switching styles to creative, you can also generate images!
-  
-  ![mention2](https://i.imgur.com/3w0vYKt.png)
+  ![mention1](https://i.imgur.com/BDy0See.png)
 
 </details>
 
@@ -99,7 +97,7 @@ pip install -r requirements.txt
    MENTION_CHANNEL_ID=123456789
    ```
    
-2. Get Bing authentication.
+2. Create `cookies.json` file, and get Bing authentication.
    * Install the cookie editor extension for Chrome or Firefox.
    * Go to [bing.com](http://bing.com/chat)
    * Click "Export" on the bottom right.

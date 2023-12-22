@@ -134,15 +134,12 @@ async def send_message(interaction, user_message: str, image: str=None):
             text = re.sub(r'\[\^(\d+)\^\]', lambda match: '', text)
             
             # Get the URL, if available
-            try:
-                if reply['sources_link']:
-                    urls = re.findall(r'\[(\d+)\. (.*?)\]\((https?://.*?)\)', reply["sources_link"])
-                    for url in urls:
-                        all_url.append(f"{url[0]}. [{url[1]}]({url[2]})")
+            urls = re.findall(r'\[(\d+)\. (.*?)\]\((https?://.*?)\)', reply["sources_link"])
+            if len(urls) > 0:
+                for url in urls:
+                    all_url.append(f"{url[0]}. [{url[1]}]({url[2]})")
                 link_text = "\n".join(all_url)
                 link_embed = discord.Embed(description=link_text)
-            except:
-                pass
             
             # Set the final message
             user_message = user_message.replace("\n", "")

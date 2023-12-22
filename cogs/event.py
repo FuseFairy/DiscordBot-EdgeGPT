@@ -142,12 +142,7 @@ async def send_message(interaction, user_message: str, image: str=None):
                 link_embed = discord.Embed(description=link_text)
             
             # Set the final message
-            user_message = user_message.replace("\n", "")
-            if isinstance(interaction, discord.Interaction):
-                ask = f"> **{user_message}** - <@{str(interaction.user.id)}> (***style: {conversation_style_str}***)\n\n"
-            elif isinstance(interaction, discord.message.Message):
-                ask = f"> **{user_message}**\t(***style: {conversation_style_str}***)\n\n"
-            response = f"{ask}{text}"
+            response = f"{text} (***style: {conversation_style_str}***)"
             
             # Discord limit about 2000 characters for a message
             while len(response) > 2000:

@@ -9,7 +9,9 @@ from cogs.event import set_chatbot
 
 load_dotenv()
 
-bot = commands.Bot(command_prefix='!', intents = discord.Intents.all())
+intents = discord.Intents.default()
+intents.message_content = True
+bot = commands.Bot(command_prefix='!', intents = intents)
 
 # init loggger
 logger = src.log.setup_logger(__name__)

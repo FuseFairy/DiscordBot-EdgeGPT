@@ -49,7 +49,7 @@ class EdgeGPT(Cog_Extension):
             if user_id in users_chatbot:
                 del_users_chatbot(user_id)
                 await interaction.followup.send("> **INFO: Delete your Bing chatbot completely.**")
-                logger.info(f"Delete {interaction.user} Cookies.")
+                logger.info(f"Delete {interaction.user} chatbot.")
             else:
                 await interaction.followup.send("> **ERROR: You don't have any Bing chatbot yet.**")
 
@@ -62,11 +62,12 @@ class EdgeGPT(Cog_Extension):
         channel = interaction.channel
         user_id = interaction.user.id
         if user_id not in users_chatbot:
-            await interaction.response.send_message("> **ERROE: Please use  `/chatbot setting`   to set yourself Bing chatbot first.**", ephemeral=True)
-            return
+            await set_chatbot(user_id)
+            logger.info(f"{interaction.user} set Bing chatbot successful. (using bot owner cookies)")
         # Check if an attachment is provided
         if image is  None or "image" in image.content_type:
             logger.info(f"{username}: {usermessage} ({channel}) [Style: {users_chatbot[user_id].get_conversation_style()}]")
+            # await interaction.channel.create_thread
             await users_chatbot[user_id].send_message(interaction, usermessage, image)
         else:
             await interaction.response.send_message("> **ERROE: This file format is not supported.**", ephemeral=True)
@@ -78,8 +79,7 @@ class EdgeGPT(Cog_Extension):
         users_chatbot = get_users_chatbot()
         user_id = interaction.user.id
         if user_id not in users_chatbot:
-            await interaction.response.send_message("> **ERROE: Please use  `/chatbot setting`   to set yourself Bing chatbot first.**", ephemeral=True)
-            return
+            await set_chatbot(user_id)
         users_chatbot[user_id].set_conversation_style(style.value)
         await interaction.response.send_message(f"> **INFO: successfull switch conversation style to {style.value}.**", ephemeral=True)
         
@@ -89,8 +89,8 @@ class EdgeGPT(Cog_Extension):
         users_chatbot = get_users_chatbot()
         user_id = interaction.user.id
         if user_id not in users_chatbot:
-            await interaction.response.send_message("> **ERROE: Please use  `/chatbot setting`   to set yourself Bing chatbot first.**", ephemeral=True)
-            return
+            await set_chatbot(user_id)
+            logger.info(f"{interaction.user} set Bing chatbot successful. (using bot owner cookies)")
         await users_chatbot[user_id].create_image(interaction, prompt)
     
     # Reset conversation
@@ -100,8 +100,8 @@ class EdgeGPT(Cog_Extension):
         user_id = interaction.user.id
         await interaction.response.defer(ephemeral=True, thinking=True)
         if user_id not in users_chatbot:
-            await interaction.followup.send("> **ERROE: Please use  `/chatbot setting`   to set yourself Bing chatbot first.**")
-            return
+            await set_chatbot(user_id)
+            logger.info(f"{interaction.user} set Bing chatbot successful. (using bot owner cookies)")
         await users_chatbot[user_id].reset_conversation()
         await interaction.followup.send("> **Info: Reset finish.**")
         

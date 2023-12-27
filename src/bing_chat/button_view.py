@@ -20,10 +20,6 @@ class ButtonView(discord.ui.View):
                     await interaction.followup.send("You don't have permission to press this button.")
                 else:
                     await interaction.response.defer(ephemeral=False, thinking=True)
-                    # When click the button, all buttons will disable.
-                    for child in self.children:
-                        child.disabled = True
-                    await interaction.followup.edit_message(message_id=interaction.message.id, view=self)
                     username = str(interaction.user)
                     usermessage = button.label
                     channel = str(interaction.channel)

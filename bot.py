@@ -1,11 +1,12 @@
 import discord
 import os
-import src.log
+# import src.log
 import pkg_resources
 import json
 from discord.ext import commands
 from dotenv import load_dotenv
 from cogs.event import set_chatbot
+from src.log import setup_logger
 
 load_dotenv()
 
@@ -14,7 +15,7 @@ intents.message_content = True
 bot = commands.Bot(command_prefix='!', intents = intents)
 
 # init loggger
-logger = src.log.setup_logger(__name__)
+logger = setup_logger(__name__)
 
 def check_version():
     required = [line.strip() for line in open('requirements.txt')]

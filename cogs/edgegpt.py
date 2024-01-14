@@ -37,7 +37,7 @@ class EdgeGPT(Cog_Extension):
                         await interaction.followup.send("> **INFO: Chatbot set successful!**")
                         logger.info(f"{interaction.user} set Bing Chatbot successful")
                     else:
-                        await interaction.followup.send("> **ERROR: Support json format only.**")
+                        await interaction.followup.send("> **ERROR：Support json format only.**")
                 else:
                     await set_chatbot(user_id)
                     await interaction.followup.send("> **INFO: Chatbot set successful! (using bot owner cookies)**")
@@ -64,11 +64,17 @@ class EdgeGPT(Cog_Extension):
         if user_id not in users_chatbot:
             await set_chatbot(user_id)
             logger.info(f"{interaction.user} set Bing chatbot successful. (using bot owner cookies)")
-        # Check if an attachment is provided
+        # Check if an attachment is provided and send message
         if image is  None or "image" in image.content_type:
-            logger.info(f"{username}: {usermessage} ({channel}) [Style: {users_chatbot[user_id].get_conversation_style()}]")
-            # await interaction.channel.create_thread
-            await users_chatbot[user_id].send_message(interaction, usermessage, image)
+            logger.info(f"{username}：{usermessage} ({channel}) [Style: {users_chatbot[user_id].get_conversation_style()}]")
+            thread = users_chatbot[user_id].get_thread()
+            if thread:
+                await users_chatbot[user_id].reset_conversation()
+                await thread.delete()
+            thread = await interaction.channel.create_thread(name=f"{interaction.user.name} chatroom", type=discord.ChannelType.public_thread)
+            users_chatbot[user_id].set_thread(thread)
+            await interaction.response.send_message(f"here is your thread {thread.jump_url}")
+            await users_chatbot[user_id].send_message(usermessage, image, interaction)
         else:
             await interaction.response.send_message("> **ERROE: This file format is not supported.**", ephemeral=True)
         
@@ -102,8 +108,11 @@ class EdgeGPT(Cog_Extension):
         if user_id not in users_chatbot:
             await set_chatbot(user_id)
             logger.info(f"{interaction.user} set Bing chatbot successful. (using bot owner cookies)")
-        await users_chatbot[user_id].reset_conversation()
-        await interaction.followup.send("> **Info: Reset finish.**")
+        try:
+            await users_chatbot[user_id].reset_conversation()
+            await interaction.followup.send("> **Info: Reset finish.**")
+        except Exception as e:
+            await interaction.followup.send(f">>> **ERROR: {e}**")
         
 async def setup(bot):
     await bot.add_cog(EdgeGPT(bot))

@@ -59,7 +59,8 @@ class UserChatbot():
                     if interaction.type == discord.InteractionType.component or self.thread == None:
                         await send_message(self.chatbot, message, image, self.conversation_style, users_chatbot, self.user_id, interaction=interaction)
                 else:
-                    await send_message(self.chatbot, message, image, self.conversation_style, users_chatbot, self.user_id, thread=self.thread)
+                    async with self.thread.typing():
+                        await send_message(self.chatbot, message, image, self.conversation_style, users_chatbot, self.user_id, thread=self.thread)
         else:
             if interaction:
                 if not interaction.response.is_done():

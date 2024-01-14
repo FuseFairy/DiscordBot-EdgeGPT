@@ -56,6 +56,9 @@ class EdgeGPT(Cog_Extension):
     # Chat with Bing.
     @app_commands.command(name="bing", description="Have a chat with Bing")
     async def bing(self, interaction: discord.Interaction, image: Optional[discord.Attachment]=None, *, message: str):
+        if isinstance(interaction.channel, discord.Thread):
+            await interaction.response.send_message("This command is disabled in thread.", ephemeral=True)
+            return
         users_chatbot = get_users_chatbot()
         username = interaction.user
         usermessage = message
@@ -66,7 +69,7 @@ class EdgeGPT(Cog_Extension):
             logger.info(f"{interaction.user} set Bing chatbot successful. (using bot owner cookies)")
         # Check if an attachment is provided and send message
         if image is  None or "image" in image.content_type:
-            logger.info(f"{username}：{usermessage} ({channel}) [Style: {users_chatbot[user_id].get_conversation_style()}]")
+            logger.info(f"\x1b[31m{username}\x1b[0m ： '{usermessage}'　({channel}) [Style: {users_chatbot[user_id].get_conversation_style()}]")
             thread = users_chatbot[user_id].get_thread()
             if thread:
                 await users_chatbot[user_id].reset_conversation()

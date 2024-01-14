@@ -35,6 +35,7 @@ class UserChatbot():
         self.sem_send_message = Semaphore(1)
         self.sem_create_image = Semaphore(1)
         self.chatbot = Chatbot(cookies=cookies)
+        self.thread = None
         self.conversation_style = "balanced"
         self.auth_cookie = auth_cookie
         self.user_id = user_id
@@ -44,15 +45,28 @@ class UserChatbot():
     
     def get_conversation_style(self) -> str:
         return self.conversation_style
+    
+    def set_thread(self, thread: discord.threads.Thread):
+        self.thread = thread
+    
+    def get_thread(self) -> discord.threads.Thread:
+        return self.thread
 
-    async def send_message(self, interaction: discord.Interaction, message: str, image: str=None):
+    async def send_message(self, message: str, interaction: discord.Interaction=None, image: str=None):
         if not self.sem_send_message.locked():
             async with self.sem_send_message:
-                await send_message(self.chatbot, interaction, message, image, self.conversation_style, users_chatbot, self.user_id)
+                if interaction:
+                    if interaction.type == discord.InteractionType.component or self.thread == None:
+                        await send_message(self.chatbot, message, image, self.conversation_style, users_chatbot, self.user_id, interaction=interaction)
+                else:
+                    await send_message(self.chatbot, message, image, self.conversation_style, users_chatbot, self.user_id, thread=self.thread)
         else:
-            if not interaction.response.is_done():
-                await interaction.response.defer(thinking=True)
-            await interaction.followup.send("> **ERROE: Please wait for the previous command to complete.**")
+            if interaction:
+                if not interaction.response.is_done():
+                    await interaction.response.defer(thinking=True)
+                await interaction.followup.send("> **ERROE: Please wait for the previous command to complete.**")
+            else:
+                await self.thread.send("> **ERROE: Please wait for the previous command to complete.**")
 
     async def create_image(self, interaction: discord.Interaction, prompt: str):
         if not self.sem_create_image.locked():

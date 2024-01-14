@@ -18,7 +18,7 @@ class ButtonView(discord.ui.View):
                 username = str(interaction.user)
                 usermessage = button.label
                 channel = str(interaction.channel)
-                logger.info(f"\x1b[31m{username}\x1b[0m : '{usermessage}' ({channel}) [Style: {conversation_style_str}] [button]")
+                logger.info(f"\x1b[31m{username}\x1b[0m ： '{usermessage}' ({channel}) [Style: {conversation_style_str}] [button]")
                 await users_chatbot[user_id].send_message(message=usermessage, interaction=interaction)
             self.add_item(button)
             self.children[-1].callback = partial(callback, button=button)

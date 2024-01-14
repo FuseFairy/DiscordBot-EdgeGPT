@@ -16,8 +16,6 @@ async def send_message(chatbot: Chatbot, user_message: str, image: str, conversa
     if interaction:
         if not interaction.response.is_done():
             await interaction.response.defer(thinking=True)
-    else:
-        await thread.typing()
 
     try:
         # Change conversation style
@@ -32,7 +30,7 @@ async def send_message(chatbot: Chatbot, user_message: str, image: str, conversa
             prompt=user_message,
             conversation_style=conversation_style,
             simplify_response=True,
-            attachment={"image_url":f"{image}"}
+            attachment={"image_url":f"{image}"}  
         )
 
         # Get reply text
@@ -71,4 +69,7 @@ async def send_message(chatbot: Chatbot, user_message: str, image: str, conversa
                 await thread.send(content=response, view=ButtonView(conversation_style_str, suggest_responses, users_chatbot, user_id))
 
     except Exception as e:
-        await interaction.followup.send(f"> **ERROR: {e}**")
+        if interaction:
+            await interaction.followup.send(f"> **ERROR: {e}**")
+        else:
+            await thread.send(f"> **ERROR: {e}**")

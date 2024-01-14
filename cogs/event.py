@@ -111,8 +111,6 @@ async def send_message(interaction, user_message: str, image: str=None):
 
         if isinstance(interaction, discord.Interaction) and not interaction.response.is_done():
             await interaction.response.defer(ephemeral=False, thinking=True)
-        elif isinstance(interaction, discord.message.Message):
-            await interaction.channel.typing()
 
         try:
             # Change conversation style
@@ -187,13 +185,15 @@ class Event(Cog_Extension):
                     if message.attachments:
                         for attachment in message.attachments:
                             if "image" in attachment.content_type:
-                                logger.info(f"{username}：{content} ({channel}) [Style: {conversation_style_str}]")
-                                await send_message(message, content, attachment.url)
+                                logger.info(f"\x1b[31m{username}\x1b[0m ： '{content}' ({channel}) [Style: {conversation_style_str}]")
+                                async with message.channel.typing():
+                                    await send_message(message, content, attachment.url)
                             else:
                                 await message.channel.send("> **ERROE: This file format is not supported.**")
                     else:
-                        logger.info(f"{username}：{content} ({channel}) [Style: {conversation_style_str}]")
-                        await send_message(message, content)
+                        logger.info(f"\x1b[31m{username}\x1b[0m ： '{content}' ({channel}) [Style: {conversation_style_str}]")
+                        async with message.channel.typing():
+                            await send_message(message, content)
                 else:
                     await message.channel.send(view=DropdownView())
             elif MENTION_CHANNEL_ID is not None:
@@ -209,11 +209,11 @@ class Event(Cog_Extension):
 
                     if user_thread != None and user_thread.id == message.channel.id:
                         content = message.content
-                        logger.info(f"{username}：{content} ({channel}) [Style: {users_chatbot[user_id].get_conversation_style()}]")
+                        logger.info(f"\x1b[31m{username}\x1b[0m ： '{content}' ({channel}) [Style: {users_chatbot[user_id].get_conversation_style()}]")
                         if message.attachments:
                             for attachment in message.attachments:
                                 if "image" in attachment.content_type:
-                                    logger.info(f"\x1b[31m{username}\x1b[0m : '{content}' ({channel}) [Style: {conversation_style_str}]")
+                                    logger.info(f"\x1b[31m{username}\x1b[0m ： '{content}' ({channel}) [Style: {users_chatbot[user_id].get_conversation_style()}]")
                                     await users_chatbot[user_id].send_message(message=content, image=attachment.url)
                                 else:
                                     await message.channel.send("> **ERROE: This file format is not supported.**")

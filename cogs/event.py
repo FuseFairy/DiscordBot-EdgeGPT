@@ -213,7 +213,6 @@ class Event(Cog_Extension):
                         if message.attachments:
                             for attachment in message.attachments:
                                 if "image" in attachment.content_type:
-                                    logger.info(f"\x1b[31m{username}\x1b[0m ： '{content}' ({channel}) [Style: {users_chatbot[user_id].get_conversation_style()}]")
                                     await users_chatbot[user_id].send_message(message=content, image=attachment.url)
                                 else:
                                     await message.channel.send("> **ERROE: This file format is not supported.**")

@@ -1,3 +1,3 @@
 discord.py==2.3.2
 python-dotenv==0.20.0
-re-edge-gpt==0.0.20
+re-edge-gpt==0.0.24

@@ -9,11 +9,14 @@ class ButtonView(discord.ui.View):
         self.user_id = user_id
 
         for i, image in enumerate(images, start=1):
-            self.add_item(discord.ui.Button(label=f"Link {i}", url=image))
+            if i > 2:
+                self.add_item(discord.ui.Button(label=f"Link {i}", url=image, row=2))
+            else:
+                self.add_item(discord.ui.Button(label=f"Link {i}", url=image, row=1))
             
 
     # Button event
-    @discord.ui.button(label="Regenerate", emoji="🔂", row=2, style=discord.ButtonStyle.blurple)
+    @discord.ui.button(label="Regenerate", emoji="🔂", row=3, style=discord.ButtonStyle.blurple)
     async def callback(self,interaction: discord.Interaction, button: discord.ui.Button):
         if  interaction.user.id != self.button_author:
             await interaction.response.defer(ephemeral=True, thinking=True)

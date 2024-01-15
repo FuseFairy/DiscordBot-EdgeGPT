@@ -1,13 +1,11 @@
 # DiscordBot-EdgeGPT
 > ## Using Microsoft's Bing Chat AI and Bing Image Creator on discord bot.
-![demo](https://i.imgur.com/Kc1aP9M.gif)
+![demo](https://i.imgur.com/rMJ6LvR.gif)
 
 ## Update
+> ### 2024/1/15：Can create thread to chat with Copilot.
 > ### 2023/12/22：Support uploading image while chatting.
 > ### 2023/11/13：Use another bing api instead.
-> ### 2023/6/21：fix Redirect failed when using Creative style to create images.
-> ### 2023/6/1：Users not need to set cookies also can use slash command.
-> ### 2023/5/21：Anyone who wants to use slash command should set their cookies first.
    
 ## Features
 
@@ -30,7 +28,7 @@
   
 * bing image creator: `/create image [prompt]`
   
-  ![bingimage.png](https://i.imgur.com/xxIAR09.png)
+  ![bingimage.png](https://i.imgur.com/pSCI1bg.png)
  
 * conversation style (default balanced): `/switch style [style]`
   

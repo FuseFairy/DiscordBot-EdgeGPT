@@ -73,7 +73,10 @@ class EdgeGPT(Cog_Extension):
             thread = users_chatbot[user_id].get_thread()
             if thread:
                 await users_chatbot[user_id].reset_conversation()
-                await thread.delete()
+                try:
+                    await thread.delete()
+                except:
+                    pass
             thread = await interaction.channel.create_thread(name=f"{interaction.user.name} chatroom", type=discord.ChannelType.public_thread)
             users_chatbot[user_id].set_thread(thread)
             await interaction.response.send_message(f"here is your thread {thread.jump_url}")

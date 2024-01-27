@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 from discord.ext import commands
 from core.classes import Cog_Extension
 from functools import partial
-from src import log
+from src.log import setup_logger
 from src.user_chatbot import get_users_chatbot
 
 load_dotenv()
@@ -18,7 +18,7 @@ try:
     MENTION_CHANNEL_ID = int(os.getenv("MENTION_CHANNEL_ID"))
 except:
     MENTION_CHANNEL_ID = None
-logger = log.setup_logger(__name__)
+logger = setup_logger(__name__)
 sem = asyncio.Semaphore(1)
 conversation_style_str = "balanced"
 
@@ -169,7 +169,7 @@ async def send_message(interaction, user_message: str, image: str=None):
                     await interaction.followup.send(f">>> **Error: {e}**")
                 elif isinstance(interaction, discord.message.Message):
                     await interaction.channel.send(f">>> **Error: {e}**")
-                logger.error(f"Error while sending message: {e}")
+                logger.error(f"Error: {e}")
 
 class Event(Cog_Extension):
     @commands.Cog.listener()
@@ -219,9 +219,9 @@ class Event(Cog_Extension):
                         else:
                             await users_chatbot[user_id].send_message(message=content)
             except Exception as e:
-                print(e)   
+                await message.channel.send(f"> **ERROR: {e}**")
+                logger.error(f"Error: {e}")   
                     
                         
-
 async def setup(bot):
     await bot.add_cog(Event(bot))

@@ -1,8 +1,8 @@
 import discord
-from src import log
+from ..log import setup_logger
 from functools import partial
 
-logger = log.setup_logger(__name__)
+logger = setup_logger(__name__)
 
 # To add suggest responses
 class ButtonView(discord.ui.View):

@@ -31,7 +31,8 @@ class EdgeGPT(Cog_Extension):
         if choice.value == "set":
             try:
                 if cookies_file is not None:
-                    if "json" in cookies_file.content_type:
+                    print(cookies_file.content_type)
+                    if "json" in cookies_file.content_type or "text" in cookies_file.content_type:
                         cookies = json.loads(await cookies_file.read())
                         await set_chatbot(user_id, cookies)
                         await interaction.followup.send("> **INFO: Chatbot set successful!**")

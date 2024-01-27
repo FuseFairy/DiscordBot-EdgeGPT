@@ -3,6 +3,7 @@
 ![demo](https://i.imgur.com/rMJ6LvR.gif)
 
 ## Update
+> ### 2024/1/27：Add jail break version, but image uploads are currently not supported.
 > ### 2024/1/15：Can create thread to chat with Copilot.
 > ### 2023/12/22：Support uploading image while chatting.
 > ### 2023/11/13：Use another bing api instead.
@@ -18,13 +19,13 @@
    
 > ### will create a separate chat for each user.
    
-* cookies setting(can use personal Bing Cookies): `/bing setting [choice]`
-  ![setting](https://i.imgur.com/GMLQpCF.png)
+* cookies setting(can use personal Bing Cookies): `/cookies setting [choice]`
+  ![setting](https://i.imgur.com/Yw72XtV.png)
   
    
-* bing: `/bing [message] [image]`
+* copilot: `/copillot [version] [message] [image]`
 
-  ![edgegpt](https://i.imgur.com/cLPL156.png)
+  ![copilot](https://i.imgur.com/dKQfks9.png)
   
 * bing image creator: `/create image [prompt]`
   
@@ -106,7 +107,9 @@ pip install -r requirements.txt
    -> Recommended Free Servers: [fly.io](https://fly.io/)
 
 ## Credits
-* ReEdgeGPT - [https://github.com/Integration-Automation/ReEdgeGPT](https://github.com/Integration-Automation/ReEdgeGPT)
+* ReEdgeGPT - https://github.com/Integration-Automation/ReEdgeGPT
+
+* Sydney  - https://github.com/juzeon/SydneyQt/tree/v1
 
 ## Contributors
 

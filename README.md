@@ -4,7 +4,7 @@
 ![demo](https://i.imgur.com/rMJ6LvR.gif)
 
 ## Update
-> ### 2024/1/27：Add jail break version, but image uploads are currently not supported, and python verion need 3.11+.
+> ### 2024/1/27：Add jail break version, but image uploads are currently not supported, and python version need 3.11+.
 > ### 2024/1/15：Can create thread to chat with Copilot.
 > ### 2023/12/22：Support uploading image while chatting.
 > ### 2023/11/13：Use another bing api instead.

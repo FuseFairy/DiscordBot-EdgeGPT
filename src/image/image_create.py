@@ -4,17 +4,16 @@ import requests
 from PIL import Image
 from io import BytesIO
 from re_edge_gpt import ImageGenAsync
-from src import log
+from src.log import setup_logger
 from src.image.button_view import ButtonView
 
-logger = log.setup_logger(__name__)
+logger = setup_logger(__name__)
 
 async def create_image(interaction: discord.Interaction, users_chatbot: dict, prompt: str, auth_cookie: str):
     try:
         if not interaction.response.is_done():
             await interaction.response.defer(thinking=True)
 
-        embeds = []
         user_id = interaction.user.id
         username = interaction.user
         channel = interaction.channel
@@ -31,8 +30,6 @@ async def create_image(interaction: discord.Interaction, users_chatbot: dict, pr
         new_image.save(image_data, format='PNG')
         image_data.seek(0)
             
-        # Add embed to list of embeds
-        # [embeds.append(discord.Embed(url="https://www.bing.com/").set_image(url=image_link)) for image_link in images]
         await interaction.followup.send(prompts, file=discord.File(fp=image_data, filename='new_image.png'), view=ButtonView(interaction, prompt, images, users_chatbot, user_id))
     except asyncio.TimeoutError:
         await interaction.followup.send("> **Error: Request timed out.**")

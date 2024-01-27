@@ -3,22 +3,22 @@ import json
 from typing import Optional
 from discord import app_commands
 from core.classes import Cog_Extension
-from src import log
+from src.log import setup_logger
 from src.user_chatbot import set_chatbot, get_users_chatbot, del_users_chatbot
 
-logger = log.setup_logger(__name__)
+logger = setup_logger(__name__)
 
 class EdgeGPT(Cog_Extension):
-    chatbot_group = app_commands.Group(name="chatbot", description="Bing setting.")
+    copilot_group = app_commands.Group(name="cookies", description="copilot setting.")
     switch_group = app_commands.Group(name="switch", description="Switch conversation style.")
     create_group = app_commands.Group(name="create", description="Create images.")
     reset_group = app_commands.Group(name="reset", description="Reset conversation.")
 
     # Set or delete Bing chatbot.
-    @chatbot_group.command(name="setting", description="Set or delete bing chatbot.")
+    @copilot_group.command(name="setting", description="Set or delete copilot cookies.")
     @app_commands.choices(choice=[app_commands.Choice(name="set", value="set"), app_commands.Choice(name="delete", value="delete")])
     async def cookies_setting(self, interaction: discord.Interaction, choice: app_commands.Choice[str], cookies_file: Optional[discord.Attachment]=None):
-        """Set or delete Bing chatbot.
+        """Set or delete copilot cookies.
             
             Parameters
             -----------
@@ -54,8 +54,9 @@ class EdgeGPT(Cog_Extension):
                 await interaction.followup.send("> **ERROR: You don't have any Bing chatbot yet.**")
 
     # Chat with Bing.
-    @app_commands.command(name="bing", description="Have a chat with Bing")
-    async def bing(self, interaction: discord.Interaction, image: Optional[discord.Attachment]=None, *, message: str):
+    @app_commands.command(name="copilot", description="Create own thread")
+    @app_commands.choices(version=[app_commands.Choice(name="default", value="default"), app_commands.Choice(name="jail_break", value="jailbreak")])
+    async def bing(self, interaction: discord.Interaction, version: app_commands.Choice[str], image: Optional[discord.Attachment]=None, *, message: str):
         if isinstance(interaction.channel, discord.Thread):
             await interaction.response.send_message("This command is disabled in thread.", ephemeral=True)
             return
@@ -67,6 +68,12 @@ class EdgeGPT(Cog_Extension):
         if user_id not in users_chatbot:
             await set_chatbot(user_id)
             logger.info(f"{interaction.user} set Bing chatbot successful. (using bot owner cookies)")
+        
+        if version.value == "default":
+            await users_chatbot[user_id].initialize_chatbot(False)
+        else:
+            await users_chatbot[user_id].initialize_chatbot(True)
+
         # Check if an attachment is provided and send message
         if image is  None or "image" in image.content_type:
             logger.info(f"\x1b[31m{username}\x1b[0m ： '{usermessage}'　({channel}) [Style: {users_chatbot[user_id].get_conversation_style()}]")

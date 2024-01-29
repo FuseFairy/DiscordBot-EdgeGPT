@@ -88,7 +88,7 @@ class EdgeGPT(Cog_Extension):
             thread = await interaction.channel.create_thread(name=f"{interaction.user.name} chatroom", type=discord.ChannelType.public_thread)
             users_chatbot[user_id].set_thread(thread)
             await interaction.response.send_message(f"here is your thread {thread.jump_url}")
-            await users_chatbot[user_id].send_message(usermessage, image, interaction)
+            await users_chatbot[user_id].send_message(message=usermessage, image=image)
         else:
             await interaction.response.send_message("> **ERROE: This file format is not supported.**", ephemeral=True)
         

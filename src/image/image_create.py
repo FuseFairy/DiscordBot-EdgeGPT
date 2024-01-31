@@ -42,11 +42,11 @@ async def concatenate_images(image_urls):
     images = [Image.open(BytesIO(requests.get(url).content)) for url in image_urls]
 
     if len(images) == 3 or len(images) == 4:
-        new_image = Image.new('RGB', (1024*2, 1024*2))
+        new_image = Image.new('RGBA', (1024*2, 1024*2), (0, 0, 0, 0))
     elif len(images) == 2:
-        new_image = Image.new('RGB', (1024*2, 1024*1))
+        new_image = Image.new('RGBA', (1024*2, 1024*1), (0, 0, 0, 0))
     else:
-        new_image = Image.new('RGB', (1024*1, 1024*1))
+        new_image = Image.new('RGBA', (1024*1, 1024*1), (0, 0, 0, 0))
 
     y_offset = 0
     x_offset = 0

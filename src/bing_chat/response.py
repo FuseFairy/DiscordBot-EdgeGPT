@@ -71,9 +71,10 @@ async def send_message(chatbot, user_message: str, image: str, conversation_styl
             suggest_responses = reply["suggestions"]
             text = f"{reply['text']}"
             urls = re.findall(r'\[(\d+)\. (.*?)\]\((https?://.*?)\)', reply["sources_link"])
-        
+
         text = re.sub(r'\[\^(\d+)\^\]',  '', text)
-        text = re.sub(r'\[.*?\]\(.*?\)', '', text)
+        text = re.sub(r':\s*\[[^\]]*\]\([^\)]*\)', '', text)
+        text = re.sub(r'<[^>]*>', '', text)
         
         # Make URL Embed, if available
         if len(urls) > 0:

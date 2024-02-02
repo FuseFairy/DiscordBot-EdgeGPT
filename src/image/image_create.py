@@ -1,11 +1,15 @@
 import discord
 import asyncio
 import requests
+import os
 from PIL import Image
 from io import BytesIO
 from re_edge_gpt import ImageGenAsync
 from src.log import setup_logger
 from src.image.button_view import ButtonView
+from dotenv import load_dotenv
+
+load_dotenv()
 
 logger = setup_logger(__name__)
 
@@ -17,13 +21,12 @@ async def create_image(interaction: discord.Interaction, users_chatbot: dict, pr
         user_id = interaction.user.id
         username = interaction.user
         channel = interaction.channel
-        prompts = f"> **{prompt}** - <@{str(interaction.user.id)}> (***BingImageCreator***)\n\n"
+        prompts = f"> **{prompt}** - <@{str(user_id)}> (***BingImageCreator***)\n\n"
         
-        logger.info(f"\x1b[31m{username}\x1b[0m ： '{prompt}' ({channel}) [BingImageCreator]")
+        logger.info(f"\x1b[31m{username}\x1b[0m：'{prompt}' ({channel}) [BingImageCreator]")
 
-        # Fetches image links 
         async_gen = ImageGenAsync(auth_cookie=auth_cookie, quiet=True)
-        images = await async_gen.get_images(prompt=prompt, timeout=300)
+        images = await async_gen.get_images(prompt=prompt, timeout=int(os.getenv("IMAGE_TIMEOUT")), max_generate_time_sec=int(os.getenv("IMAGE_MAX_CREATE_SEC")))
         images = [file for file in images if not file.endswith('.svg')]
         new_image = await concatenate_images(images)
         image_data = BytesIO()
@@ -32,11 +35,11 @@ async def create_image(interaction: discord.Interaction, users_chatbot: dict, pr
             
         await interaction.followup.send(prompts, file=discord.File(fp=image_data, filename='new_image.png'), view=ButtonView(interaction, prompt, images, users_chatbot, user_id))
     except asyncio.TimeoutError:
-        await interaction.followup.send("> **Error: Request timed out.**")
-        logger.error("Error while create image: Request timed out.")
+        await interaction.followup.send("> **Error：Request timed out.**")
+        logger.error("Error while create image：Request timed out.")
     except Exception as e:
-        await interaction.followup.send(f"> **Error: {e}**")
-        logger.error(f"Error while create image: {e}")
+        await interaction.followup.send(f"> **Error：{e}**")
+        logger.error(f"Error while create image：{e}")
 
 async def concatenate_images(image_urls):
     images = [Image.open(BytesIO(requests.get(url).content)) for url in image_urls]

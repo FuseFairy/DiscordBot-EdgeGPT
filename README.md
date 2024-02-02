@@ -93,7 +93,9 @@ pip install -r requirements.txt
 ## Usage
 1. Rename the file`.env.dev`to`.env`, then open it and edit it.
    ```env
-   DISCORD_BOT_TOKEN="input your Dicord bot token"
+   # input your Discord bot token
+   DISCORD_BOT_TOKEN=
+   
    IMAGE_TIMEOUT=300
    IMAGE_MAX_CREATE_SEC=300
 

@@ -1,5 +1,5 @@
 # DiscordBot-EdgeGPT
-## Using Microsoft's Bing Chat AI and Bing Image Creator on discord bot.
+## Using Copilot and Bing Image Creator on discord bot.
 
 ![demo](https://i.imgur.com/mvg18xh.gif)
 
@@ -54,9 +54,6 @@
 
   ![dropdown1](https://i.imgur.com/XDcnTuC.png)
   ![dropdown2](https://i.imgur.com/azHIUqv.png)
-
-* Same as use `/bing`,
-
   ![mention1](https://i.imgur.com/BDy0See.png)
 
 </details>

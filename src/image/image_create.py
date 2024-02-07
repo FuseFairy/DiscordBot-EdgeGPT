@@ -37,6 +37,9 @@ async def create_image(interaction: discord.Interaction, users_chatbot: dict, pr
     except asyncio.TimeoutError:
         await interaction.followup.send("> **Error：Request timed out.**")
         logger.error("Error while create image：Request timed out.")
+    except TypeError:
+        await interaction.followup.send("> **Error：No images returned.**")
+        logger.error("Error while create image：No images returned.")
     except Exception as e:
         await interaction.followup.send(f"> **Error：{e}**")
         logger.error(f"Error while create image：{e}")

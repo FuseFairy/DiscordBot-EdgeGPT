@@ -194,6 +194,10 @@ class Event(Cog_Extension):
                 if isinstance(message.channel, discord.Thread):
                     users_chatbot = get_users_chatbot()
                     user_id = message.author.id
+                    
+                    if user_id not in users_chatbot:
+                        return
+                    
                     user_thread = users_chatbot[user_id].get_thread()
                     username = str(message.author)
                     channel = str(message.channel)

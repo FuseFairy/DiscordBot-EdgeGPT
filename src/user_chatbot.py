@@ -112,9 +112,9 @@ class UserChatbot():
             if interaction:
                 if not interaction.response.is_done():
                     await interaction.response.defer(thinking=True)
-                await interaction.followup.send("> **ERROE：Please wait for the previous command to complete.**")
+                await interaction.followup.send("> **ERROR：Please wait for the previous command to complete.**")
             else:
-                await self.thread.send("> **ERROE：Please wait for the previous command to complete.**")
+                await self.thread.send("> **ERROR：Please wait for the previous command to complete.**")
 
     async def create_image(self, interaction: discord.Interaction, prompt: str):
         if not self.sem_create_image.locked():
@@ -128,7 +128,7 @@ class UserChatbot():
         else:
             if not interaction.response.is_done():
                 await interaction.response.defer(thinking=True)
-            await interaction.followup.send("> **ERROE：Please wait for the previous command to complete.**")
+            await interaction.followup.send("> **ERROR：Please wait for the previous command to complete.**")
     
     async def reset_conversation(self):
         if self.jailbreak:

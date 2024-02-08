@@ -1,5 +1,6 @@
 __pycache__/
 .env
+.venv
 discord_bot.log
 test.py
 test2.py

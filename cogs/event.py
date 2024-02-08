@@ -180,7 +180,7 @@ class Event(Cog_Extension):
                                 async with message.channel.typing():
                                     await send_message(message, chatbot, conversation_style_str, content, attachment.url)
                             else:
-                                await message.channel.send("> **ERROE：This file format is not supported.**")
+                                await message.channel.send("> **ERROR：This file format is not supported.**")
                     else:
                         logger.info(f"\x1b[31m{username}\x1b[0m：'{content}' ({channel}) [Style: {conversation_style_str}]")
                         async with message.channel.typing():
@@ -194,6 +194,10 @@ class Event(Cog_Extension):
                 if isinstance(message.channel, discord.Thread):
                     users_chatbot = get_users_chatbot()
                     user_id = message.author.id
+                    
+                    if user_id not in users_chatbot:
+                        return
+                    
                     user_thread = users_chatbot[user_id].get_thread()
                     username = str(message.author)
                     channel = str(message.channel)
@@ -206,7 +210,7 @@ class Event(Cog_Extension):
                                 if "image" in attachment.content_type:
                                     await users_chatbot[user_id].send_message(message=content, image=attachment.url)
                                 else:
-                                    await message.channel.send("> **ERROE：This file format is not supported.**")
+                                    await message.channel.send("> **ERROR：This file format is not supported.**")
                         else:
                             await users_chatbot[user_id].send_message(message=content)
             except Exception as e:

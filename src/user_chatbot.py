@@ -121,7 +121,7 @@ class UserChatbot():
             if self.auth_cookie == None and os.getenv("AUTH_COOKIE"):
                 self.auth_cookie = os.getenv("AUTH_COOKIE")
             elif self.auth_cookie == None:
-                await interaction.response.send_message(">>> **ERROR：Please upload your auth_cookie.**")
+                await interaction.followup.send(">>> **ERROR：Please upload your auth_cookie.**")
                 return
             async with self.sem_create_image:
                 await create_image(interaction, users_chatbot, prompt, self.auth_cookie)

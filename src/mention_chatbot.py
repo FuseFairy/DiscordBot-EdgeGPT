@@ -5,7 +5,7 @@ from re_edge_gpt import Chatbot
 class MentionChatbot():
     def __init__(self):
         self.conversation_style = "balanced"
-        self.chatbot = None
+        self.chatbot: Chatbot = None
     
     def set_conversation_style(self, conversation_style):
         self.conversation_style = conversation_style

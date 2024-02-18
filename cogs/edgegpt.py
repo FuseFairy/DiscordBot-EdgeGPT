@@ -30,11 +30,14 @@ class EdgeGPT(Cog_Extension):
                 if cookies_file:
                     if "json" in cookies_file.content_type or "text" in cookies_file.content_type:
                         cookies = json.loads(await cookies_file.read())
+                        is_copilot = False
                         for cookie in cookies:
-                            if cookie["domain"] != "copilot.microsoft.com":
-                                await interaction.followup.send("> **ERROR：Cookies are wrong, please copy cookies from https://copilot.microsoft.com/**")
-                                return
-                            break
+                            if cookie["domain"] == "copilot.microsoft.com":
+                                is_copilot=True
+                                break
+                        if not is_copilot:
+                            await interaction.followup.send("> **ERROR：Cookies are wrong, please copy cookies from https://copilot.microsoft.com/**")
+                            return
                         await set_chatbot(user_id=user_id, cookies=cookies)
                         await interaction.followup.send("> **INFO：You have successfully set copilot cookies!**")
                         logger.info(f"{interaction.user}：setting copilot cookies succeeded")

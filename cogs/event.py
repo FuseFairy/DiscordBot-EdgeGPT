@@ -115,16 +115,26 @@ async def send_message(interaction, chatbot, conversation_style_str, user_messag
             )
 
             # Get reply text
-            text = f"{reply['text']}"
-            text = re.sub(r'\[\^(\d+)\^\]',  '', text)
-            text = re.sub(r':\s*\[[^\]]*\]\([^\)]*\)', '', text)
+            text = reply['text']
+            suggest_responses = reply["suggestions"]
+            urls = [(i+1, x, reply["source_values"][i]) for i, x in  enumerate(reply["source_keys"])]
+            end = text.find("Generating answers for you...")
+            text = text[:end]
+            text = re.sub(r'\[\^(\d+)\^\]', '', text)
             text = re.sub(r'<[^>]*>', '', text)
+            matches = re.findall(r'- \[.*?\]', text)
+            for match in matches:
+                content_within_brackets = match[:2] + match[3:-1]  # Remove brackets
+                text = text.replace(match, content_within_brackets)
+            text = re.sub(r'\(\^.*?\^\)', '', text)
             
             # Get the URL, if available
-            urls = re.findall(r'\[(\d+)\. (.*?)\]\((https?://.*?)\)', reply["sources_link"])
             if len(urls) > 0:
                 for url in urls:
-                    all_url.append(f"{url[0]}. [{url[1]}]({url[2]})")
+                    if url[1]:
+                        all_url.append(f"{url[0]}. [{url[1]}]({url[2]})")
+                    else:
+                        all_url.append(f"{url[0]}. {url[2]}")
                 link_text = "\n".join(all_url)
                 link_embed = discord.Embed(description=link_text)
             

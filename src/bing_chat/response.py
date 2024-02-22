@@ -52,8 +52,11 @@ async def send_message(chatbot, user_message: str, image: str, conversation_styl
                         if text == "":
                             text = response['item']['result']['message']
                         break
+                users_chatbot[user_id].update_chat_history(f"\n\n[user](#message) \n{user_message} \n\n[assistant](#message) \n{text}")
+                text = re.sub(r'\[\^(\d+)\^\]',  '', text)
+                text = re.sub(r':\s*\[[^\]]*\]\([^\)]*\)', '', text)
+                text = re.sub(r'<[^>]*>', '', text)
 
-            users_chatbot[user_id].update_chat_history(f"\n\n[user](#message) \n{user_message} \n\n[assistant](#message) \n{text}")   
         else:
             if conversation_style_str == "creative":
                 conversation_style=ConversationStyle.creative
@@ -68,18 +71,28 @@ async def send_message(chatbot, user_message: str, image: str, conversation_styl
                 simplify_response=True,
                 attachment={"image_url":f"{image}"}  
             )
+
+            # Get reply text
             suggest_responses = reply["suggestions"]
             text = f"{reply['text']}"
-            urls = re.findall(r'\[(\d+)\. (.*?)\]\((https?://.*?)\)', reply["sources_link"])
-
-        text = re.sub(r'\[\^(\d+)\^\]',  '', text)
-        text = re.sub(r':\s*\[[^\]]*\]\([^\)]*\)', '', text)
-        text = re.sub(r'<[^>]*>', '', text)
-        
+            urls = [(i+1, x, reply["source_values"][i]) for i, x in  enumerate(reply["source_keys"])]
+            end = text.find("Generating answers for you...")
+            text = text[:end]
+            text = re.sub(r'\[\^(\d+)\^\]',  '', text)
+            text = re.sub(r'<[^>]*>', '', text)
+            matches = re.findall(r'- \[.*?\]', text)
+            for match in matches:
+                content_within_brackets = match[:2] + match[3:-1]  # Remove brackets
+                text = text.replace(match, content_within_brackets)
+            text = re.sub(r'\(\^.*?\^\)', '', text)
+            
         # Make URL Embed, if available
         if len(urls) > 0:
             for url in urls:
-                all_url.append(f"{url[0]}. [{url[1]}]({url[2]})")
+                if url[1]:
+                    all_url.append(f"{url[0]}. [{url[1]}]({url[2]})")
+                else:
+                    all_url.append(f"{url[0]}. {url[2]}")
             link_text = "\n".join(all_url)
             link_embed = discord.Embed(description=link_text)
         

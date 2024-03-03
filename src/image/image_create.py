@@ -13,7 +13,7 @@ load_dotenv()
 
 logger = setup_logger(__name__)
 
-async def create_image(interaction: discord.Interaction, users_chatbot: dict, prompt: str, auth_cookie: str):
+async def create_image(interaction: discord.Interaction, users_chatbot: dict, prompt: str, cookies):
     try:
         if not interaction.response.is_done():
             await interaction.response.defer(thinking=True)
@@ -24,6 +24,10 @@ async def create_image(interaction: discord.Interaction, users_chatbot: dict, pr
         prompts = f"> **{prompt}** - <@{str(user_id)}> (***BingImageCreator***)\n\n"
         
         logger.info(f"\x1b[31m{username}\x1b[0m：'{prompt}' ({channel}) [BingImageCreator]")
+
+        for cookie in cookies:
+            if cookie["name"] == "_U":
+                auth_cookie =  cookie["value"]
 
         async_gen = ImageGenAsync(auth_cookie=auth_cookie, quiet=True)
         images = await async_gen.get_images(prompt=prompt, timeout=int(os.getenv("IMAGE_TIMEOUT")), max_generate_time_sec=int(os.getenv("IMAGE_MAX_CREATE_SEC")))

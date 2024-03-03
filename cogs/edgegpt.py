@@ -18,7 +18,7 @@ class EdgeGPT(Cog_Extension):
     reset_group = app_commands.Group(name="reset", description="Reset conversation.")
 
     @cookies_group.command(name="setting", description="can set personal Copilot cookies, no mandatory setting.")
-    async def cookies_setting(self, interaction: discord.Interaction, *, cookies_file: Optional[discord.Attachment]):
+    async def cookies_setting(self, interaction: discord.Interaction, *, cookies_file: discord.Attachment):
         await interaction.response.defer(thinking=True)
         allowed_channel_id = os.getenv("SETTING_CHANNEL_ID")
         if allowed_channel_id and int(allowed_channel_id) != interaction.channel_id:

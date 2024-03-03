@@ -1,33 +1,44 @@
 import discord
 import re
+import os
+from io import BytesIO
 from re_edge_gpt import ConversationStyle
 from ..log import setup_logger
 from contextlib import aclosing
 from .jail_break import sydney, config
 from .button_view import ButtonView
+from re_edge_gpt import ImageGenAsync
+from ..image.image_create import concatenate_images
+from dotenv import load_dotenv
+
+load_dotenv()
 
 logger = setup_logger(__name__)
 
 config = config.Config()
 
-async def send_message(chatbot, user_message: str, image: str, conversation_style_str: str, jailbreak: bool, chat_history: str, users_chatbot=None, user_id=None, thread: discord.threads.Thread=None, interaction: discord.Interaction=None):
+async def send_message(user_chatbot, user_message: str, image: str, interaction: discord.Interaction=None):
     reply = ''
     text = ''
     link_embed = ''
     all_url = []
     urls = []
+    image_create_text = ""
     suggest_responses = []
+    chatbot = user_chatbot.chatbot
+    thread = user_chatbot.thread
+    conversation_style_str = user_chatbot.conversation_style
     
     if interaction:
         if not interaction.response.is_done():
             await interaction.response.defer(thinking=True)
 
     try:        
-        if jailbreak:
+        if user_chatbot.jailbreak:
             async with aclosing(sydney.ask_stream(
                 conversation=chatbot,
                 prompt=user_message,
-                context=chat_history,
+                context=user_chatbot.chat_history,
                 conversation_style=conversation_style_str,
                 locale='en-US',
                 wss_url='wss://' + config.get('wss_domain') + '/sydney/ChatHub',
@@ -52,7 +63,7 @@ async def send_message(chatbot, user_message: str, image: str, conversation_styl
                         if text == "":
                             text = response['item']['result']['message']
                         break
-                users_chatbot[user_id].update_chat_history(f"\n\n[user](#message) \n{user_message} \n\n[assistant](#message) \n{text}")
+                user_chatbot.chat_history += f"\n\n[user](#message) \n{user_message} \n\n[assistant](#message) \n{text}"
                 text = re.sub(r'\[\^(\d+)\^\]',  '', text)
                 text = re.sub(r':\s*\[[^\]]*\]\([^\)]*\)', '', text)
                 text = re.sub(r'<[^>]*>', '', text)
@@ -77,14 +88,30 @@ async def send_message(chatbot, user_message: str, image: str, conversation_styl
             text = f"{reply['text']}"
             urls = [(i+1, x, reply["source_values"][i]) for i, x in  enumerate(reply["source_keys"])]
             end = text.find("Generating answers for you...")
-            text = text[:end]
+            text = text[:end] if end != -1 else text
+            end = text.find("Analyzing the image: Faces may be blurred to protect privacy.")
+            text = text[:end] if end != -1 else text
             text = re.sub(r'\[\^(\d+)\^\]',  '', text)
             text = re.sub(r'<[^>]*>', '', text)
+            text = text.strip()
             matches = re.findall(r'- \[.*?\]', text)
             for match in matches:
                 content_within_brackets = match[:2] + match[3:-1]  # Remove brackets
                 text = text.replace(match, content_within_brackets)
             text = re.sub(r'\(\^.*?\^\)', '', text)
+            
+            image_create_text = reply["image_create_text"]
+            if image_create_text:
+                for cookie in user_chatbot.cookies:
+                    if cookie["name"] == "_U":
+                        auth_cookie =  cookie["value"]
+                async_gen = ImageGenAsync(auth_cookie=auth_cookie, quiet=True)
+                images = await async_gen.get_images(prompt=image_create_text, timeout=int(os.getenv("IMAGE_TIMEOUT")), max_generate_time_sec=int(os.getenv("IMAGE_MAX_CREATE_SEC")))
+                images = [file for file in images if not file.endswith('.svg')]
+                new_image = await concatenate_images(images)
+                image_data = BytesIO()
+                new_image.save(image_data, format='PNG')
+                image_data.seek(0)
             
         # Make URL Embed, if available
         if len(urls) > 0:
@@ -98,7 +125,7 @@ async def send_message(chatbot, user_message: str, image: str, conversation_styl
         
         # Set the final message
         response = f"{text} \n(***style: {conversation_style_str}***)"
-        
+
         # Discord limit about 2000 characters for a message
         while len(response) > 2000:
             temp = response[:2000]
@@ -109,28 +136,45 @@ async def send_message(chatbot, user_message: str, image: str, conversation_styl
                 await thread.send(temp)
             
         if interaction and suggest_responses:
-            if link_embed:
-                await interaction.followup.send(response, view=ButtonView(conversation_style_str, suggest_responses, users_chatbot, user_id), embed=link_embed)
+            if link_embed and image_create_text:
+                await interaction.followup.send(response, file=discord.File(fp=image_data, filename='new_image.png'), view=ButtonView(conversation_style_str, suggest_responses, user_chatbot, images), embed=link_embed)
+            elif link_embed:
+                await interaction.followup.send(response, view=ButtonView(conversation_style_str, suggest_responses, user_chatbot), embed=link_embed)
+            elif image_create_text:
+                await interaction.followup.send(response, file=discord.File(fp=image_data, filename='new_image.png'), view=ButtonView(conversation_style_str, suggest_responses, user_chatbot, images))
             else:
-                await interaction.followup.send(response, view=ButtonView(conversation_style_str, suggest_responses, users_chatbot, user_id))
-        elif suggest_responses:
-            if link_embed:
-                await thread.send(content=response, view=ButtonView(conversation_style_str, suggest_responses, users_chatbot, user_id), embed=link_embed)
-            else:
-                await thread.send(content=response, view=ButtonView(conversation_style_str, suggest_responses, users_chatbot, user_id))
+                await interaction.followup.send(response, view=ButtonView(conversation_style_str, suggest_responses, user_chatbot))
         elif interaction:
-            if link_embed:
+            if link_embed and image_create_text:
+                await interaction.followup.send(response, file=discord.File(fp=image_data, filename='new_image.png'), view=ButtonView(images), embed=link_embed)
+            elif link_embed:
                 await interaction.followup.send(response, embed=link_embed)
+            elif image_create_text:
+                await interaction.followup.send(response, file=discord.File(fp=image_data, filename='new_image.png'), view=ButtonView(images))
             else:
                 await interaction.followup.send(response)
-        else:
-            if link_embed:
-                await thread.send(content=response, embed=link_embed)
+        elif suggest_responses:
+            if link_embed and image_create_text:
+                await thread.send(response, file=discord.File(fp=image_data, filename='new_image.png'), view=ButtonView(conversation_style_str, suggest_responses, user_chatbot, images), embed=link_embed)
+            elif link_embed:
+                await thread.send(response, view=ButtonView(conversation_style_str, suggest_responses, user_chatbot), embed=link_embed)
+            elif image_create_text:
+                await thread.send(response, file=discord.File(fp=image_data, filename='new_image.png'), view=ButtonView(conversation_style_str, suggest_responses, user_chatbot, images))
             else:
-                await thread.send(content=response)
+                await thread.send(response, view=ButtonView(conversation_style_str, suggest_responses, user_chatbot))
+        else:
+            if link_embed and image_create_text:
+                await thread.send(response, file=discord.File(fp=image_data, filename='new_image.png'), view=ButtonView(images), embed=link_embed)
+            elif link_embed:
+                await thread.send(response, embed=link_embed)
+            elif image_create_text:
+                await thread.send(response, file=discord.File(fp=image_data, filename='new_image.png'), view=ButtonView(images))
+            else:
+                await thread.send(response)
 
     except Exception as e:
         if interaction:
             await interaction.followup.send(f"> **ERROR: {e}**")
         else:
             await thread.send(f"> **ERROR: {e}**")
+        logger.error(f"Error: {e}", exc_info=True)

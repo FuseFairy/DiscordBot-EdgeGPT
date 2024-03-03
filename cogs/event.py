@@ -2,14 +2,18 @@ import discord
 import re
 import os
 import asyncio
+import json
+from io import BytesIO
 from re_edge_gpt import ConversationStyle
 from dotenv import load_dotenv
 from discord.ext import commands
 from core.classes import Cog_Extension
 from functools import partial
+from re_edge_gpt import ImageGenAsync
 from src.log import setup_logger
 from src.user_chatbot import get_users_chatbot
 from src.mention_chatbot import get_client
+from src.image.image_create import concatenate_images
 
 load_dotenv()
 
@@ -22,14 +26,21 @@ sem = asyncio.Semaphore(1)
 
 # To add suggest responses
 class ButtonView(discord.ui.View):
-    def __init__(self, suggest_responses:list):
+    def __init__(self, suggest_responses:list, images:list = None):
         super().__init__(timeout=120)
         self.client = get_client()
         self.conversation_style_str = self.client.get_conversation_style()
         self.chatbot = self.client.get_chatbot()
+
+        if images:
+            for i, image in enumerate(images, start=1):
+                if i > 2:
+                    self.add_item(discord.ui.Button(label=f"Link {i}", url=image, row=2))
+                else:
+                    self.add_item(discord.ui.Button(label=f"Link {i}", url=image, row=1))
         # Add buttons
         for label in suggest_responses:
-            button = discord.ui.Button(label=label)
+            button = discord.ui.Button(label=label, row=3)
             # Button event
             async def callback(interaction: discord.Interaction, button: discord.ui.Button):
                     await interaction.response.defer(ephemeral=False, thinking=True)
@@ -119,7 +130,9 @@ async def send_message(interaction, chatbot, conversation_style_str, user_messag
             suggest_responses = reply["suggestions"]
             urls = [(i+1, x, reply["source_values"][i]) for i, x in  enumerate(reply["source_keys"])]
             end = text.find("Generating answers for you...")
-            text = text[:end]
+            text = text[:end] if end != -1 else text
+            end = text.find("Analyzing the image: Faces may be blurred to protect privacy.")
+            text = text[:end] if end != -1 else text
             text = re.sub(r'\[\^(\d+)\^\]', '', text)
             text = re.sub(r'<[^>]*>', '', text)
             matches = re.findall(r'- \[.*?\]', text)
@@ -127,6 +140,21 @@ async def send_message(interaction, chatbot, conversation_style_str, user_messag
                 content_within_brackets = match[:2] + match[3:-1]  # Remove brackets
                 text = text.replace(match, content_within_brackets)
             text = re.sub(r'\(\^.*?\^\)', '', text)
+            text = text.strip()
+        
+            if reply["image_create_text"]:
+                with open("./cookies.json", encoding="utf-8") as file:
+                    cookies = json.load(file)
+                    for cookie in cookies:
+                        if cookie["name"] == "_U":
+                            auth_cookie =  cookie["value"]
+                async_gen = ImageGenAsync(auth_cookie=auth_cookie, quiet=True)
+                images = await async_gen.get_images(prompt=reply["image_create_text"], timeout=int(os.getenv("IMAGE_TIMEOUT")), max_generate_time_sec=int(os.getenv("IMAGE_MAX_CREATE_SEC")))
+                images = [file for file in images if not file.endswith('.svg')]
+                new_image = await concatenate_images(images)
+                image_data = BytesIO()
+                new_image.save(image_data, format='PNG')
+                image_data.seek(0)
             
             # Get the URL, if available
             if len(urls) > 0:
@@ -151,14 +179,24 @@ async def send_message(interaction, chatbot, conversation_style_str, user_messag
                     await interaction.channel.send(temp)
                 
             suggest_responses = reply["suggestions"]              
-            if link_embed:
+            if link_embed and reply["image_create_text"]:
                 if isinstance(interaction, discord.Interaction):
-                    await interaction.followup.send(response, view=ButtonView(suggest_responses), embed=link_embed, wait=True)
+                    await interaction.followup.send(response, file=discord.File(fp=image_data, filename='new_image.png'), view=ButtonView(suggest_responses, images), embed=link_embed)
+                elif isinstance(interaction, discord.message.Message):
+                    await interaction.channel.send(response, file=discord.File(fp=image_data, filename='new_image.png'), view=ButtonView(suggest_responses, images), embed=link_embed)
+            elif link_embed:
+                if isinstance(interaction, discord.Interaction):
+                    await interaction.followup.send(response, view=ButtonView(suggest_responses), embed=link_embed)
                 elif isinstance(interaction, discord.message.Message):
                     await interaction.channel.send(response, view=ButtonView(suggest_responses), embed=link_embed)
+            elif reply["image_create_text"]:
+                if isinstance(interaction, discord.Interaction):
+                    await interaction.followup.send(response, file=discord.File(fp=image_data, filename='new_image.png'), view=ButtonView(suggest_responses, images))
+                elif isinstance(interaction, discord.message.Message):
+                    await interaction.channel.send(response, file=discord.File(fp=image_data, filename='new_image.png'), view=ButtonView(suggest_responses, images))
             else:
                 if isinstance(interaction, discord.Interaction):
-                    await interaction.followup.send(response, view=ButtonView(suggest_responses), wait=True)
+                    await interaction.followup.send(response, view=ButtonView(suggest_responses))
                 elif isinstance(interaction, discord.message.Message):
                     await interaction.channel.send(response, view=ButtonView(suggest_responses))
 

@@ -17,8 +17,8 @@ class EdgeGPT(Cog_Extension):
     create_group = app_commands.Group(name="create", description="Create images.")
     reset_group = app_commands.Group(name="reset", description="Reset conversation.")
 
-    @cookies_group.command(name="setting", description="can set personal Copilot cookies and auth_cookie(for create image), no mandatory setting.")
-    async def cookies_setting(self, interaction: discord.Interaction, cookies_file: Optional[discord.Attachment]=None, auth_cookie: str=None):
+    @cookies_group.command(name="setting", description="can set personal Copilot cookies, no mandatory setting.")
+    async def cookies_setting(self, interaction: discord.Interaction, *, cookies_file: Optional[discord.Attachment]):
         await interaction.response.defer(thinking=True)
         allowed_channel_id = os.getenv("SETTING_CHANNEL_ID")
         if allowed_channel_id and int(allowed_channel_id) != interaction.channel_id:
@@ -26,32 +26,21 @@ class EdgeGPT(Cog_Extension):
             return
         user_id = interaction.user.id
         try:
-            if cookies_file or auth_cookie:
-                if cookies_file:
-                    if "json" in cookies_file.content_type or "text" in cookies_file.content_type:
-                        cookies = json.loads(await cookies_file.read())
-                        is_copilot = False
-                        for cookie in cookies:
-                            if cookie["domain"] == "copilot.microsoft.com":
-                                is_copilot=True
-                                break
-                        if not is_copilot:
-                            await interaction.followup.send("> **ERROR：Cookies are wrong, please copy cookies from https://copilot.microsoft.com/**")
-                            return
-                        await set_chatbot(user_id=user_id, cookies=cookies)
-                        await interaction.followup.send("> **INFO：You have successfully set copilot cookies!**")
-                        logger.info(f"{interaction.user}：setting copilot cookies succeeded")
-                    else:
-                        await interaction.followup.send("> **ERROR： cookies_file only Support json or txt format only.**")
-                if auth_cookie:
-                    await set_chatbot(user_id=user_id, auth_cookie=auth_cookie)
-                    try:
-                        await interaction.followup.send("> **INFO：You have successfully set auth_cookie!**")
-                    except:
-                        await interaction.followup.send("> **INFO：You have successfully set auth_cookie!**")
-                    logger.info(f"{interaction.user}：setting auth_cookie succeeded")
+            if "json" in cookies_file.content_type or "text" in cookies_file.content_type:
+                cookies = json.loads(await cookies_file.read())
+                is_bing = False
+                for cookie in cookies:
+                    if cookie["domain"] == ".bing.com":
+                        is_bing=True
+                        break
+                if not is_bing:
+                    await interaction.followup.send("> **ERROR：Cookies are wrong, please copy cookies from https://www.bing.com/**")
+                    return
+                await set_chatbot(user_id=user_id, cookies=cookies)
+                await interaction.followup.send("> **INFO：You have successfully set copilot cookies!**")
+                logger.info(f"{interaction.user}：setting copilot cookies succeeded")
             else:
-                await interaction.followup.send(f">>> **ERROR：Please upload a file(.json or .txt) containing Copilot cookies or input your auth_cookie**")
+                await interaction.followup.send("> **ERROR： cookies_file only Support json or txt format only.**")
         except Exception as e:
             await interaction.followup.send(f">>> **ERROR：{e}**")
 

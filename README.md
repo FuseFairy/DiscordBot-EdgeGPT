@@ -118,7 +118,7 @@ pip install -r requirements.txt
    HELP_CMD_CHANNEL_ID=
    ```
    
-2. It is not necessary to create the `cookies.json` file, but if you do, there will be more conversation.
+2. Create the `cookies.json` file.
    * Install the cookie editor extension for Chrome or Firefox.
    * Go to [bing.com](https://www.bing.com/)
    * Click "Export" on the bottom right.

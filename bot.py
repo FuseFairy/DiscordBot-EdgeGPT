@@ -1,6 +1,6 @@
 import discord
 import os
-import pkg_resources
+import importlib_metadata
 import json
 from discord.ext import commands
 from dotenv import load_dotenv
@@ -21,7 +21,8 @@ def check_version():
 
     for package in required:
         package_name, package_version = package.split('==')
-        name, version = pkg_resources.get_distribution(package_name).project_name, pkg_resources.get_distribution(package_name).version
+        distribution = importlib_metadata.distribution(package_name)
+        name, version = distribution.metadata['Name'], distribution.version
         if package != f'{name}=={version}':
             raise ValueError(f'{name} version {version} is installed but does not match the requirements')
 

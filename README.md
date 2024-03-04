@@ -20,17 +20,18 @@
    
 > ### will create a separate chat for each user.
    
-* cookies setting(can use personal Bing Cookies): `/cookies setting [cookies_file] [auth_cookie]`
-  * Can upload own cookies (get from https://copilot.microsoft.com/) or auth_cookie (get from https://bing.com/, and copy the value from the _U). Supports simultaneous uploads.
-  ![setting](https://i.imgur.com/Smca2HO.png)
+* cookies setting(can use personal Bing Cookies): `/cookies setting [cookies_file]`
+  * Can upload own cookies (get from https://bing.com/). Supports simultaneous uploads.
+  ![setting](https://i.imgur.com/ZTLKkAJ.png)
   
 * copilot: `/copilot [version] [style] [type]`
-  * A separate thread will be created.
+  * A separate thread will be created, if use default version, can generate images while chatting.
     * [version]：`default` can chat with Copilot, `jailbreak` chat with Sydney, but `jailbreak` image uploads are not currently supported.
     * [style]：Have 3 conversation style can choose, `creative`、`balanced` and `precise`.
     * [type]：Options for thread type, `public` or `private`.
 
   ![copilot](https://i.imgur.com/ctcGb7I.png)
+  ![chat](https://i.imgur.com/3Fx0iQE.png)
   
 * bing image creator: `/create image [prompt]`
   
@@ -55,6 +56,7 @@
   ![dropdown1](https://i.imgur.com/XDcnTuC.png)
   ![dropdown2](https://i.imgur.com/azHIUqv.png)
   ![mention1](https://i.imgur.com/BDy0See.png)
+  ![mention2](https://i.imgur.com/3Fx0iQE.png)
 
 </details>
 
@@ -77,9 +79,9 @@
    
    ![getLog](https://i.imgur.com/LHX4yWV.png)
  
- * `!upload [.txt_file]`: Same as `/cookies setting`, but for default cookies and auth_cookie.
+ * `!upload [.txt_file]`: Same as `/cookies setting`, but for default cookies.
  
-   ![upload](https://i.imgur.com/clvPcIM.png)
+   ![upload](https://i.imgur.com/Qqz07WA.png)
 </details>
 
 ## Install
@@ -95,9 +97,6 @@ pip install -r requirements.txt
    
    IMAGE_TIMEOUT=300
    IMAGE_MAX_CREATE_SEC=300
-
-   # Get from https://bing.com/, and copy the value from the _U, not necessary to set.
-   AUTH_COOKIE=
 
    # Allow mention bot only in specific channel, if you don't set it, just default to all channels.
    MENTION_CHANNEL_ID=
@@ -121,13 +120,11 @@ pip install -r requirements.txt
    
 2. It is not necessary to create the `cookies.json` file, but if you do, there will be more conversation.
    * Install the cookie editor extension for Chrome or Firefox.
-   * Go to [copilot.microsoft.com](https://copilot.microsoft.com/)
+   * Go to [bing.com](https://www.bing.com/)
    * Click "Export" on the bottom right.
    * Paste your cookies into a file `cookies.json`
 
 4. Start run your bot, hosted locally or on a server.
-
-   -> Recommended Free Servers: [fly.io](https://fly.io/)
 
 ## Credits
 * ReEdgeGPT - https://github.com/Integration-Automation/ReEdgeGPT

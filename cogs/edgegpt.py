@@ -38,11 +38,11 @@ class EdgeGPT(Cog_Extension):
                     return
                 await set_chatbot(user_id=user_id, cookies=cookies)
                 await interaction.followup.send("> **INFO：You have successfully set copilot cookies!**")
-                logger.info(f"{interaction.user}：setting copilot cookies succeeded")
+                logger.info(f"\x1b[31m{interaction.user}\x1b[0m：setting copilot cookies succeeded")
             else:
                 await interaction.followup.send("> **ERROR： cookies_file only Support json or txt format only.**")
         except Exception as e:
-            await interaction.followup.send(f">>> **ERROR：{e}**")
+            await interaction.followup.send(f"> **ERROR：{e}**")
 
     # Chat with Copilot.
     @app_commands.command(name="copilot", description="Create thread for conversation.")
@@ -56,14 +56,14 @@ class EdgeGPT(Cog_Extension):
             await interaction.followup.send(f"> **Command can only used on <#{allowed_channel_id}>**")
             return
         if isinstance(interaction.channel, discord.Thread):
-            await interaction.followup.send("This command is disabled in thread.")
+            await interaction.followup.send("> This command is disabled in thread.")
             return
         
         user_id = interaction.user.id
         try:
             await set_chatbot(user_id=user_id, conversation_style=style.value, version=version.value)
         except Exception as e:
-            await interaction.followup.send(f">>> **ERROR：{e}**")
+            await interaction.followup.send(f"> **ERROR：{e}**")
             return
 
         users_chatbot = get_users_chatbot()
@@ -109,13 +109,13 @@ class EdgeGPT(Cog_Extension):
         user_id = interaction.user.id
         
         if user_id not in users_chatbot or users_chatbot[user_id].get_chatbot() == None:
-            await interaction.followup.send(f">>> **ERROR：You don't have any conversation yet.**")
+            await interaction.followup.send(f"> **ERROR：You don't have any conversation yet.**")
             return
         try:
             await users_chatbot[user_id].reset_conversation()
             await interaction.followup.send("> **INFO：Reset finish.**")
         except Exception as e:
-            await interaction.followup.send(f">>> **ERROR：{e}**")
+            await interaction.followup.send(f"> **ERROR：{e}**")
         
 async def setup(bot):
     await bot.add_cog(EdgeGPT(bot))

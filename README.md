@@ -121,7 +121,7 @@ pip install -r requirements.txt
 2. Create the `cookies.json` file.
    * Install the cookie editor extension for Chrome or Firefox.
    * Go to [bing.com](https://www.bing.com/)
-   * Click "Export" on the bottom right.
+   * Click "Export" on the buttom right.
    * Paste your cookies into a file `cookies.json`
 
 4. Start run your bot, hosted locally or on a server.

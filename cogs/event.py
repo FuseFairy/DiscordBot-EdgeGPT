@@ -30,7 +30,7 @@ class ButtonView(discord.ui.View):
         super().__init__(timeout=120)
         self.client = get_client()
         self.conversation_style_str = self.client.get_conversation_style()
-        self.chatbot = self.client.get_chatbot()
+        self.chatbot = self.client.chatbot
 
         if images:
             for i, image in enumerate(images, start=1):
@@ -38,10 +38,10 @@ class ButtonView(discord.ui.View):
                     self.add_item(discord.ui.Button(label=f"Link {i}", url=image, row=2))
                 else:
                     self.add_item(discord.ui.Button(label=f"Link {i}", url=image, row=1))
+
         # Add buttons
         for label in suggest_responses:
             button = discord.ui.Button(label=label, row=3)
-            # Button event
             async def callback(interaction: discord.Interaction, button: discord.ui.Button):
                     await interaction.response.defer(ephemeral=False, thinking=True)
                     username = str(interaction.user)
@@ -81,19 +81,19 @@ class DropdownView(discord.ui.View):
         if interaction.data['values'][0] == "Creative":
             self.client.set_conversation_style("creative")
             await interaction.followup.send(f"> **Info: successfull switch conversation style to *{interaction.data['values'][0]}*.**")
-            logger.warning(f"\x1b[31mConversation style has been successfully switch to {interaction.data['values'][0]}\x1b[0m")
+            logger.info(f"Conversation style has been successfully switch to {interaction.data['values'][0]}")
         elif interaction.data['values'][0] == "Balanced":
             self.client.set_conversation_style("balanced")
             await interaction.followup.send(f"> **Info: successfull switch conversation style to *{interaction.data['values'][0]}*.**")
-            logger.warning(f"\x1b[31mConversation style has been successfully switch to {interaction.data['values'][0]}\x1b[0m")
+            logger.info(f"Conversation style has been successfully switch to {interaction.data['values'][0]}")
         elif interaction.data['values'][0] == "Precise":
             self.client.set_conversation_style("precise")
             await interaction.followup.send(f"> **Info: successfull switch conversation style to *{interaction.data['values'][0]}*.**")
-            logger.warning(f"\x1b[31mConversation style has been successfully switch to {interaction.data['values'][0]}\x1b[0m")
+            logger.info(f"Conversation style has been successfully switch to {interaction.data['values'][0]}")
         else:
             await self.client.reset()
             await interaction.followup.send(f"> **Info: Reset finish.**")
-            logger.warning("\x1b[31mBing has been successfully reset\x1b[0m")
+            logger.info("Chat has been successfully reset")
         # disable dropdown after select
         for dropdown in self.children:
             dropdown.disabled = True
@@ -142,7 +142,7 @@ async def send_message(interaction, chatbot, conversation_style_str, user_messag
             text = re.sub(r'\(\^.*?\^\)', '', text)
             text = text.strip()
         
-            if reply["image_create_text"]:
+            if reply["image_create_text"] and os.path.isfile("./cookies.json"):
                 with open("./cookies.json", encoding="utf-8") as file:
                     cookies = json.load(file)
                     for cookie in cookies:
@@ -205,7 +205,7 @@ async def send_message(interaction, chatbot, conversation_style_str, user_messag
                 await interaction.followup.send(f">>> **Error：{e}**")
             elif isinstance(interaction, discord.message.Message):
                 await interaction.channel.send(f">>> **Error：{e}**")
-            logger.error(f"Error：{e}")
+            logger.error(e, exc_info=True)
 
 class Event(Cog_Extension):
     @commands.Cog.listener()
@@ -217,7 +217,8 @@ class Event(Cog_Extension):
                 content = re.sub(r'<@.*?>', '', message.content).strip()
                 client = get_client()
                 conversation_style_str = client.get_conversation_style()
-                chatbot = client.get_chatbot()
+                chatbot = client.chatbot
+
                 if len(content) > 0:
                     username = str(message.author)
                     channel = str(message.channel)
@@ -263,7 +264,7 @@ class Event(Cog_Extension):
                             await users_chatbot[user_id].send_message(message=content)
             except Exception as e:
                 await message.channel.send(f"> **ERROR：{e}**")
-                logger.error(f"Error：{e}")   
+                logger.error(e, exc_info=True)   
                     
                         
 async def setup(bot):

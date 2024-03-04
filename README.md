@@ -56,7 +56,7 @@
   ![dropdown1](https://i.imgur.com/XDcnTuC.png)
   ![dropdown2](https://i.imgur.com/azHIUqv.png)
   ![mention1](https://i.imgur.com/BDy0See.png)
-  ![mention2](https://i.imgur.com/3Fx0iQE.png)
+  ![mention2](https://i.imgur.com/iJg4pSg.png)
 
 </details>
 

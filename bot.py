@@ -38,9 +38,9 @@ async def on_ready():
     logger.info(f'{bot.user} is now running!')
     try:
         synced = await bot.tree.sync()
-        print(f"Synced {len(synced)} commands")
+        logger.info(f"Synced {len(synced)} commands")
     except Exception as e:
-        logger.error(f"Error：{e}")
+        logger.error(e, exc_info=True)
 
 # Load command
 @commands.is_owner()   
@@ -78,7 +78,7 @@ async def getlog(ctx):
 # Upload new Bing cookies and restart the bot
 @commands.is_owner()
 @bot.command()
-async def upload(ctx, auth_token=None):
+async def upload(ctx):
     try:
         if ctx.message.attachments:
             for attachment in ctx.message.attachments:
@@ -89,18 +89,14 @@ async def upload(ctx, auth_token=None):
                     client = get_client()
                     await client.set_chatbot(json.loads(content))
                     await ctx.author.send(f'> **Upload new cookies successfully!**')
-                    logger.info("\x1b[31mCookies has been setup successfully\x1b[0m")
+                    logger.info("Cookies has been setup successfully")
                 else:
                     await ctx.author.send("> **Didn't get any json or txt file.**")
-        if auth_token:
-            os.environ["AUTH_TOKEN"] = auth_token
-            await ctx.author.send(f'> **Upload new AUTH_TOKEN successfully!**')
-        
-        if len(ctx.message.attachments) == 0 and auth_token == None:
-            await ctx.author.send("> **Didn't get any file or AUTH_TOKEN.**")
+        else:
+            await ctx.author.send("> **Didn't get any file**")
     except Exception as e:
-        await ctx.author.send(f">>> **Error：{e}**")
-        logger.exception(f"Error：{e}")
+        await ctx.author.send(f"> **Error：{e}**")
+        logger.error(e, exc_info=True)
     finally:
         if not isinstance(ctx.channel, discord.abc.PrivateChannel):
             await ctx.message.delete()

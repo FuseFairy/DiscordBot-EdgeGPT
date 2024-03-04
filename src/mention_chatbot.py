@@ -1,6 +1,9 @@
 import json
 import os
+from .log import setup_logger
 from re_edge_gpt import Chatbot
+
+logger = setup_logger(__name__)
 
 class MentionChatbot():
     def __init__(self):
@@ -15,15 +18,15 @@ class MentionChatbot():
 
     async def set_chatbot(self, cookies: str=None):
         try:
-            if cookies == None and os.path.isfile("./cookies.json"):
+            if not os.path.exists("./cookies.json"):
+                logger.error("cookies.json file not found")
+                return
+            if cookies == None:
                 with open("./cookies.json", encoding="utf-8") as file:
                     cookies = json.load(file)
             self.chatbot = await Chatbot.create(cookies=cookies, mode="Bing")
-        except:
-            return
-    
-    def get_chatbot(self):
-        return self.chatbot
+        except Exception as e:
+            logger.error(e, exc_info=True)
     
     async def reset(self):
         await self.chatbot.reset()

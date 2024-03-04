@@ -67,7 +67,6 @@ async def send_message(user_chatbot, user_message: str, image: str, interaction:
                 text = re.sub(r'\[\^(\d+)\^\]',  '', text)
                 text = re.sub(r':\s*\[[^\]]*\]\([^\)]*\)', '', text)
                 text = re.sub(r'<[^>]*>', '', text)
-
         else:
             if conversation_style_str == "creative":
                 conversation_style=ConversationStyle.creative
@@ -93,15 +92,15 @@ async def send_message(user_chatbot, user_message: str, image: str, interaction:
             text = text[:end] if end != -1 else text
             text = re.sub(r'\[\^(\d+)\^\]',  '', text)
             text = re.sub(r'<[^>]*>', '', text)
-            text = text.strip()
             matches = re.findall(r'- \[.*?\]', text)
             for match in matches:
-                content_within_brackets = match[:2] + match[3:-1]  # Remove brackets
+                content_within_brackets = match[:2] + match[3:-1]
                 text = text.replace(match, content_within_brackets)
             text = re.sub(r'\(\^.*?\^\)', '', text)
             
+            # Generate image
             image_create_text = reply["image_create_text"]
-            if image_create_text:
+            if image_create_text and user_chatbot.cookies:
                 for cookie in user_chatbot.cookies:
                     if cookie["name"] == "_U":
                         auth_cookie =  cookie["value"]
@@ -124,6 +123,7 @@ async def send_message(user_chatbot, user_message: str, image: str, interaction:
             link_embed = discord.Embed(description=link_text)
         
         # Set the final message
+        text = text.strip()
         response = f"{text} \n(***style: {conversation_style_str}***)"
 
         # Discord limit about 2000 characters for a message
@@ -174,7 +174,7 @@ async def send_message(user_chatbot, user_message: str, image: str, interaction:
 
     except Exception as e:
         if interaction:
-            await interaction.followup.send(f"> **ERROR: {e}**")
+            await interaction.followup.send(f"> **ERROR：{e}**")
         else:
-            await thread.send(f"> **ERROR: {e}**")
-        logger.error(f"Error: {e}", exc_info=True)
+            await thread.send(f"> **ERROR：{e}**")
+        logger.error(e, exc_info=True)

@@ -14,7 +14,7 @@ class Help(Cog_Extension):
             await interaction.response.send_message(f"> **Command can only used on <#{allowed_channel_id}>**", ephemeral=True)
             return
         embed=discord.Embed(description="[FuseFairy/DiscordBot-EdgeGPT](https://github.com/FuseFairy/DiscordBot-EdgeGPT/blob/main/README.md)\n***COMMANDS -***")
-        embed.add_field(name="/cookies setting", value="Can upload own cookies or auth_cookie.", inline=False)
+        embed.add_field(name="/cookies setting", value="Can upload own cookies.", inline=False)
         embed.add_field(name="/copilot", value="Chat with Copilot or Sydney(jail break).", inline=False)
         embed.add_field(name="/reset conversation", value="Reset your conversation.", inline=False)
         embed.add_field(name="/create image", value="Generate image by Bing Image Creator.", inline=False)

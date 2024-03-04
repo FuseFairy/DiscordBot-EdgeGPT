@@ -6,6 +6,7 @@ import os
 from .bing_chat.jail_break import sydney
 from asyncio import Semaphore
 from re_edge_gpt import Chatbot
+from .log import setup_logger
 from .bing_chat.response import send_message
 from .image.image_create import create_image
 from dotenv import load_dotenv
@@ -13,6 +14,7 @@ from dotenv import load_dotenv
 load_dotenv()
 tracemalloc.start()
 
+logger = setup_logger(__name__)
 users_chatbot = {}
 
 async def set_chatbot(user_id, conversation_style=None, version=None, cookies=None):
@@ -78,19 +80,23 @@ class UserChatbot():
     async def initialize_chatbot(self, jailbreak: bool):
         self.jailbreak = jailbreak
 
-        if self.cookies == None and os.path.isfile("./cookies.json"):
+        if self.cookies == None:
+            if not os.path.exists("./cookies.json"):
+                logger.error("cookies.json file not found")
+                return
             with open("./cookies.json", encoding="utf-8") as file:
                 self.cookies = json.load(file)
 
-        if self.jailbreak:
-            self.chatbot = await asyncio.wait_for(sydney.create_conversation(cookies = self.cookies), timeout=20)
-        else:
+        if not self.jailbreak:
             self.chatbot = await Chatbot.create(cookies=self.cookies, mode="Bing")
 
     async def send_message(self, message: str, interaction: discord.Interaction=None, image: str=None):
         if not self.sem_send_message.locked():
             if self.jailbreak:
-                self.chatbot = await asyncio.wait_for(sydney.create_conversation(cookies = self.cookies), timeout=20)
+                try:
+                    self.chatbot = await asyncio.wait_for(sydney.create_conversation(cookies = self.cookies), timeout=20)
+                except Exception as e:
+                    await self.thread.send(f"ERROR：{e}")
             async with self.sem_send_message:
                 if interaction:
                     if interaction.type == discord.InteractionType.component or self.thread == None:
@@ -112,7 +118,7 @@ class UserChatbot():
                 with open("./cookies.json", encoding="utf-8") as file:
                     self.cookies = json.load(file)
             elif self.cookies == None:
-                await interaction.followup.send(">>> **ERROR：Please upload your cookies.**")
+                await interaction.followup.send("> **ERROR：Please upload your cookies.**")
                 return
             async with self.sem_create_image:
                 await create_image(interaction, users_chatbot, prompt, self.cookies)

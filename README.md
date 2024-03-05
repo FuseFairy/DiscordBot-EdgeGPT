@@ -4,6 +4,7 @@
 ![demo](https://i.imgur.com/mvg18xh.gif)
 
 ## Update
+> ### 2024/3/5：Images can be generated while chatting.
 > ### 2024/2/2：To optimize usage, recommended to re-read the README.
 > ### 2024/1/27：Add jail break version, but image uploads are currently not supported, and python version need 3.10+.
 > ### 2024/1/15：Can create thread to chat with Copilot.

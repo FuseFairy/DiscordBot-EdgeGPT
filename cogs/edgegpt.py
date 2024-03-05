@@ -1,7 +1,6 @@
 import discord
 import json
 import os
-from typing import Optional
 from discord import app_commands
 from core.classes import Cog_Extension
 from src.log import setup_logger

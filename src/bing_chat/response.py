@@ -100,10 +100,13 @@ async def send_message(user_chatbot, user_message: str, image: str, interaction:
             
             # Generate image
             image_create_text = reply["image_create_text"]
-            if image_create_text and user_chatbot.cookies:
+            auth_cookie = ""
+            if image_create_text:
                 for cookie in user_chatbot.cookies:
                     if cookie["name"] == "_U":
                         auth_cookie =  cookie["value"]
+                        break
+                    
                 async_gen = ImageGenAsync(auth_cookie=auth_cookie, quiet=True)
                 images = await async_gen.get_images(prompt=image_create_text, timeout=int(os.getenv("IMAGE_TIMEOUT")), max_generate_time_sec=int(os.getenv("IMAGE_MAX_CREATE_SEC")))
                 images = [file for file in images if not file.endswith('.svg')]

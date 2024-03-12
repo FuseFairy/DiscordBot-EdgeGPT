@@ -25,9 +25,11 @@ async def create_image(interaction: discord.Interaction, users_chatbot: dict, pr
         
         logger.info(f"\x1b[31m{username}\x1b[0m：'{prompt}' ({channel}) [BingImageCreator]")
 
+        auth_cookie = ""
         for cookie in cookies:
             if cookie["name"] == "_U":
                 auth_cookie =  cookie["value"]
+                break
 
         async_gen = ImageGenAsync(auth_cookie=auth_cookie, quiet=True)
         images = await async_gen.get_images(prompt=prompt, timeout=int(os.getenv("IMAGE_TIMEOUT")), max_generate_time_sec=int(os.getenv("IMAGE_MAX_CREATE_SEC")))

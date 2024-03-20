@@ -8,7 +8,7 @@ from asyncio import Semaphore
 from re_edge_gpt import Chatbot
 from .log import setup_logger
 from .bing_chat.response import send_message
-from .image.image_create import create_image
+from .image.image_create import create_image_bing, create_image_dalle3
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -17,7 +17,7 @@ tracemalloc.start()
 logger = setup_logger(__name__)
 users_chatbot = {}
 
-async def set_chatbot(user_id, conversation_style=None, version=None, cookies=None):
+async def set_chatbot(user_id, conversation_style=None, version=None, cookies=None, dalle3_apikey=None):
     if user_id not in users_chatbot:
         users_chatbot[user_id] = UserChatbot(user_id)
 
@@ -34,12 +34,19 @@ async def set_chatbot(user_id, conversation_style=None, version=None, cookies=No
 
 def get_users_chatbot():
     return users_chatbot
+
+async def set_dalle3_unofficial_apikey(user_id, dalle3_apikey: str):
+    if user_id not in users_chatbot:
+        users_chatbot[user_id] = UserChatbot(user_id)
+    users_chatbot[user_id].set_dalle3_apikey(dalle3_apikey)
     
 class UserChatbot():
     def __init__(self, user_id):
         self.sem_send_message = Semaphore(1)
-        self.sem_create_image = Semaphore(1)
+        self.sem_create_image_bing = Semaphore(1)
+        self.sem_create_image_dalle3 = Semaphore(1)
         self.cookies = None
+        self.dalle3_unoffcial_apikey=None
         self.chatbot = None
         self.thread = None
         self.jailbreak = None
@@ -47,6 +54,9 @@ class UserChatbot():
         self.conversation_style = None
         self.user_id = user_id
     
+    def set_dalle3_apikey(self, apikey):
+        self.dalle3_unoffcial_apikey = apikey
+
     def set_conversation_style(self, conversation_style: str):
         self.conversation_style = conversation_style
     
@@ -112,20 +122,28 @@ class UserChatbot():
             else:
                 await self.thread.send("> **ERROR：Please wait for the previous command to complete.**")
 
-    async def create_image(self, interaction: discord.Interaction, prompt: str):
-        if not self.sem_create_image.locked():
-            if self.cookies == None and os.path.isfile("./cookies.json"):
-                with open("./cookies.json", encoding="utf-8") as file:
-                    self.cookies = json.load(file)
-            elif self.cookies == None:
-                await interaction.followup.send("> **ERROR：Please upload your cookies.**")
-                return
-            async with self.sem_create_image:
-                await create_image(interaction, users_chatbot, prompt, self.cookies)
-        else:
-            if not interaction.response.is_done():
-                await interaction.response.defer(thinking=True)
-            await interaction.followup.send("> **ERROR：Please wait for the previous command to complete.**")
+    async def create_image(self, interaction: discord.Interaction, prompt: str, service=None):
+        if service == "bing_image_creator" or service == None:
+            if not self.sem_create_image_bing.locked():
+                if self.cookies == None and os.path.isfile("./cookies.json"):
+                    with open("./cookies.json", encoding="utf-8") as file:
+                        self.cookies = json.load(file)
+                elif self.cookies == None:
+                    await interaction.followup.send("> **ERROR：Please upload your cookies.**")
+                    return
+                async with self.sem_create_image_bing:
+                    await create_image_bing(interaction, users_chatbot, prompt, self.cookies)
+            else:
+                if not interaction.response.is_done():
+                    await interaction.response.defer(thinking=True)
+                await interaction.followup.send("> **ERROR：Please wait for the previous command to complete.**")
+        else: 
+            if not self.sem_create_image_dalle3.locked():
+                 async with self.sem_create_image_dalle3:
+                    await create_image_dalle3(interaction, prompt, self.dalle3_unoffcial_apikey)
+            else:
+                await interaction.followup.send("> **ERROR：Please wait for the previous command to complete.**")
+        
     
     async def reset_conversation(self):
         if self.jailbreak:

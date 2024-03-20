@@ -1,6 +1,7 @@
 import discord
 import asyncio
 import requests
+import aiohttp
 import os
 from PIL import Image
 from io import BytesIO
@@ -13,7 +14,50 @@ load_dotenv()
 
 logger = setup_logger(__name__)
 
-async def create_image(interaction: discord.Interaction, users_chatbot: dict, prompt: str, cookies):
+async def create_image_dalle3(interaction: discord.Interaction, prompt: str, api_key: str=None):
+    try:
+        username = interaction.user
+        channel = interaction.channel
+
+        logger.info(f"\x1b[31m{username}\x1b[0m：'{prompt}' ({channel}) [Unofficial DALLE-3]")
+
+        payload = {
+            "prompt": prompt,
+            "model": 'dall-e-3',
+            "n": 1,
+            "quality": 'standard',
+            "response_format": 'url',
+            "size": '1024x1024',
+            "style": 'vivid',
+            "user": 'free-dall-e-user'
+        }
+
+        if api_key == None and os.getenv("dalle3_unofficial_apikey"):
+            api_key = os.getenv("dalle3_unofficial_apikey")
+        else:
+            await interaction.followup.send(f"> **ERROR：Please use `/dalle3 setting` to set your api key, api key can get from https://dalle.feiyuyu.net/dashboard**")
+            return
+
+        headers = {"Authorization": "Bearer " + api_key}
+        async with aiohttp.ClientSession() as session:
+            current_task = asyncio.create_task(session.post("https://dalle.feiyuyu.net/v1/images/generations", json=payload, headers=headers))
+            response = await current_task
+            if response.status == 200:
+                image_url = (await response.json())["data"][0]["url"]
+                prompt = (await response.json())["data"][0]["revised_prompt"]
+                embed=discord.Embed(title="Unofficial DALLE-3", url="https://dalle.feiyuyu.net/gradio/", type="image")
+                embed.add_field(name="prompt", value=f"{prompt}", inline=False)
+                embed.set_image(url=image_url)
+                embed.set_footer(text="Power by feiyuyu", icon_url="https://avatars.githubusercontent.com/u/32660959?v=4")
+                await interaction.followup.send(embed=embed)
+            else:
+                await interaction.followup.send(f"ERROR：{response.status} {response.reason}")
+                logger.error(f"Error while create image：{response.status} {response.reason}")
+    except Exception as e:
+        await interaction.followup.send(f"> **Error：{e}**")
+        logger.error(f"Error while create image：{e}")
+
+async def create_image_bing(interaction: discord.Interaction, users_chatbot: dict, prompt: str, cookies):
     try:
         if not interaction.response.is_done():
             await interaction.response.defer(thinking=True)

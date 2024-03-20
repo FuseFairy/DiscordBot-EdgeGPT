@@ -21,9 +21,13 @@
    
 > ### will create a separate chat for each user.
    
-* cookies setting(can use personal Bing Cookies): `/cookies setting [cookies_file]`
+* cookies setting (set for using personal Bing Cookies): `/cookies setting [cookies_file]`
   * Can upload own cookies (get from https://bing.com/). Supports simultaneous uploads.
   ![setting](https://i.imgur.com/ZTLKkAJ.png)
+
+* Unofficial DALLE-3 api key setting (set for using personal unofficial DALLE-3 api key, can get from https://dalle.feiyuyu.net/dashboard): `/dalle3 setting`
+
+  ![dalle3_setting](https://i.imgur.com/cSVBFov.png)
   
 * copilot: `/copilot [version] [style] [type]`
   * A separate thread will be created, if use default version, can generate images while chatting.
@@ -34,9 +38,10 @@
   ![copilot](https://i.imgur.com/ctcGb7I.png)
   ![chat](https://i.imgur.com/3Fx0iQE.png)
   
-* bing image creator: `/create image [prompt]`
+* image creator: `/create image [service][prompt]`
   
   ![bingimage.png](https://i.imgur.com/pSCI1bg.png)
+  ![dalle3image.png](https://i.imgur.com/ELYbuK5.png)
 
 * reset conversation: `/reset conversation`
 
@@ -93,30 +98,34 @@ pip install -r requirements.txt
 ## Usage
 1. Rename the file`.env.dev`to`.env`, then open it and edit it.
    ```env
-   # input your Discord bot token
-   DISCORD_BOT_TOKEN=
-   
-   IMAGE_TIMEOUT=300
-   IMAGE_MAX_CREATE_SEC=300
+    DISCORD_BOT_TOKEN=
+    IMAGE_TIMEOUT=300
+    IMAGE_MAX_CREATE_SEC=300
 
-   # Allow mention bot only in specific channel, if you don't set it, just default to all channels.
-   MENTION_CHANNEL_ID=
+    # (Optional) Set unofficial DALLE-3 api key, api key can get from https://dalle.feiyuyu.net/dashboard
+    dalle3_unofficial_apikey=
 
-   # Allow each commands only in specific channel, if you don't set it, just default to all channels.
-   # specific channel for /cookies setting
-   SETTING_CHANNEL_ID=
+    # (Optional) Allow mention bot only in specific channel, if you don't set it, just default to all channels.
+    MENTION_CHANNEL_ID=
 
-   # specific channel for /copilot
-   CHAT_CHANNEL_ID=
+    # (Optional) Allow each commands only in specific channel, if you don't set it, just default to all channels.
+    # specific channel for /cookies setting
+    COOKIES_SETTING_CHANNEL_ID=
 
-   # specific channel for /create image
-   CREATE_IMAGE_CHANNEL_ID=
+    # specific channel for /dalle3 setting
+    DALLE3_SETTING_CHANNEL_ID=
 
-   # specific channel for /reset conversation
-   RESET_CHAT_CHANNEL_ID=
+    # specific channel for /copilot
+    CHAT_CHANNEL_ID=
 
-   # specific channel for /help
-   HELP_CMD_CHANNEL_ID=
+    # specific channel for /create image
+    CREATE_IMAGE_CHANNEL_ID=
+
+    # specific channel for /reset conversation
+    RESET_CHAT_CHANNEL_ID=
+
+    # specific channel for /help
+    HELP_CMD_CHANNEL_ID=
    ```
    
 2. Create the `cookies.json` file.
@@ -131,6 +140,8 @@ pip install -r requirements.txt
 * ReEdgeGPT - https://github.com/Integration-Automation/ReEdgeGPT
 
 * Sydney  - https://github.com/juzeon/SydneyQt/tree/v1
+
+* free-dall-e-proxy - https://github.com/Feiyuyu0503/free-dall-e-proxy
 
 ## Contributors
 

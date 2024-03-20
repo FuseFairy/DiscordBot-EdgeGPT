@@ -4,7 +4,7 @@ import os
 from discord import app_commands
 from core.classes import Cog_Extension
 from src.log import setup_logger
-from src.user_chatbot import set_chatbot, get_users_chatbot
+from src.user_chatbot import set_chatbot, get_users_chatbot, set_dalle3_unofficial_apikey
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -13,13 +13,14 @@ logger = setup_logger(__name__)
 
 class EdgeGPT(Cog_Extension):
     cookies_group = app_commands.Group(name="cookies", description="set personal cookies")
+    dalle3_group = app_commands.Group(name="dalle3", description="Set unofficial DALLE-3 api key")
     create_group = app_commands.Group(name="create", description="Create images.")
     reset_group = app_commands.Group(name="reset", description="Reset conversation.")
 
     @cookies_group.command(name="setting", description="can set personal Copilot cookies, no mandatory setting.")
     async def cookies_setting(self, interaction: discord.Interaction, *, cookies_file: discord.Attachment):
         await interaction.response.defer(thinking=True)
-        allowed_channel_id = os.getenv("SETTING_CHANNEL_ID")
+        allowed_channel_id = os.getenv("COOKIES_SETTING_CHANNEL_ID")
         if allowed_channel_id and int(allowed_channel_id) != interaction.channel_id:
             await interaction.followup.send(f"> **Command can only used on <#{allowed_channel_id}>**")
             return
@@ -42,6 +43,17 @@ class EdgeGPT(Cog_Extension):
                 await interaction.followup.send("> **ERROR： cookies_file only Support json or txt format only.**")
         except Exception as e:
             await interaction.followup.send(f"> **ERROR：{e}**")
+    
+    # Set unofficial DALLE-3 api key
+    @dalle3_group.command(name="setting", description="Set unofficial DALLE-3 api key")
+    async def dalle3_setting(self, interaction: discord.Interaction, api_key: str):
+        await interaction.response.defer(thinking=True, ephemeral=True)
+        allowed_channel_id = os.getenv("DALLE3_SETTING_CHANNEL_ID")
+        if allowed_channel_id and int(allowed_channel_id) != interaction.channel_id:
+            await interaction.followup.send(f"> **Command can only used on <#{allowed_channel_id}>**")
+            return
+        await set_dalle3_unofficial_apikey(interaction.user.id, api_key)
+        await interaction.followup.send("> **Setting success!**")
 
     # Chat with Copilot.
     @app_commands.command(name="copilot", description="Create thread for conversation.")
@@ -83,8 +95,9 @@ class EdgeGPT(Cog_Extension):
         await interaction.followup.send(f"here is your thread {thread.jump_url}")
         
     # Create images.
-    @create_group.command(name="image", description="Generate image by Bing Image Creator")
-    async def create_image(self, interaction: discord.Interaction, *, prompt: str):
+    @create_group.command(name="image", description="Generate image.")
+    @app_commands.choices(service=[app_commands.Choice(name="DALLE-3", value="dalle-3"), app_commands.Choice(name="Bing Image Creator", value="bing_image_creator")])
+    async def create_image(self, interaction: discord.Interaction, *, service: app_commands.Choice[str], prompt: str):
         await interaction.response.defer(thinking=True)
         allowed_channel_id = os.getenv("CREATE_IMAGE_CHANNEL_ID")
         if allowed_channel_id and int(allowed_channel_id) != interaction.channel_id:
@@ -94,7 +107,7 @@ class EdgeGPT(Cog_Extension):
         user_id = interaction.user.id
         if user_id not in users_chatbot:
             await set_chatbot(user_id=user_id)
-        await users_chatbot[user_id].create_image(interaction, prompt)
+        await users_chatbot[user_id].create_image(interaction, prompt, service.value)
     
     # Reset conversation
     @reset_group.command(name="conversation", description="Reset bing chatbot conversation.")

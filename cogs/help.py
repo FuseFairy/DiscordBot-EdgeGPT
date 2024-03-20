@@ -15,9 +15,10 @@ class Help(Cog_Extension):
             return
         embed=discord.Embed(description="[FuseFairy/DiscordBot-EdgeGPT](https://github.com/FuseFairy/DiscordBot-EdgeGPT/blob/main/README.md)\n***COMMANDS -***")
         embed.add_field(name="/cookies setting", value="Can upload own cookies.", inline=False)
+        embed.add_field(name="/dalle3 setting", value="Can upload own api key, api key can get from https://dalle.feiyuyu.net/dashboard.", inline=False)
         embed.add_field(name="/copilot", value="Chat with Copilot or Sydney(jail break).", inline=False)
         embed.add_field(name="/reset conversation", value="Reset your conversation.", inline=False)
-        embed.add_field(name="/create image", value="Generate image by Bing Image Creator.", inline=False)
+        embed.add_field(name="/create image", value="Generate image.", inline=False)
         await interaction.response.send_message(embed=embed)
 
 async def setup(bot):

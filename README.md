@@ -1,5 +1,5 @@
 # DiscordBot-EdgeGPT
-## Using Copilot and Bing Image Creator on discord bot.
+## Using Copilot and Bing Image Creator、DALLE-3 on discord bot.
 
 ![demo](https://i.imgur.com/mvg18xh.gif)
 

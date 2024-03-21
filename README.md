@@ -99,16 +99,18 @@ pip install -r requirements.txt
 1. Rename the file`.env.dev`to`.env`, then open it and edit it.
    ```env
     DISCORD_BOT_TOKEN=
+
+    # Timeout for BingImageCreator
     IMAGE_TIMEOUT=300
     IMAGE_MAX_CREATE_SEC=300
 
     # (Optional) Set unofficial DALLE-3 api key, api key can get from https://dalle.feiyuyu.net/dashboard
     dalle3_unofficial_apikey=
 
-    # (Optional) Allow mention bot only in specific channel, if you don't set it, just default to all channels.
+    # (Optional) Allow mention bot only in specific channel.
     MENTION_CHANNEL_ID=
 
-    # (Optional) Allow each commands only in specific channel, if you don't set it, just default to all channels.
+    # (Optional) Allow each commands only in specific channel.
     # specific channel for /cookies setting
     COOKIES_SETTING_CHANNEL_ID=
 

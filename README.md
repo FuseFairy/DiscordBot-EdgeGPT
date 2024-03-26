@@ -41,7 +41,7 @@
 * image creator: `/create image [service][prompt]`
   
   ![bingimage.png](https://i.imgur.com/pSCI1bg.png)
-  ![dalle3image.png](https://i.imgur.com/ELYbuK5.png)
+  ![dalle3image.png](https://i.imgur.com/o13jaln.png)
 
 * reset conversation: `/reset conversation`
 

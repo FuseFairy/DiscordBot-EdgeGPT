@@ -44,7 +44,6 @@ async def create_image_dalle3(interaction: discord.Interaction, prompt: str, cha
             response = await current_task
             if response.status == 200:
                 image_url = (await response.json())["data"][0]["url"]
-                prompt = (await response.json())["data"][0]["revised_prompt"]
                 embed=discord.Embed(title="Unofficial DALLE-3", url="https://dalle.feiyuyu.net/gradio/", type="image")
                 embed.add_field(name="prompt", value=f"{prompt}", inline=False)
                 embed.set_image(url=image_url)

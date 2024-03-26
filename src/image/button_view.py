@@ -6,6 +6,7 @@ class ButtonView(discord.ui.View):
         self.button_author = interaction.user.id
         self.prompt = prompt
         self.chatbot = chatbot
+        self.images = images
 
         if images:
             for i, image in enumerate(images, start=1):
@@ -22,4 +23,4 @@ class ButtonView(discord.ui.View):
             await interaction.followup.send("You don't have permission to press this button.")
         else:
             await interaction.response.defer(ephemeral=False, thinking=True)
-            await self.chatbot.create_image(interaction, self.prompt)
+            await self.chatbot.create_image(interaction, self.prompt, service="bing_image_creator" if self.images else "dalle-3")

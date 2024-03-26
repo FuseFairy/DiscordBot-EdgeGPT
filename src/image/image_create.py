@@ -14,7 +14,7 @@ load_dotenv()
 
 logger = setup_logger(__name__)
 
-async def create_image_dalle3(interaction: discord.Interaction, prompt: str, api_key: str=None):
+async def create_image_dalle3(interaction: discord.Interaction, prompt: str, chatbot, api_key: str=None):
     try:
         username = interaction.user
         channel = interaction.channel
@@ -49,7 +49,7 @@ async def create_image_dalle3(interaction: discord.Interaction, prompt: str, api
                 embed.add_field(name="prompt", value=f"{prompt}", inline=False)
                 embed.set_image(url=image_url)
                 embed.set_footer(text="Power by feiyuyu", icon_url="https://avatars.githubusercontent.com/u/32660959?v=4")
-                await interaction.followup.send(embed=embed)
+                await interaction.followup.send(embed=embed, view=ButtonView(interaction, prompt, chatbot))
             else:
                 await interaction.followup.send(f"ERROR：{response.status} {response.reason}")
                 logger.error(f"Error while create image：{response.status} {response.reason}")
@@ -57,7 +57,7 @@ async def create_image_dalle3(interaction: discord.Interaction, prompt: str, api
         await interaction.followup.send(f"> **Error：{e}**")
         logger.error(f"Error while create image：{e}")
 
-async def create_image_bing(interaction: discord.Interaction, users_chatbot: dict, prompt: str, cookies):
+async def create_image_bing(chatbot, interaction: discord.Interaction, prompt: str, cookies):
     try:
         if not interaction.response.is_done():
             await interaction.response.defer(thinking=True)
@@ -83,7 +83,7 @@ async def create_image_bing(interaction: discord.Interaction, users_chatbot: dic
         new_image.save(image_data, format='PNG')
         image_data.seek(0)
             
-        await interaction.followup.send(prompts, file=discord.File(fp=image_data, filename='new_image.png'), view=ButtonView(interaction, prompt, images, users_chatbot, user_id))
+        await interaction.followup.send(prompts, file=discord.File(fp=image_data, filename='new_image.png'), view=ButtonView(interaction, prompt, chatbot, images))
     except asyncio.TimeoutError:
         await interaction.followup.send("> **Error：Request timed out.**")
         logger.error("Error while create image：Request timed out.")

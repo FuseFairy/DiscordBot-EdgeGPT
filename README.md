@@ -136,7 +136,11 @@ pip install -r requirements.txt
    * Click "Export" on the buttom right.
    * Paste your cookies into a file `cookies.json`
 
-4. Start run your bot, hosted locally or on a server.
+4. Start run your bot.
+   ```python
+   python bot.py
+
+   ```
 
 ## Credits
 * ReEdgeGPT - https://github.com/Integration-Automation/ReEdgeGPT

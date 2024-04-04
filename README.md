@@ -1,4 +1,9 @@
 # DiscordBot-EdgeGPT
+
+  <a href="https://www.python.org/downloads/">
+    <img alt="PyPI - Python Version" src="https://img.shields.io/badge/pyversion-3.10%2B-blue?style=flat&label=python">
+  </a>
+  
 ## Using Copilot and Bing Image Creator、DALLE-3 on discord bot.
 
 ![demo](https://i.imgur.com/mvg18xh.gif)

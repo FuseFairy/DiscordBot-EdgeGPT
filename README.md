@@ -3,10 +3,6 @@
   <a href="https://www.python.org/downloads/">
     <img alt="PyPI - Python Version" src="https://img.shields.io/badge/pyversion-3.10%2B-blue?style=flat&label=python">
   </a>
-  
-## Using Copilot and Bing Image Creator、DALLE-3 on discord bot.
-
-![demo](https://i.imgur.com/mvg18xh.gif)
 
 ## Update
 > ### 2024/3/30：Support DALLE-3(Unofficial), get api key from https://dalle.feiyuyu.net/dashboard.
@@ -14,7 +10,9 @@
 > ### 2024/2/2：To optimize usage, recommended to re-read the README.
 > ### 2024/1/27：Add jail break version, but image uploads are currently not supported, and python version need 3.10+.
 > ### 2024/1/15：Can create thread to chat with Copilot.
-   
+
+![demo](https://i.imgur.com/mvg18xh.gif)
+
 ## Features
 
 <details>

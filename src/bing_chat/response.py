@@ -2,7 +2,7 @@ import discord
 import re
 import os
 from io import BytesIO
-from re_edge_gpt import ConversationStyle
+from re_edge_gpt import ConversationStyle, Chatbot
 from ..log import setup_logger
 from contextlib import aclosing
 from .jail_break import sydney, config
@@ -74,7 +74,8 @@ async def send_message(user_chatbot, user_message: str, image: str, interaction:
                 conversation_style=ConversationStyle.precise
             else:
                 conversation_style=ConversationStyle.balanced
-
+            
+            chatbot: Chatbot
             reply = await chatbot.ask(
                 prompt=user_message,
                 conversation_style=conversation_style,

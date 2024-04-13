@@ -1,0 +1,18 @@
+modules = ["python-3.10:v18-20230807-322e88b"]
+run = "python bot.py"
+onBoot = "pip install -r requirements.txt"
+
+[unitTest]
+language = "python3"
+
+[languages]
+
+[languages.python]
+pattern = "**/{*.py,*.pyw}"
+
+[gitHubImport]
+requiredFiles = [".replit"]
+
+[deployment]
+run = ["sh", "-c", "python bot.py"]
+deploymentTarget = "cloudrun"

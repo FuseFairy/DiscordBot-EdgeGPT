@@ -84,9 +84,12 @@ async def upload(ctx):
         if ctx.message.attachments:
             for attachment in ctx.message.attachments:
                 if "json" in attachment.content_type or "text" in attachment.content_type:
-                    content = await attachment.read()
-                    with open("cookies.json", "w", encoding = "utf-8") as f:
-                        json.dump(json.loads(content), f, indent = 2)
+                    content: bytes = await attachment.read()
+                    if os.path.exists("./cookies.json"):
+                        with open("cookies.json", "w", encoding = "utf-8") as f:
+                            json.dump(json.loads(content), f, indent = 2)
+                    else:
+                        os.environ["BING_COOKIES"] = content.decode('utf-8')
                     client = get_client()
                     await client.set_chatbot(json.loads(content))
                     await ctx.author.send(f'> **Upload new cookies successfully!**')

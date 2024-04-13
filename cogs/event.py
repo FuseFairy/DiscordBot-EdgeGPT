@@ -143,13 +143,17 @@ async def send_message(interaction, chatbot, conversation_style_str, user_messag
             text = text.strip()
 
             auth_cookie = ""
-            if reply["image_create_text"] and os.path.isfile("./cookies.json"):
-                with open("./cookies.json", encoding="utf-8") as file:
-                    cookies = json.load(file)
-                    for cookie in cookies:
-                        if cookie["name"] == "_U":
-                            auth_cookie =  cookie["value"]
-                            break
+            if reply["image_create_text"] and (os.path.isfile("./cookies.json") or os.getenv("BING_COOKIES")):
+                if os.getenv("BING_COOKIES"):
+                    cookies = json.loads(os.getenv("BING_COOKIES"))
+                elif os.path.isfile("./cookies.json"):
+                    with open("./cookies.json", encoding="utf-8") as file:
+                        cookies = json.load(file)
+
+                for cookie in cookies:
+                    if cookie["name"] == "_U":
+                        auth_cookie =  cookie["value"]
+                        break
                     
                 async_gen = ImageGenAsync(auth_cookie=auth_cookie, quiet=True)
                 images = await async_gen.get_images(prompt=reply["image_create_text"], timeout=int(os.getenv("IMAGE_TIMEOUT")), max_generate_time_sec=int(os.getenv("IMAGE_MAX_CREATE_SEC")))

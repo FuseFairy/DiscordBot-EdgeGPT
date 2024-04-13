@@ -18,12 +18,15 @@ class MentionChatbot():
 
     async def set_chatbot(self, cookies: str=None):
         try:
-            if not os.path.exists("./cookies.json"):
-                logger.error("cookies.json file not found")
+            if not os.path.exists("./cookies.json") and not os.getenv("BING_COOKIES"):
+                logger.error("Please setup your Bing cookies.")
                 return
             if cookies == None:
-                with open("./cookies.json", encoding="utf-8") as file:
-                    cookies = json.load(file)
+                if os.getenv("BING_COOKIES"):
+                    cookies = json.loads(os.getenv("BING_COOKIES"))
+                elif os.path.exists("./cookies.json"):
+                    with open("./cookies.json", encoding="utf-8") as file:
+                        cookies = json.load(file)
             self.chatbot = await Chatbot.create(cookies=cookies, mode="Bing")
         except Exception as e:
             logger.error(e, exc_info=True)

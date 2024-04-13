@@ -91,11 +91,15 @@ class UserChatbot():
         self.jailbreak = jailbreak
 
         if self.cookies == None:
-            if not os.path.exists("./cookies.json"):
-                logger.error("cookies.json file not found")
+            if not os.path.exists("./cookies.json") and not os.getenv("BING_COOKIES"):
+                logger.error("Bing cookies not found")
                 return
-            with open("./cookies.json", encoding="utf-8") as file:
-                self.cookies = json.load(file)
+            
+            if os.getenv("BING_COOKIES"):
+                self.cookies = json.loads(os.getenv("BING_COOKIES"))
+            elif os.path.exists("./cookies.json"):
+                with open("./cookies.json", encoding="utf-8") as file:
+                    self.cookies = json.load(file)
 
         if not self.jailbreak:
             self.chatbot = await Chatbot.create(cookies=self.cookies, mode="Bing")
@@ -125,12 +129,15 @@ class UserChatbot():
     async def create_image(self, interaction: discord.Interaction, prompt: str, service=None):
         if service == "bing_image_creator" or service == None:
             if not self.sem_create_image_bing.locked():
-                if self.cookies == None and os.path.isfile("./cookies.json"):
-                    with open("./cookies.json", encoding="utf-8") as file:
-                        self.cookies = json.load(file)
-                elif self.cookies == None:
-                    await interaction.followup.send("> **ERROR：Please upload your cookies.**")
-                    return
+                if self.cookies == None:
+                    if not os.path.exists("./cookies.json") and not os.getenv("BING_COOKIES"):
+                        await interaction.followup.send("> **ERROR：Please upload your cookies.**")
+                        return
+                    if os.getenv("BING_COOKIES"):
+                        self.cookies = json.loads(os.getenv("BING_COOKIES"))
+                    elif os.path.exists("./cookies.json"):
+                        with open("./cookies.json", encoding="utf-8") as file:
+                            self.cookies = json.load(file)
                 async with self.sem_create_image_bing:
                     await create_image_bing(self, interaction, prompt, self.cookies)
             else:

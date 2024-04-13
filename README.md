@@ -4,6 +4,10 @@
     <img alt="PyPI - Python Version" src="https://img.shields.io/badge/pyversion-3.10%2B-blue?style=flat&label=python">
   </a>
 
+  [![Try with Replit Badge](https://replit.com/badge?caption=Try%20with%20Replit)](https://replit.com/@dd8611706/DiscordBot-EdgeGPT)
+
+
+
 ## Update
 > ### 2024/3/30：Support DALLE-3(Unofficial), get api key from https://dalle.feiyuyu.net/dashboard.
 > ### 2024/3/5：Images can be generated while chatting.
@@ -103,11 +107,14 @@ pip install -r requirements.txt
    ```env
     DISCORD_BOT_TOKEN=
 
+    # (Optional) If you are run with Replit, it is recommended to configure cookies using this parameter instead of using cookies.json
+    BING_COOKIES=
+
     # Timeout for BingImageCreator
     IMAGE_TIMEOUT=300
     IMAGE_MAX_CREATE_SEC=300
 
-    # (Optional) Set unofficial DALLE-3 api key, api key can get from https://dalle.feiyuyu.net/dashboard
+    # Set unofficial DALLE-3 api key, api key can get from https://dalle.feiyuyu.net/dashboard
     dalle3_unofficial_apikey=
 
     # (Optional) Allow mention bot only in specific channel.

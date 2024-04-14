@@ -4,7 +4,7 @@
     <img alt="PyPI - Python Version" src="https://img.shields.io/badge/pyversion-3.10%2B-blue?style=flat&label=python">
   </a>
 
-  [![Try with Replit Badge](https://replit.com/badge?caption=Try%20with%20Replit)](https://replit.com/@dd8611706/DiscordBot-EdgeGPT)
+  [![Try with Replit Badge](https://replit.com/badge?caption=Try%20with%20Replit)](https://replit.com/@dd8611706/DiscordBot-EdgeGPT?v=1)
 
 
 

@@ -144,9 +144,14 @@ class UserChatbot():
                 if not interaction.response.is_done():
                     await interaction.response.defer(thinking=True)
                 await interaction.followup.send("> **ERROR：Please wait for the previous command to complete.**")
-        else: 
+        else:
             if not self.sem_create_image_dalle3.locked():
-                 async with self.sem_create_image_dalle3:
+                if self.dalle3_unoffcial_apikey == None and os.getenv("DALLE3_UNOFFICIAL_APIKEY"):
+                    self.dalle3_unoffcial_apikey = os.getenv("DALLE3_UNOFFICIAL_APIKEY")
+                else:
+                    await interaction.followup.send("> **ERROR：Please upload your api key.**")
+                    return
+                async with self.sem_create_image_dalle3:
                     await create_image_dalle3(interaction, prompt, self, self.dalle3_unoffcial_apikey)
             else:
                 await interaction.followup.send("> **ERROR：Please wait for the previous command to complete.**")

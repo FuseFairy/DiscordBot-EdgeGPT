@@ -1,5 +1,5 @@
 discord.py==2.3.2
 python-dotenv==0.21.0
-re_edge_gpt==0.0.35
+re_edge_gpt==0.0.36
 Pillow==10.1.0
 importlib-metadata==7.0.1

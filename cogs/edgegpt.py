@@ -5,6 +5,7 @@ from discord import app_commands
 from core.classes import Cog_Extension
 from src.log import setup_logger
 from src.user_chatbot import set_chatbot, get_users_chatbot
+from src.check_channel import check_channel
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -20,10 +21,9 @@ class EdgeGPT(Cog_Extension):
     @cookies_group.command(name="setting", description="can set personal Copilot cookies, no mandatory setting.")
     async def cookies_setting(self, interaction: discord.Interaction, *, cookies_file: discord.Attachment):
         await interaction.response.defer(thinking=True)
-        allowed_channel_id = os.getenv("COOKIES_SETTING_CHANNEL_ID")
-        if allowed_channel_id and int(allowed_channel_id) != interaction.channel_id:
-            await interaction.followup.send(f"> **Command can only used on <#{allowed_channel_id}>**")
+        if not await check_channel(interaction, "COOKIES_SETTING_CHANNEL_ID"):
             return
+
         user_id = interaction.user.id
         try:
             if "json" in cookies_file.content_type or "text" in cookies_file.content_type:
@@ -48,10 +48,9 @@ class EdgeGPT(Cog_Extension):
     @dalle3_group.command(name="setting", description="Set unofficial DALLE-3 api key")
     async def dalle3_setting(self, interaction: discord.Interaction, api_key: str):
         await interaction.response.defer(thinking=True, ephemeral=True)
-        allowed_channel_id = os.getenv("DALLE3_SETTING_CHANNEL_ID")
-        if allowed_channel_id and int(allowed_channel_id) != interaction.channel_id:
-            await interaction.followup.send(f"> **Command can only used on <#{allowed_channel_id}>**")
+        if not await check_channel(interaction, "DALLE3_SETTING_CHANNEL_ID"):
             return
+
         await set_chatbot(interaction.user.id, dalle3_apikey=api_key)
         await interaction.followup.send("> **Setting success!**")
 
@@ -64,10 +63,9 @@ class EdgeGPT(Cog_Extension):
     async def chat(self, interaction: discord.Interaction, version: app_commands.Choice[str], style: app_commands.Choice[str],
                    type: app_commands.Choice[str], plugin: app_commands.Choice[str]=None):
         await interaction.response.defer(thinking=True)
-        allowed_channel_id = os.getenv("CHAT_CHANNEL_ID")
-        if allowed_channel_id and int(allowed_channel_id) != interaction.channel_id:
-            await interaction.followup.send(f"> **Command can only used on <#{allowed_channel_id}>**")
+        if not await check_channel(interaction, "CHAT_CHANNEL_ID"):
             return
+        
         if isinstance(interaction.channel, discord.Thread):
             await interaction.followup.send("> **This command is disabled in thread.**")
             return
@@ -105,10 +103,9 @@ class EdgeGPT(Cog_Extension):
     @app_commands.choices(service=[app_commands.Choice(name="DALLE-3", value="dalle-3"), app_commands.Choice(name="Bing Image Creator", value="bing_image_creator")])
     async def create_image(self, interaction: discord.Interaction, *, service: app_commands.Choice[str], prompt: str):
         await interaction.response.defer(thinking=True)
-        allowed_channel_id = os.getenv("CREATE_IMAGE_CHANNEL_ID")
-        if allowed_channel_id and int(allowed_channel_id) != interaction.channel_id:
-            await interaction.followup.send(f"> **Command can only used on <#{allowed_channel_id}>**")
+        if not await check_channel(interaction, "CREATE_IMAGE_CHANNEL_ID"):
             return
+        
         users_chatbot = get_users_chatbot()
         user_id = interaction.user.id
         if user_id not in users_chatbot:
@@ -119,10 +116,9 @@ class EdgeGPT(Cog_Extension):
     @reset_group.command(name="conversation", description="Reset bing chatbot conversation.")
     async def reset_conversation(self, interaction: discord.Interaction):
         await interaction.response.defer(thinking=True)
-        allowed_channel_id = os.getenv("RESET_CHAT_CHANNEL_ID")
-        if allowed_channel_id and int(allowed_channel_id) != interaction.channel_id:
-            await interaction.followup.send(f"> **Command can only used on <#{allowed_channel_id}>**")
+        if not await check_channel(interaction, "RESET_CHAT_CHANNEL_ID"):
             return
+
         users_chatbot = get_users_chatbot()
         user_id = interaction.user.id
         

@@ -9,11 +9,11 @@
 
 
 ## Update
+> ### 2024/4/21：Supporting the Suno plugin with Copilot.
 > ### 2024/3/30：Support DALLE-3(Unofficial), get api key from https://dalle.feiyuyu.net/dashboard.
 > ### 2024/3/5：Images can be generated while chatting.
 > ### 2024/2/2：To optimize usage, recommended to re-read the README.
 > ### 2024/1/27：Add jail break version, but image uploads are currently not supported, and python version need 3.10+.
-> ### 2024/1/15：Can create thread to chat with Copilot.
 
 ![demo](https://i.imgur.com/mvg18xh.gif)
 
@@ -41,9 +41,10 @@
     * [version]：`default` can chat with Copilot, `jailbreak` chat with Sydney, but `jailbreak` image uploads are not currently supported.
     * [style]：Have 3 conversation style can choose, `creative`、`balanced` and `precise`.
     * [type]：Options for thread type, `public` or `private`.
+    * [plugin]：Currently only supports Suno.
 
-  ![copilot](https://i.imgur.com/ctcGb7I.png)
   ![chat](https://i.imgur.com/3Fx0iQE.png)
+  ![suno](https://i.imgur.com/G5FugDC.png)
   
 * image creator: `/create image [service][prompt]`
   
@@ -115,28 +116,28 @@ pip install -r requirements.txt
     IMAGE_MAX_CREATE_SEC=300
 
     # Set unofficial DALLE-3 api key, api key can get from https://dalle.feiyuyu.net/dashboard
-    dalle3_unofficial_apikey=
+    DALLE3_UNOFFICIAL_APIKEY=
 
     # (Optional) Allow mention bot only in specific channel.
-    MENTION_CHANNEL_ID=
+    MENTION_CHANNEL_ID=1227670969702754857
 
-    # (Optional) Allow each commands only in specific channel.
-    # specific channel for /cookies setting
-    COOKIES_SETTING_CHANNEL_ID=
+    # (Optional) Allow each commands in some channels.
+    # specific channel(s) for /cookies setting
+    COOKIES_SETTING_CHANNEL_ID=1227670969702754857,1227327094070254857
 
-    # specific channel for /dalle3 setting
-    DALLE3_SETTING_CHANNEL_ID=
+    # specific channel(s) for /dalle3 setting
+    DALLE3_SETTING_CHANNEL_ID=122767096970275483
 
-    # specific channel for /copilot
+    # specific channel(s) for /copilot
     CHAT_CHANNEL_ID=
 
-    # specific channel for /create image
+    # specific channel(s) for /create image
     CREATE_IMAGE_CHANNEL_ID=
 
-    # specific channel for /reset conversation
+    # specific channel(s) for /reset conversation
     RESET_CHAT_CHANNEL_ID=
 
-    # specific channel for /help
+    # specific channel(s) for /help
     HELP_CMD_CHANNEL_ID=
    ```
    

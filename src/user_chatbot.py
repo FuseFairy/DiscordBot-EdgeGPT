@@ -17,7 +17,7 @@ tracemalloc.start()
 logger = setup_logger(__name__)
 users_chatbot = {}
 
-async def set_chatbot(user_id, conversation_style=None, version=None, cookies=None, dalle3_apikey=None):
+async def set_chatbot(user_id, conversation_style=None, version=None, cookies=None, dalle3_apikey=None, plugin=None):
     if user_id not in users_chatbot:
         users_chatbot[user_id] = UserChatbot(user_id)
 
@@ -32,13 +32,14 @@ async def set_chatbot(user_id, conversation_style=None, version=None, cookies=No
     if cookies:
         users_chatbot[user_id].set_cookies(cookies)
 
+    if dalle3_apikey:
+        users_chatbot[user_id].set_dalle3_apikey(dalle3_apikey)
+    
+    if plugin:
+        users_chatbot[user_id].set_plugin(plugin)
+
 def get_users_chatbot():
     return users_chatbot
-
-async def set_dalle3_unofficial_apikey(user_id, dalle3_apikey: str):
-    if user_id not in users_chatbot:
-        users_chatbot[user_id] = UserChatbot(user_id)
-    users_chatbot[user_id].set_dalle3_apikey(dalle3_apikey)
     
 class UserChatbot():
     def __init__(self, user_id):
@@ -47,6 +48,7 @@ class UserChatbot():
         self.sem_create_image_dalle3 = Semaphore(1)
         self.cookies = None
         self.dalle3_unoffcial_apikey=None
+        self.plugin = None
         self.chatbot = None
         self.thread = None
         self.jailbreak = None
@@ -87,6 +89,9 @@ class UserChatbot():
     def get_chatbot(self):
         return self.chatbot
     
+    def set_plugin(self, plugin: str):
+        self.plugin = plugin
+    
     async def initialize_chatbot(self, jailbreak: bool):
         self.jailbreak = jailbreak
 
@@ -102,7 +107,7 @@ class UserChatbot():
                     self.cookies = json.load(file)
 
         if not self.jailbreak:
-            self.chatbot = await Chatbot.create(cookies=self.cookies, mode="Bing")
+            self.chatbot = await Chatbot.create(cookies=self.cookies, mode="Bing", plugin_ids=[self.plugin])
 
     async def send_message(self, message: str, interaction: discord.Interaction=None, image: str=None):
         if not self.sem_send_message.locked():
@@ -114,10 +119,10 @@ class UserChatbot():
             async with self.sem_send_message:
                 if interaction:
                     if interaction.type == discord.InteractionType.component or self.thread == None:
-                        await send_message(self, message, image, interaction)
+                        await send_message(self, message, image, self.plugin, interaction)
                 else:
                     async with self.thread.typing():
-                        await send_message(self, message, image)
+                        await send_message(self, message, image, self.plugin)
         else:
             if interaction:
                 if not interaction.response.is_done():
@@ -148,11 +153,11 @@ class UserChatbot():
             if not self.sem_create_image_dalle3.locked():
                 if self.dalle3_unoffcial_apikey == None and os.getenv("DALLE3_UNOFFICIAL_APIKEY"):
                     self.dalle3_unoffcial_apikey = os.getenv("DALLE3_UNOFFICIAL_APIKEY")
-                else:
+                elif self.dalle3_unoffcial_apikey == None:
                     await interaction.followup.send("> **ERROR：Please upload your api key.**")
                     return
                 async with self.sem_create_image_dalle3:
-                    await create_image_dalle3(interaction, prompt, self, self.dalle3_unoffcial_apikey)
+                    await create_image_dalle3(interaction, prompt, self)
             else:
                 await interaction.followup.send("> **ERROR：Please wait for the previous command to complete.**")
  

@@ -4,7 +4,7 @@ import os
 from discord import app_commands
 from core.classes import Cog_Extension
 from src.log import setup_logger
-from src.user_chatbot import set_chatbot, get_users_chatbot, set_dalle3_unofficial_apikey
+from src.user_chatbot import set_chatbot, get_users_chatbot
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -52,7 +52,7 @@ class EdgeGPT(Cog_Extension):
         if allowed_channel_id and int(allowed_channel_id) != interaction.channel_id:
             await interaction.followup.send(f"> **Command can only used on <#{allowed_channel_id}>**")
             return
-        await set_dalle3_unofficial_apikey(interaction.user.id, api_key)
+        await set_chatbot(interaction.user.id, dalle3_apikey=api_key)
         await interaction.followup.send("> **Setting success!**")
 
     # Chat with Copilot.
@@ -60,19 +60,25 @@ class EdgeGPT(Cog_Extension):
     @app_commands.choices(version=[app_commands.Choice(name="default", value="default"), app_commands.Choice(name="jail_break", value="jailbreak")])
     @app_commands.choices(style=[app_commands.Choice(name="Creative", value="creative"), app_commands.Choice(name="Balanced", value="balanced"), app_commands.Choice(name="Precise", value="precise")])
     @app_commands.choices(type=[app_commands.Choice(name="private", value="private"), app_commands.Choice(name="public", value="public")])
-    async def chat(self, interaction: discord.Interaction, version: app_commands.Choice[str], style: app_commands.Choice[str], type: app_commands.Choice[str]):
+    @app_commands.choices(plugin=[app_commands.Choice(name="Suno", value="suno")])
+    async def chat(self, interaction: discord.Interaction, version: app_commands.Choice[str], style: app_commands.Choice[str],
+                   type: app_commands.Choice[str], plugin: app_commands.Choice[str]=None):
         await interaction.response.defer(thinking=True)
         allowed_channel_id = os.getenv("CHAT_CHANNEL_ID")
         if allowed_channel_id and int(allowed_channel_id) != interaction.channel_id:
             await interaction.followup.send(f"> **Command can only used on <#{allowed_channel_id}>**")
             return
         if isinstance(interaction.channel, discord.Thread):
-            await interaction.followup.send("> This command is disabled in thread.")
+            await interaction.followup.send("> **This command is disabled in thread.**")
+            return
+        if version.value == "jailbreak" and plugin != None:
+            await interaction.followup.send("> **jail break is not support plugins.**")
             return
         
         user_id = interaction.user.id
         try:
-            await set_chatbot(user_id=user_id, conversation_style=style.value, version=version.value)
+            plugin = plugin.value if plugin else None
+            await set_chatbot(user_id=user_id, conversation_style=style.value, version=version.value, plugin=plugin)
         except Exception as e:
             await interaction.followup.send(f"> **ERROR：{e}**")
             return

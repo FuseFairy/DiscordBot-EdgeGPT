@@ -8,6 +8,7 @@ from contextlib import aclosing
 from .jail_break import sydney, config
 from .button_view import ButtonView
 from re_edge_gpt import ImageGenAsync
+from re_edge_gpt.plugins.suno import generate_suno_music
 from ..image.image_create import concatenate_images
 from dotenv import load_dotenv
 
@@ -17,7 +18,7 @@ logger = setup_logger(__name__)
 
 config = config.Config()
 
-async def send_message(user_chatbot, user_message: str, image: str, interaction: discord.Interaction=None):
+async def send_message(user_chatbot, user_message: str, image: str, plugin: str=None, interaction: discord.Interaction=None):
     reply = ''
     text = ''
     link_embed = ''
@@ -75,17 +76,32 @@ async def send_message(user_chatbot, user_message: str, image: str, interaction:
             else:
                 conversation_style=ConversationStyle.balanced
             
+            add_options = None
+            plugins=None
+            if plugin == "suno":
+                add_options = ["014CB21D"]
+                plugins = [{"Id": "c310c353-b9f0-4d76-ab0d-1dd5e979cf68", "Category": 1}]
             chatbot: Chatbot
             reply = await chatbot.ask(
                 prompt=user_message,
                 conversation_style=conversation_style,
                 simplify_response=True,
-                attachment={"image_url":f"{image}"}  
+                attachment={"image_url":f"{image}"},
+                add_options=add_options,
+                plugins=plugins,
+                message_type="GenerateContentQuery"
             )
+
+            music = None
+            try:
+                if plugin == "suno":
+                    music = await generate_suno_music(user_chatbot.cookies, reply.get("messageId"), reply.get("requestId"))
+            except:
+                pass
 
             # Get reply text
             suggest_responses = reply["suggestions"]
-            text = f"{reply['text']}"
+            text = f"{reply['text']}\n\n[Video]({music['Video']})" if music and music['Video'] else f"{reply['text']}"
             urls = [(i+1, x, reply["source_values"][i]) for i, x in  enumerate(reply["source_keys"])]
             end = text.find("Generating answers for you...")
             text = text[:end] if end != -1 else text

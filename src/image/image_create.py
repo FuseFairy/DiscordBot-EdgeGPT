@@ -14,10 +14,11 @@ load_dotenv()
 
 logger = setup_logger(__name__)
 
-async def create_image_dalle3(interaction: discord.Interaction, prompt: str, chatbot, api_key: str=None):
+async def create_image_dalle3(interaction: discord.Interaction, prompt: str, chatbot):
     try:
         username = interaction.user
         channel = interaction.channel
+        api_key = chatbot.dalle3_unoffcial_apikey
 
         logger.info(f"\x1b[31m{username}\x1b[0m：'{prompt}' ({channel}) [Unofficial DALLE-3]")
 
@@ -31,10 +32,10 @@ async def create_image_dalle3(interaction: discord.Interaction, prompt: str, cha
             "style": 'vivid',
             "user": 'free-dall-e-user'
         }
-
+        
         if api_key == None and os.getenv("dalle3_unofficial_apikey"):
             api_key = os.getenv("dalle3_unofficial_apikey")
-        else:
+        elif api_key == None:
             await interaction.followup.send(f"> **ERROR：Please use `/dalle3 setting` to set your api key, api key can get from https://dalle.feiyuyu.net/dashboard**")
             return
 

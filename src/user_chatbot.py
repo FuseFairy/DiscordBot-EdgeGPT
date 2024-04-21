@@ -154,7 +154,7 @@ class UserChatbot():
                 if self.dalle3_unoffcial_apikey == None and os.getenv("DALLE3_UNOFFICIAL_APIKEY"):
                     self.dalle3_unoffcial_apikey = os.getenv("DALLE3_UNOFFICIAL_APIKEY")
                 elif self.dalle3_unoffcial_apikey == None:
-                    await interaction.followup.send("> **ERROR：Please upload your api key.**")
+                    await interaction.followup.send("> **ERROR：Please use `/dalle3 setting` to set your api key, api key can get from https://dalle.feiyuyu.net/dashboard**")
                     return
                 async with self.sem_create_image_dalle3:
                     await create_image_dalle3(interaction, prompt, self)

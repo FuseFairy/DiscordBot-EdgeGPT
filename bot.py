@@ -2,6 +2,8 @@ import discord
 import os
 import importlib_metadata
 import json
+import requests
+import asyncio
 from discord.ext import commands
 from dotenv import load_dotenv
 from src.mention_chatbot import get_client
@@ -26,6 +28,48 @@ def check_version():
         if package != f'{name}=={version}':
             raise ValueError(f'{name} version {version} is installed but does not match the requirements')
 
+async def refresh_cookies():
+    while True:
+        cookies = fetch_cookies_from_bing()
+        with open("cookies.json", "w") as file:
+            json.dump(cookies, file, indent=4)  # Write cookies to JSON file with indentation
+        await asyncio.sleep(3600)
+
+def fetch_cookies_from_bing():
+    target_url = 'https://www.bing.com/'
+
+    # Make a GET request to Bing's website
+    response = requests.get(target_url)
+
+    # Get cookies from the response
+    cookies = response.cookies.get_dict()
+
+    # Convert cookies to the expected format
+    formatted_cookies = []
+    for name, value in cookies.items():
+        cookie = {
+            "name": name,
+            "value": value,
+            "domain": ".bing.com",
+            "hostOnly": False,
+            "path": "/",
+            "secure": False,
+            "httpOnly": False,
+            "sameSite": "no_restriction",
+            "session": False,
+            "firstPartyDomain": "",
+            "partitionKey": None,
+            "expirationDate": None,
+            "storeId": None
+        }
+        formatted_cookies.append(cookie)
+
+    # Save cookies to cookies.json
+    with open('cookies.json', 'w') as f:
+        json.dump(formatted_cookies, f, indent=4)
+
+    return formatted_cookies
+
 @bot.event
 async def on_ready():
     bot_status = discord.Status.online
@@ -40,6 +84,7 @@ async def on_ready():
     try:
         synced = await bot.tree.sync()
         logger.info(f"Synced {len(synced)} commands")
+        asyncio.create_task(refresh_cookies())
     except Exception as e:
         logger.error(e, exc_info=True)
 

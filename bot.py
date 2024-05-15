@@ -2,6 +2,10 @@ import discord
 import os
 import importlib_metadata
 import json
+import requests
+import asyncio
+import time
+from datetime import datetime
 from discord.ext import commands
 from dotenv import load_dotenv
 from src.mention_chatbot import get_client
@@ -26,6 +30,50 @@ def check_version():
         if package != f'{name}=={version}':
             raise ValueError(f'{name} version {version} is installed but does not match the requirements')
 
+async def refresh_cookies():
+    while True:
+        cookies, expirationDate = fetch_cookies_from_bing()  # Fetch cookies and expiration date
+        with open("cookies.json", "w") as file:
+            json.dump(cookies, file, indent=4)
+        await asyncio.sleep(expirationDate)
+
+def fetch_cookies_from_bing():
+    target_url = 'https://bing.com'
+
+    session = requests.Session()
+    response = session.get(target_url)
+
+    cookies = session.cookies.get_dict()  # Get cookies from the session
+
+    formatted_cookies = []
+    expirationDate = None
+    for name, value in cookies.items():
+        # Extract expiration date if available
+        if 'expires' in response.headers.get('Set-Cookie', ''):
+            expires_str = response.headers['Set-Cookie'].split('expires=')[1].split(';')[0]
+            expirationDate = int(time.mktime(datetime.strptime(expires_str, '%a, %d-%b-%Y %H:%M:%S %Z').timetuple()))
+        cookie = {
+            "name": name,
+            "value": value,
+            "domain": ".bing.com",
+            "hostOnly": False,
+            "path": "/",
+            "secure": False,
+            "httpOnly": False,
+            "sameSite": "no_restriction",
+            "session": False,
+            "firstPartyDomain": "",
+            "partitionKey": None,
+            "expirationDate": expirationDate,
+            "storeId": None
+        }
+        formatted_cookies.append(cookie)
+
+    with open('cookies.json', 'w') as f:
+        json.dump(formatted_cookies, f, indent=4)
+
+    return formatted_cookies, expirationDate
+
 @bot.event
 async def on_ready():
     bot_status = discord.Status.online
@@ -40,6 +88,7 @@ async def on_ready():
     try:
         synced = await bot.tree.sync()
         logger.info(f"Synced {len(synced)} commands")
+        asyncio.create_task(refresh_cookies())
     except Exception as e:
         logger.error(e, exc_info=True)
 

@@ -19,6 +19,7 @@ class ButtonView(discord.ui.View):
         if conversation_style_str and suggest_responses and user_chatbot:
             # Add buttons
             for label in suggest_responses:
+                label = label[:78] + "..." if len(label) > 80 else label
                 button = discord.ui.Button(label=label, row=3)
                 # Button event
                 async def callback(interaction: discord.Interaction, button: discord.ui.Button):     

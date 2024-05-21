@@ -107,7 +107,7 @@ class UserChatbot():
                     self.cookies = json.load(file)
 
         if not self.jailbreak:
-            self.chatbot = await Chatbot.create(cookies=self.cookies, mode="Bing", plugin_ids=[self.plugin])
+            self.chatbot = await Chatbot.create(proxy=os.getenv("PROXY"), cookies=self.cookies, mode="Bing", plugin_ids=[self.plugin])
 
     async def send_message(self, message: str, interaction: discord.Interaction=None, image: str=None):
         if not self.sem_send_message.locked():

@@ -42,6 +42,7 @@ async def send_message(user_chatbot, user_message: str, image: str, plugin: str=
                 context=user_chatbot.chat_history,
                 conversation_style=conversation_style_str,
                 locale='en-US',
+                proxy=os.getenv("PROXY"),
                 wss_url='wss://' + config.get('wss_domain') + '/sydney/ChatHub',
                 no_search=False
             )) as agen:

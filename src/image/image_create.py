@@ -35,7 +35,7 @@ async def create_image_dalle3(interaction: discord.Interaction, prompt: str, cha
 
         headers = {"Authorization": "Bearer " + api_key}
         async with aiohttp.ClientSession() as session:
-            current_task = asyncio.create_task(session.post("https://dalle.feiyuyu.net/v1/images/generations", json=payload, headers=headers))
+            current_task = asyncio.create_task(session.post("https://dalle.feiyuyu.net/v1/images/generations",proxy=os.getenv("PROXY"), json=payload, headers=headers))
             response = await current_task
             if response.status == 200:
                 image_url = (await response.json())["data"][0]["url"]
@@ -69,7 +69,7 @@ async def create_image_bing(chatbot, interaction: discord.Interaction, prompt: s
                 auth_cookie =  cookie["value"]
                 break
 
-        async_gen = ImageGenAsync(auth_cookie=auth_cookie, quiet=True)
+        async_gen = ImageGenAsync(auth_cookie=auth_cookie, quiet=True, proxy=os.getenv("PROXY"))
         images = await async_gen.get_images(prompt=prompt, timeout=int(os.getenv("IMAGE_TIMEOUT")), max_generate_time_sec=int(os.getenv("IMAGE_MAX_CREATE_SEC")))
         images = [file for file in images if not file.endswith('.svg')]
         new_image = await concatenate_images(images)

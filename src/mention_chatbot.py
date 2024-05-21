@@ -27,7 +27,7 @@ class MentionChatbot():
                 elif os.path.exists("./cookies.json"):
                     with open("./cookies.json", encoding="utf-8") as file:
                         cookies = json.load(file)
-            self.chatbot = await Chatbot.create(cookies=cookies, mode="Bing")
+            self.chatbot = await Chatbot.create(proxy=os.getenv("PROXY"), cookies=cookies, mode="Bing")
         except Exception as e:
             logger.error(e, exc_info=True)
     

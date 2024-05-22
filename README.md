@@ -105,43 +105,51 @@ pip install -r requirements.txt
 
 ## Usage
 1. Rename the file`.env.dev`to`.env`, then open it and edit it.
+ > [!WARNING]
+ > AUTO_COOKIES features are still being tested, so it may not work for everyone, and if you want to use with BING_COOKIES, you need to set BING_COOKIES first to work properly.
    ```env
-    DISCORD_BOT_TOKEN=
-
-    # (Optional) If you are run with Replit, it is recommended to configure cookies using this parameter instead of using cookies.json
-    BING_COOKIES=
-
-    # Timeout for BingImageCreator
-    IMAGE_TIMEOUT=300
-    IMAGE_MAX_CREATE_SEC=300
-
-    # Set unofficial DALLE-3 api key, api key can get from https://dalle.feiyuyu.net/dashboard
-    DALLE3_UNOFFICIAL_APIKEY=
-
-    # (Optional) Allow mention bot only in specific channel.
-    MENTION_CHANNEL_ID=1227670969702754857
-
-    # (Optional) Allow each commands in some channels.
-    # specific channel(s) for /cookies setting
+   DISCORD_BOT_TOKEN=
+    
+   # (Optional) If you are run with Replit, it is recommended to configure cookies using this parameter instead of using cookies.json
+   BING_COOKIES=
+    
+   # (Experimental) Automatically obtain Bing cookies and regular updates 
+   AUTO_COOKIES=False # False/True
+    
+   # (Optional) proxy
+   PROXY= 
+    
+   # Timeout for BingImageCreator
+   IMAGE_TIMEOUT=300
+   IMAGE_MAX_CREATE_SEC=300
+    
+   # Set unofficial DALLE-3 api key, api key can get from https://dalle.feiyuyu.net/dashboard
+   DALLE3_UNOFFICIAL_APIKEY=
+  
+   # (Optional) Allow mention bot only in specific channel.
+   MENTION_CHANNEL_ID=1227670969702754857
+    
+   # (Optional) Allow each commands in some channels.
+   # specific channel(s) for `/cookies setting`
     COOKIES_SETTING_CHANNEL_ID=1227670969702754857,1227327094070254857
-
-    # specific channel(s) for /dalle3 setting
-    DALLE3_SETTING_CHANNEL_ID=122767096970275483
-
-    # specific channel(s) for /copilot
-    CHAT_CHANNEL_ID=
-
-    # specific channel(s) for /create image
-    CREATE_IMAGE_CHANNEL_ID=
-
-    # specific channel(s) for /reset conversation
-    RESET_CHAT_CHANNEL_ID=
-
-    # specific channel(s) for /help
-    HELP_CMD_CHANNEL_ID=
+    
+   # specific channel(s) for `/dalle3 setting`
+   DALLE3_SETTING_CHANNEL_ID=122767096970275483
+    
+   # specific channel(s) for `/copilot`
+   CHAT_CHANNEL_ID=
+    
+   # specific channel(s) for `/create image`
+   CREATE_IMAGE_CHANNEL_ID=
+    
+   # specific channel(s) for `/reset conversation`
+   RESET_CHAT_CHANNEL_ID=
+    
+   # specific channel(s) for `/help`
+   HELP_CMD_CHANNEL_ID=
    ```
    
-2. Create the `cookies.json` file.
+3. Create the `cookies.json` file. (If you have set BING_COOKIES or set AUTO_COOKIES to True in the `.env` file, skip this step!)
    * Install the cookie editor extension for Chrome or Firefox.
    * Go to [bing.com](https://www.bing.com/)
    * Click "Export" on the buttom right.

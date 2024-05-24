@@ -131,7 +131,7 @@ pip install -r requirements.txt
     
    # (Optional) Allow each commands in some channels.
    # specific channel(s) for `/cookies setting`
-    COOKIES_SETTING_CHANNEL_ID=1227670969702754857,1227327094070254857
+   COOKIES_SETTING_CHANNEL_ID=1227670969702754857,1227327094070254857
     
    # specific channel(s) for `/dalle3 setting`
    DALLE3_SETTING_CHANNEL_ID=122767096970275483

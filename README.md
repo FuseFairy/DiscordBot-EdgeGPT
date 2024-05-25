@@ -29,7 +29,7 @@
 > ### will create a separate chat for each user.
    
 * cookies setting (set for using personal Bing Cookies): `/cookies setting [cookies_file]`
-  * Can upload own cookies (get from https://bing.com/). Supports simultaneous uploads.
+  * Can upload own cookies (get from https://bing.com/).
   ![setting](https://i.imgur.com/ZTLKkAJ.png)
 
 * Unofficial DALLE-3 api key setting (set for using personal unofficial DALLE-3 api key, can get from https://dalle.feiyuyu.net/dashboard): `/dalle3 setting`

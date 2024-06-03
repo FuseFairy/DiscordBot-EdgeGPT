@@ -9,6 +9,7 @@
 
 
 ## Update
+> ### 2024/6/3：Known issues with DALLE-3(Unofficial).
 > ### 2024/4/21：Supporting the Suno plugin with Copilot.
 > ### 2024/3/30：Support DALLE-3(Unofficial), get api key from https://dalle.feiyuyu.net/dashboard.
 > ### 2024/3/5：Images can be generated while chatting.

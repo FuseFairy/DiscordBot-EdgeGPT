@@ -22,18 +22,19 @@ class MentionChatbot():
 
     async def set_chatbot(self, cookies: str=None):
         try:
-            if os.getenv("AUTO_COOKIES"):       
-                asyncio.create_task(refresh_cookies())
-            elif not os.path.exists("./cookies.json") and not os.getenv("BING_COOKIES"):
-                logger.error("Please setup your Bing cookies.")
-                return
-            
             if cookies == None:
                 if os.getenv("BING_COOKIES"):
                     cookies = json.loads(os.getenv("BING_COOKIES"))
                 elif os.path.exists("./cookies.json"):
                     with open("./cookies.json", encoding="utf-8") as file:
                         cookies = json.load(file)
+            
+            if os.getenv("AUTO_COOKIES") == "True":
+                if os.getenv("AUTO_COOKIES"):       
+                    asyncio.create_task(refresh_cookies())
+                elif not os.path.exists("./cookies.json") and not os.getenv("BING_COOKIES"):
+                    logger.error("Please setup your Bing cookies.")
+                    return
 
             self.chatbot = await Chatbot.create(proxy=os.getenv("PROXY"), cookies=cookies, mode="Bing")
         except Exception as e:

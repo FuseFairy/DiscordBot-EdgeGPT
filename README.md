@@ -9,12 +9,11 @@
 
 
 ## Update
+> ### 2024/6/11：DALLE-3(Unofficial) has been fixed.
 > ### 2024/6/3：Known issues with DALLE-3(Unofficial).
 > ### 2024/4/21：Supporting the Suno plugin with Copilot.
 > ### 2024/3/30：Support DALLE-3(Unofficial), get api key from https://dalle.feiyuyu.net/dashboard.
 > ### 2024/3/5：Images can be generated while chatting.
-> ### 2024/2/2：To optimize usage, recommended to re-read the README.
-> ### 2024/1/27：Add jail break version, but image uploads are currently not supported, and python version need 3.10+.
 
 ![demo](https://i.imgur.com/mvg18xh.gif)
 

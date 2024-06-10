@@ -71,7 +71,7 @@ async def create_image_bing(chatbot, interaction: discord.Interaction, prompt: s
 
         async_gen = ImageGenAsync(auth_cookie=auth_cookie, quiet=True, proxy=os.getenv("PROXY"))
         images = await async_gen.get_images(prompt=prompt, timeout=int(os.getenv("IMAGE_TIMEOUT")), max_generate_time_sec=int(os.getenv("IMAGE_MAX_CREATE_SEC")))
-        images = [file for file in images if not file.endswith('.svg')]
+        images = [file for file in images if not (file.endswith('.svg') or file.endswith('.js'))]
         new_image = await concatenate_images(images)
         image_data = BytesIO()
         new_image.save(image_data, format='PNG')
@@ -79,13 +79,13 @@ async def create_image_bing(chatbot, interaction: discord.Interaction, prompt: s
             
         await interaction.followup.send(prompts, file=discord.File(fp=image_data, filename='new_image.png'), view=ButtonView(interaction, prompt, chatbot, images))
     except asyncio.TimeoutError:
-        await interaction.followup.send("> **Error：Request timed out.**")
+        await interaction.followup.send("> **ERROR：Request timed out.**")
         logger.error("Error while create image：Request timed out.")
     except TypeError:
-        await interaction.followup.send("> **Error：No images returned.**")
+        await interaction.followup.send("> **ERROR：No images returned.**")
         logger.error("Error while create image：No images returned.")
     except Exception as e:
-        await interaction.followup.send(f"> **Error：{e}**")
+        await interaction.followup.send(f"> **ERROR：{e}**")
         logger.error(f"Error while create image：{e}")
 
 async def concatenate_images(image_urls):

@@ -122,7 +122,7 @@ async def send_message(interaction, chatbot, conversation_style_str, user_messag
                 prompt=user_message,
                 conversation_style=conversation_style,
                 simplify_response=True,
-                attachment={"image_url":f"{image}"}
+                attachment={"image_url":f"{image}"} if image != None else None
             )
 
             # Get reply text

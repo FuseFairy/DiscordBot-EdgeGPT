@@ -81,13 +81,13 @@ async def send_message(user_chatbot, user_message: str, image: str, plugin: str=
             plugins=None
             if plugin == "suno":
                 add_options = ["014CB21D"]
-                plugins = [{"Id": "c310c353-b9f0-4d76-ab0d-1dd5e979cf68", "Category": 1}]
+                plugins = [{"Id": "22b7f79d-8ea4-437e-b5fd-3e21f09f7bc1", "Category": 1}]
             chatbot: Chatbot
             reply = await chatbot.ask(
                 prompt=user_message,
                 conversation_style=conversation_style,
                 simplify_response=True,
-                attachment={"image_url":f"{image}"},
+                attachment={"image_url":f"{image}"} if image != None else None,
                 add_options=add_options,
                 plugins=plugins,
                 message_type="GenerateContentQuery"

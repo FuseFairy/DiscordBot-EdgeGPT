@@ -127,7 +127,7 @@ async def send_message(user_chatbot, user_message: str, image: str, plugin: str=
                     
                 async_gen = ImageGenAsync(auth_cookie=auth_cookie, quiet=True)
                 images = await async_gen.get_images(prompt=image_create_text, timeout=int(os.getenv("IMAGE_TIMEOUT")), max_generate_time_sec=int(os.getenv("IMAGE_MAX_CREATE_SEC")))
-                images = [file for file in images if not file.endswith('.svg')]
+                images = [file for file in images if not (file.endswith('.svg') or file.endswith('.js'))]
                 new_image = await concatenate_images(images)
                 image_data = BytesIO()
                 new_image.save(image_data, format='PNG')

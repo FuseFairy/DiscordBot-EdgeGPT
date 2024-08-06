@@ -6,7 +6,8 @@
 
   [![Try with Replit Badge](https://replit.com/badge?caption=Try%20with%20Replit)](https://replit.com/@dd8611706/DiscordBot-EdgeGPT?v=1)
 
-
+> [!IMPORTANT]
+> Because Microsoft changed the cookie expiration time from one week to only 3 days and made it easier to trigger Captcha challenges, it is no longer convenient to use. Apart from generating images, if you simply want to chat with an AI, I recommend using [Gemini discord bot](https://github.com/FuseFairy/DiscordBot-GeminiAI), which is much more user-friendly.
 
 ## Update
 > ### 2024/6/11：DALLE-3(Unofficial) has been fixed.

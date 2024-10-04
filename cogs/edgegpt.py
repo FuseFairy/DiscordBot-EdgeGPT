@@ -6,9 +6,6 @@ from core.classes import Cog_Extension
 from src.log import setup_logger
 from src.user_chatbot import set_chatbot, get_users_chatbot
 from src.check_channel import check_channel
-from dotenv import load_dotenv
-
-load_dotenv()
 
 logger = setup_logger(__name__)
 

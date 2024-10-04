@@ -5,7 +5,6 @@ import asyncio
 import json
 from io import BytesIO
 from re_edge_gpt import ConversationStyle
-from dotenv import load_dotenv
 from discord.ext import commands
 from core.classes import Cog_Extension
 from functools import partial
@@ -14,8 +13,6 @@ from src.log import setup_logger
 from src.user_chatbot import get_users_chatbot
 from src.mention_chatbot import get_client
 from src.image.image_create import concatenate_images
-
-load_dotenv()
 
 try:
     MENTION_CHANNEL_ID = int(os.getenv("MENTION_CHANNEL_ID"))

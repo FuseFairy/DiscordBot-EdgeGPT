@@ -3,10 +3,7 @@ import asyncio
 import time
 import json
 import os
-from dotenv import load_dotenv
 from datetime import datetime
-
-load_dotenv()
 
 async def refresh_cookies():
     while True:

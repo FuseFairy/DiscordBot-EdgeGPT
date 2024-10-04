@@ -3,10 +3,8 @@ import os
 import asyncio
 from .log import setup_logger
 from re_edge_gpt import Chatbot
-from dotenv import load_dotenv
 from src.auto_cookies import refresh_cookies
 
-load_dotenv()
 logger = setup_logger(__name__)
 
 class MentionChatbot():

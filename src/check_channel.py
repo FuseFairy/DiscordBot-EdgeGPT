@@ -1,8 +1,5 @@
 import discord
 import os
-from dotenv import load_dotenv
-
-load_dotenv()
 
 async def check_channel(interaction: discord.Interaction, channel):
     allowed_channel_ids = os.getenv(channel, "").split(",")

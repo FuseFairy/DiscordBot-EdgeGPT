@@ -9,9 +9,7 @@ from re_edge_gpt import Chatbot
 from .log import setup_logger
 from .bing_chat.response import send_message
 from .image.image_create import create_image_bing, create_image_dalle3
-from dotenv import load_dotenv
 
-load_dotenv()
 tracemalloc.start()
 
 logger = setup_logger(__name__)
@@ -23,11 +21,6 @@ async def set_chatbot(user_id, conversation_style=None, version=None, cookies=No
 
     if conversation_style:
         users_chatbot[user_id].set_conversation_style(conversation_style)
-
-    if version == "default":
-        await users_chatbot[user_id].initialize_chatbot(False)
-    elif version == "jailbreak":
-        await users_chatbot[user_id].initialize_chatbot(True)
     
     if cookies:
         users_chatbot[user_id].set_cookies(cookies)
@@ -37,6 +30,11 @@ async def set_chatbot(user_id, conversation_style=None, version=None, cookies=No
     
     if plugin:
         users_chatbot[user_id].set_plugin(plugin)
+    
+    if version == "default":
+        await users_chatbot[user_id].initialize_chatbot(False)
+    elif version == "jailbreak":
+        await users_chatbot[user_id].initialize_chatbot(True)
 
 def get_users_chatbot():
     return users_chatbot

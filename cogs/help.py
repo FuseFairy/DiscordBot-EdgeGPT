@@ -3,9 +3,6 @@ import os
 from core.classes import Cog_Extension
 from discord import app_commands
 from src.check_channel import check_channel
-from dotenv import load_dotenv
-
-load_dotenv()
 
 class Help(Cog_Extension):
     @app_commands.command(name = "help", description = "Show how to use")

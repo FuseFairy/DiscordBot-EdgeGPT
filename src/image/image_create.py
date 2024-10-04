@@ -8,9 +8,6 @@ from io import BytesIO
 from re_edge_gpt import ImageGenAsync
 from src.log import setup_logger
 from src.image.button_view import ButtonView
-from dotenv import load_dotenv
-
-load_dotenv()
 
 logger = setup_logger(__name__)
 
